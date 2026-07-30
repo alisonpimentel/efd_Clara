@@ -33,6 +33,8 @@
 - relatório de recorrência e preparação técnica de SEO.
 - evolução temporal, concentração, apuração E110 e inventário H005/H010;
 - gráficos responsivos fundamentados em Few, IBCS e Knaflic.
+- conferência inicial pelos registros 0000, 0005 e 0100, com CPF do contabilista
+  mascarado e ausente do CSV.
 
 ## Situação do deploy
 
@@ -44,14 +46,15 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_HNsmDNwndycFKqhABsCypngCLADE`
-- **Commit:** `ddc776e`
+- **Deploy:** `dpl_61MSRaeu6WyjKQ4KYLG4S3aziMJM`
+- **Commit:** `1885cb9`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
 - **CSV e nova análise:** aprovados
 - **Novas abas:** concentração, estoque e apuração E110 aprovadas
+- **Identificação:** entidade, competência, endereço e contabilista aprovados
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
@@ -66,5 +69,6 @@ informar pessoalmente o CPF e a senha ao final. A tela `/admin/configurar` está
 protegida pela credencial temporária local. Depois da criação única, o acesso ocorrerá em
 `/admin/login`.
 
-Os dez cadastros sintéticos encontrados após as execuções locais e públicas foram
-removidos do banco; a verificação final indicou zero cadastros de teste restantes.
+Na rodada desta evolução, os seis cadastros sintéticos encontrados após as execuções
+locais e públicas foram removidos; a verificação final indicou zero cadastros de teste
+restantes.
