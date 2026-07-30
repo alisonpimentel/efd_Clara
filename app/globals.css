@@ -1202,6 +1202,38 @@ summary:focus-visible,
   width: fit-content;
 }
 
+.admin-auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at top left, rgba(51, 112, 100, 0.14), transparent 36%),
+    var(--surface-muted);
+}
+
+.admin-auth-page .registration-card {
+  width: min(100%, 520px);
+}
+
+.admin-auth-page h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  letter-spacing: -0.05em;
+}
+
+.admin-auth-form {
+  display: grid;
+  gap: 18px;
+  margin: 28px 0 18px;
+}
+
+.admin-auth-form small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-soft);
+}
+
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;

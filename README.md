@@ -16,7 +16,10 @@ iniciantes e estudantes.
 - arquivo demonstrativo fictício;
 - testes automatizados com valores esperados;
 - aviso de privacidade e canal interno para solicitações de titulares;
-- área administrativa privada em `/interessados`, com resumo e exportação da lista;
+- área administrativa privada em `/interessados`, protegida por autenticação HTTP;
+- relatório com total e último acesso de cada cadastro;
+- login administrativo por CPF e senha, sem guardar o CPF ou a senha em texto;
+- sitemap, robots, metadados sociais e dados estruturados para mecanismos de busca;
 - documentação acadêmica e diário de decisões.
 
 O arquivo fiscal não é enviado ao servidor e não existe histórico de SPED. O banco
@@ -28,16 +31,39 @@ O ponto de entrada é [docs/00-indice.md](docs/00-indice.md). O material reúne 
 objetivos, escopo, requisitos, arquitetura, indicadores, metodologia, testes, resultados,
 limitações, modelo de negócio, privacidade, referências e um roteiro para o TCC.
 
-## Executar e verificar
+## Instalar, executar e verificar
 
 Requisitos: Node.js 22 ou superior.
 
 ```bash
 npm install
 npm run dev
-npm test
+npm run lint
+npm run test
 npm run build
 ```
+
+Copie `.env.example` para `.env.local` e informe:
+
+- `DATABASE_URL`: conexão PostgreSQL do banco gratuito;
+- `ADMIN_USER` e `ADMIN_PASSWORD`: proteção temporária da criação da conta;
+- `ADMIN_ID_SECRET` e `ADMIN_SESSION_SECRET`: hashes e sessões administrativas;
+- `NEXT_PUBLIC_SITE_URL`: endereço canônico usado por sitemap e robots.
+
+Essas variáveis são usadas somente pelo backend mínimo de cadastro. Nenhuma variável
+fica disponível ao JavaScript do navegador.
+
+## Publicação
+
+O GitHub é a fonte oficial. A aplicação está preparada para deploy contínuo na Vercel
+Hobby e banco Neon Free. O provedor recebe apenas os arquivos públicos da aplicação e os
+dados mínimos enviados no formulário de cadastro. A EFD não passa por uma rota de upload.
+
+Consulte `docs/13-infraestrutura-cloud.md`, `docs/14-seguranca-e-privacidade.md` e
+`docs/15-relatorio-de-deploy.md` para a configuração e as evidências acadêmicas.
+
+Na primeira implantação, acesse `/admin/configurar` usando as credenciais temporárias e
+crie o CPF/senha definitivos. Depois, `/admin/login` abre o relatório de interessados.
 
 O arquivo de demonstração está em `public/exemplo-efd.txt`. Todos os nomes, documentos e
 valores nele contidos são fictícios.

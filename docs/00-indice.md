@@ -18,9 +18,15 @@ normas de citação e às orientações recebidas.
 10. [Limitações e riscos](10-limitacoes.md)
 11. [Modelo de negócio](11-modelo-de-negocio.md)
 12. [Diário de decisões](12-diario-de-decisoes.md)
-13. [LGPD e ética](13-lgpd-etica.md)
-14. [Referências preliminares](14-referencias.md)
-15. [Roteiro de escrita do TCC](15-roteiro-tcc.md)
+13. [Infraestrutura em nuvem](13-infraestrutura-cloud.md)
+14. [Segurança e privacidade](14-seguranca-e-privacidade.md)
+15. [Relatório de deploy](15-relatorio-de-deploy.md)
+
+Materiais complementares preservados:
+
+- [LGPD e ética](13-lgpd-etica.md)
+- [Referências preliminares](14-referencias.md)
+- [Roteiro de escrita do TCC](15-roteiro-tcc.md)
 
 ## Identidade da pesquisa
 
@@ -40,4 +46,3 @@ normas de citação e às orientações recebidas.
 - cadastro de interesse não deve ser confundido com satisfação ou impacto;
 - o painel descreve movimentação fiscal escriturada, não desempenho financeiro completo;
 - dados reais só podem ser utilizados quando autorizados e adequadamente protegidos.
-

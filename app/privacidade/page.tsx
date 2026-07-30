@@ -51,7 +51,8 @@ export default function PrivacyPage() {
         <p>
           No cadastro de acesso, coletamos nome, e-mail, perfil de interesse, registro do
           aceite de privacidade e, quando você escolher, autorização para receber
-          comunicações do projeto.
+          comunicações do projeto. O sistema também atualiza a quantidade e a data do
+          último acesso vinculado ao mesmo e-mail.
         </p>
       </section>
       <section>
@@ -66,7 +67,7 @@ export default function PrivacyPage() {
         <h2>3. Finalidades</h2>
         <ul>
           <li>liberar o acesso ao experimento acadêmico;</li>
-          <li>medir o interesse de diferentes perfis na proposta;</li>
+          <li>medir interesse e recorrência de acesso de forma exploratória;</li>
           <li>enviar novidades somente quando houver aceite específico;</li>
           <li>registrar e atender solicitações relacionadas à privacidade.</li>
         </ul>
@@ -78,6 +79,10 @@ export default function PrivacyPage() {
           automatizadas. Os dados permanecem na infraestrutura de hospedagem do projeto
           durante a avaliação acadêmica e poderão ser anonimizados ou eliminados quando
           deixarem de ser necessários.
+        </p>
+        <p>
+          A área administrativa usa uma credencial exclusiva do responsável. O CPF não é
+          guardado em texto, e a senha é protegida por hash com sal.
         </p>
       </section>
       <section>

@@ -8,6 +8,36 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <EfdClaraApp />;
-}
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "EFD Clara",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Navegador web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "BRL",
+    },
+    description:
+      "Aplicativo acadêmico gratuito que transforma registros da EFD ICMS/IPI em indicadores gerenciais, com processamento local.",
+    featureList: [
+      "Processamento local da EFD ICMS/IPI",
+      "Dashboard de entradas e saídas",
+      "Rankings de clientes, fornecedores e produtos",
+      "Exportação CSV e PDF",
+    ],
+  };
 
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
+      <EfdClaraApp />
+    </>
+  );
+}

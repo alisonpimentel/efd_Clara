@@ -15,9 +15,10 @@ API mínima
 ├── Cadastro de interessados
 └── Solicitações de privacidade
 
-Banco persistente D1
+Banco PostgreSQL gratuito
 ├── interested_people
-└── privacy_requests
+├── privacy_requests
+└── admin_credentials (somente hashes)
 ```
 
 ## Fluxo do arquivo fiscal
@@ -55,7 +56,9 @@ servidor recebem os dados do cadastro ou uma solicitação de privacidade.
 | `/api/privacy-request` | Registrar exercício de direito do titular |
 | `/interessados` | Exibir ao proprietário autenticado a lista e os totais |
 | `/api/admin/interested` | Exportar CSV somente após a mesma verificação de proprietário |
-| D1 | Persistir somente dados pessoais mínimos |
+| PostgreSQL/Neon | Persistir somente dados pessoais mínimos |
+| `/admin/login` | Criar sessão administrativa protegida |
+| `/admin/configurar` | Configuração inicial única protegida por credencial temporária |
 
 ## Escolha do SQLite temporário
 
@@ -74,6 +77,9 @@ histórico”.
 - consentimento de comunicação separado;
 - campos de armadilha contra submissões automatizadas simples;
 - cadastros não possuem endpoint público de listagem;
+- área administrativa protegida por credenciais mantidas em variáveis de ambiente;
+- CPF administrativo transformado em HMAC e senha protegida por scrypt com sal;
+- sessão em cookie `HttpOnly`, `SameSite=Strict` e `Secure` em produção;
 - solicitações de titulares ficam em tabela separada.
 
 ## Riscos residuais

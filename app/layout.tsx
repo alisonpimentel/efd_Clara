@@ -27,6 +27,30 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description:
       "Business Intelligence simples para compreender a movimentação registrada na EFD ICMS/IPI.",
+    keywords: [
+      "EFD ICMS/IPI",
+      "SPED Fiscal",
+      "Business Intelligence",
+      "dashboard fiscal",
+      "análise de EFD",
+      "BI para pequenas empresas",
+    ],
+    applicationName: "EFD Clara",
+    authors: [{ name: "Projeto acadêmico EFD Clara" }],
+    creator: "Projeto acadêmico EFD Clara",
+    category: "Business Intelligence",
+    alternates: { canonical: "/" },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     icons: {
       icon: "/favicon.svg",
       shortcut: "/favicon.svg",
@@ -34,6 +58,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "EFD Clara",
       description: "Seu SPED em linguagem de negócio.",
+      locale: "pt_BR",
+      siteName: "EFD Clara",
       type: "website",
       images: [
         {
@@ -50,6 +76,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Seu SPED em linguagem de negócio.",
       images: ["/og.png"],
     },
+    verification: process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : undefined,
   };
 }
 

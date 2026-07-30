@@ -9,18 +9,24 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os cinco testes automatizados foram executados sem falhas. Eles
-cobrem dez cenários documentados, incluindo normalização, relacionamento, cancelamento,
-ausência de registros opcionais, totais, rankings e período sem movimento válido.
+Em 30 de julho de 2026, os quatorze testes unitários foram executados sem falhas. Eles
+cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
+totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
+validação cadastral e exportação.
+
+Três testes de ponta a ponta também foram aprovados. O fluxo real cobriu desktop e
+celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
+inspeção dos corpos de requisição. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes: 5
-aprovados: 5
+testes unitários: 14
+testes E2E: 3
+aprovados: 17
 falhas: 0
 ```
 
-O build de produção também foi concluído, abrangendo a página principal, metodologia,
-privacidade e duas rotas de API.
+O lint e o build de produção também foram concluídos. O build abrange a página principal,
+metodologia, privacidade, área administrativa e três rotas de API.
 
 ## Evidência quantitativa
 
@@ -54,4 +60,3 @@ Na base fictícia, o artefato reproduziu:
 
 O número de interessados, quando houver tempo de exposição suficiente, poderá indicar
 procura inicial. Ele não equivale a intenção de compra nem validação do problema.
-

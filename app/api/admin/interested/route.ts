@@ -1,11 +1,13 @@
 import { ensureDatabaseSchema, getDb } from "../../../../db";
-import { isProjectOwner } from "../../../../lib/server/owner-access";
+import { isAdminSession } from "../../../../lib/server/admin-auth";
 
 type InterestedExportRow = {
   name: string;
   email: string;
   interest: string;
   communications_consent: boolean;
+  access_count: number;
+  last_access_at: Date | string;
   created_at: Date | string;
 };
 
@@ -14,24 +16,35 @@ function csvCell(value: string | number) {
 }
 
 export async function GET() {
-  if (!(await isProjectOwner())) {
+  if (!(await isAdminSession())) {
     return Response.json({ error: "Acesso não autorizado." }, { status: 403 });
   }
 
   await ensureDatabaseSchema();
   const sql = getDb();
   const result = await sql`
-    SELECT name, email, interest, communications_consent, created_at
+    SELECT name, email, interest, communications_consent,
+           access_count, last_access_at, created_at
     FROM interested_people
     ORDER BY created_at DESC
   ` as InterestedExportRow[];
   const rows = [
-    ["nome", "email", "perfil", "aceitou_novidades", "data_cadastro"],
+    [
+      "nome",
+      "email",
+      "perfil",
+      "aceitou_novidades",
+      "quantidade_acessos",
+      "ultimo_acesso",
+      "data_cadastro",
+    ],
     ...result.map((person) => [
       person.name,
       person.email,
       person.interest,
       person.communications_consent ? "sim" : "não",
+      person.access_count,
+      new Date(person.last_access_at).toISOString(),
       new Date(person.created_at).toISOString(),
     ]),
   ];

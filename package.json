@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx --test tests/**/*.test.ts",
+    "test:e2e": "playwright test",
     "test:build": "npm run test && npm run build",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
@@ -26,6 +27,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/sql.js": "^1.4.11",
+    "@playwright/test": "^1.57.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "4.2.1",

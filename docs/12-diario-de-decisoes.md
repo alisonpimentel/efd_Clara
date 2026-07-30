@@ -41,7 +41,7 @@
 ## D05 - Usar SQLite apenas em memória
 
 - **Motivo:** demonstrar transformação por SQL sem criar histórico fiscal.
-- **Alternativas:** arrays JavaScript, OPFS persistente ou D1.
+- **Alternativas:** arrays JavaScript, OPFS persistente ou banco no servidor.
 - **Escolha:** SQLite WebAssembly temporário.
 - **Impacto:** consultas reproduzíveis e descarte após o resumo.
 - **Validação:** banco fechado no bloco `finally`.
@@ -51,7 +51,7 @@
 
 - **Motivo:** medir procura inicial sem armazenar informações fiscais.
 - **Alternativas:** nenhum cadastro, login completo ou histórico.
-- **Escolha:** nome, e-mail, perfil e consentimentos em D1.
+- **Escolha:** nome, e-mail, perfil e consentimentos em PostgreSQL gratuito.
 - **Impacto:** cria responsabilidade LGPD limitada.
 - **Validação:** duas tabelas, sem endpoint público de listagem.
 - **Uso no TCC:** modelagem de negócio e ética.
@@ -110,3 +110,52 @@
 - **Validação:** build e implantação pública.
 - **Uso no TCC:** canal e viabilidade operacional.
 
+## D13 - Usar GitHub como fonte de verdade
+
+- **Motivo:** garantir versionamento, reprodutibilidade e histórico auditável.
+- **Alternativas:** manter somente cópia local ou publicar diretamente pela hospedagem.
+- **Escolha:** repositório `alisonpimentel/efd_Clara`, branch principal.
+- **Impacto:** cada alteração publicada pode ser relacionada a um commit.
+- **Validação:** comparação do commit local com a branch remota.
+- **Uso no TCC:** rastreabilidade do desenvolvimento.
+
+## D14 - Migrar o backend mínimo para Vercel e PostgreSQL
+
+- **Motivo:** alinhar o código à hospedagem solicitada sem criar armazenamento fiscal.
+- **Alternativas:** manter a infraestrutura anterior, remover cadastro ou criar backend
+  próprio.
+- **Escolha:** Vercel Hobby e Neon Free, apenas para interessados e solicitações.
+- **Impacto:** três variáveis do banco e duas credenciais administrativas no ambiente;
+  nenhum dado fiscal adicional.
+- **Validação:** testes das rotas e inspeção de rede no deploy.
+- **Uso no TCC:** infraestrutura cloud e viabilidade de custo zero.
+
+## D15 - Proteger o relatório por CPF sem armazenar o CPF
+
+- **Motivo:** reservar a lista ao responsável sem guardar um identificador sensível em
+  texto.
+- **Alternativas:** senha única, OAuth externo ou CPF criptografado reversível.
+- **Escolha:** HMAC do CPF, scrypt com sal para a senha e sessão assinada.
+- **Impacto:** o CPF original não pode ser lido no banco; perda da senha exige processo
+  controlado de recuperação.
+- **Validação:** testes de CPF, senha e acesso não autenticado.
+- **Uso no TCC:** segurança e privacidade desde a concepção.
+
+## D16 - Registrar recorrência mínima
+
+- **Motivo:** permitir relatório de uso sem criar histórico fiscal.
+- **Alternativas:** analytics de terceiros ou eventos detalhados.
+- **Escolha:** contagem e data do último acesso por e-mail cadastrado.
+- **Impacto:** melhora a leitura exploratória de interesse e amplia o aviso de
+  privacidade.
+- **Validação:** novo cadastro inicia em um e acesso repetido incrementa o total.
+- **Uso no TCC:** evidência exploratória de procura, sem confundir com validação.
+
+## D17 - Preparar descoberta orgânica
+
+- **Motivo:** tornar as páginas públicas compreensíveis para buscadores.
+- **Alternativas:** anúncios, domínio pago ou ausência de indexação.
+- **Escolha:** metadados, URL canônica, sitemap, robots e JSON-LD.
+- **Impacto:** facilita rastreamento, mas não garante posição no Google.
+- **Validação:** abrir `/robots.txt`, `/sitemap.xml` e conferir metadados.
+- **Uso no TCC:** canal digital de baixo custo.

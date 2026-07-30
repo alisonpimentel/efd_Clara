@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ensureDatabaseSchema, getDb } from "../../db";
-import { isProjectOwner } from "../../lib/server/owner-access";
+import { isAdminSession } from "../../lib/server/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,8 @@ type InterestedRow = {
   email: string;
   interest: string;
   communications_consent: boolean;
+  access_count: number;
+  last_access_at: Date | string;
   created_at: Date | string;
 };
 
@@ -31,28 +34,15 @@ async function loadInterestedPeople() {
   await ensureDatabaseSchema();
   const sql = getDb();
   return await sql`
-    SELECT id, name, email, interest, communications_consent, created_at
+    SELECT id, name, email, interest, communications_consent,
+           access_count, last_access_at, created_at
     FROM interested_people
     ORDER BY created_at DESC
   ` as InterestedRow[];
 }
 
 export default async function InterestedPage() {
-  if (!(await isProjectOwner())) {
-    return (
-      <main className="document-page access-denied">
-        <p className="eyebrow">Área administrativa</p>
-        <h1>Esta lista é exclusiva do responsável pelo projeto.</h1>
-        <p className="document-lead">
-          Abra esta página enquanto estiver autenticado na plataforma com o e-mail do
-          proprietário do EFD Clara.
-        </p>
-        <Link className="primary-button" href="/">
-          Voltar ao site
-        </Link>
-      </main>
-    );
-  }
+  if (!(await isAdminSession())) redirect("/admin/login");
 
   const people = await loadInterestedPeople();
   const profiles = people.reduce<Record<string, number>>((totals, person) => {
@@ -78,6 +68,11 @@ export default async function InterestedPage() {
           <Link className="primary-button compact" href="/">
             Voltar ao site
           </Link>
+          <form action="/api/admin/logout" method="post">
+            <button className="secondary-button" type="submit">
+              Sair
+            </button>
+          </form>
         </div>
       </div>
 
@@ -117,6 +112,8 @@ export default async function InterestedPage() {
                 <th>E-mail</th>
                 <th>Perfil</th>
                 <th>Novidades</th>
+                <th>Acessos</th>
+                <th>Último acesso</th>
                 <th>Cadastro</th>
               </tr>
             </thead>
@@ -127,6 +124,8 @@ export default async function InterestedPage() {
                   <td>{person.email}</td>
                   <td>{profileLabels[person.interest] ?? person.interest}</td>
                   <td>{person.communications_consent ? "Sim" : "Não"}</td>
+                  <td>{person.access_count}</td>
+                  <td>{new Date(person.last_access_at).toLocaleString("pt-BR")}</td>
                   <td>{new Date(person.created_at).toLocaleString("pt-BR")}</td>
                 </tr>
               ))}

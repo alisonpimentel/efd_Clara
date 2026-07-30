@@ -4,11 +4,12 @@
 
 | Fluxo | Dados | Persistência | Finalidade |
 |---|---|---|---|
-| cadastro | nome, e-mail, perfil e consentimentos | D1 | acesso e medição de interesse |
-| comunicação | consentimento opcional | D1 | novidades do projeto |
+| cadastro | nome, e-mail, perfil, consentimentos, contagem e último acesso | PostgreSQL | acesso e medição de interesse |
+| comunicação | consentimento opcional | PostgreSQL | novidades do projeto |
 | análise fiscal | conteúdo da EFD | nenhuma | gerar indicadores locais |
 | resultado | agregados do painel | memória da página | visualização e exportação |
-| direitos | e-mail e tipo de solicitação | D1 | organizar atendimento |
+| direitos | e-mail e tipo de solicitação | PostgreSQL | organizar atendimento |
+| administrador | HMAC do CPF e hash com sal da senha | PostgreSQL | acesso privado ao relatório |
 
 ## Princípios incorporados
 
@@ -65,4 +66,3 @@ instituição, do Comitê de Ética quando aplicável e da LGPD antes do recruta
 - avaliar transferência e suboperadores;
 - documentar incidentes e resposta;
 - revisar linguagem fiscal e responsabilidade profissional.
-

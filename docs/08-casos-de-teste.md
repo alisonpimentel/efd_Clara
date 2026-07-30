@@ -27,8 +27,29 @@
 | CT08 | ICMS | 5.100 | passou |
 | CT09 | rankings | fornecedor, cliente, produto e CFOP esperados | passou |
 | CT10 | somente cancelamento | totais e ticket iguais a zero | passou |
+| CT11 | tamanho máximo | aceitar 8 MB e rejeitar 8 MB + 1 byte | passou |
+| CT12 | múltiplos arquivos | rejeitar dois arquivos na seleção | passou |
+| CT13 | extensão inválida | rejeitar arquivo que não seja TXT | passou |
+| CT14 | cadastro válido | normalizar nome/e-mail e preservar aceite opcional | passou |
+| CT15 | aceite obrigatório | impedir cadastro sem privacidade | passou |
+| CT16 | cadastro inválido | rejeitar e-mail e perfil inválidos | passou |
+| CT17 | exportação | CSV conter totais e rankings esperados | passou |
+| CT18 | CPF | aceitar CPF válido e rejeitar repetição inválida | passou |
+| CT19 | senha administrativa | hash validar a senha correta e rejeitar outra | passou |
 
-Os dez cenários são cobertos por cinco funções de teste automatizado.
+Os cenários unitários são cobertos por quatorze funções de teste automatizado distribuídas
+em cinco suítes.
+
+## Testes de ponta a ponta
+
+| ID | Cenário | Resultado |
+|---|---|---|
+| E2E01 | cadastro, aceite, 8 MB, dashboard, CSV e nova análise | passou |
+| E2E02 | viewport móvel de 375 × 812 px | passou sem rolagem horizontal |
+| E2E03 | inspeção dos corpos enviados pela rede | nenhum registro `0000` ou `C100` transmitido |
+
+Os três testes E2E foram executados em Chrome real contra a aplicação local conectada ao
+banco gratuito.
 
 ## Valores esperados da demonstração
 
@@ -50,8 +71,8 @@ Os dez cenários são cobertos por cinco funções de teste automatizado.
 
 | ID | Verificação | Procedimento |
 |---|---|---|
-| MT01 | limite de 8 MB | selecionar TXT acima do limite |
-| MT02 | formato | selecionar arquivo sem extensão TXT |
+| MT01 | limite de 8 MB | confirmar mensagem visual ao selecionar TXT acima do limite |
+| MT02 | formato | confirmar mensagem visual ao selecionar arquivo sem extensão TXT |
 | MT03 | teclado | percorrer cadastro, upload, abas e exportações sem mouse |
 | MT04 | tela estreita | testar em 320 e 375 CSS px |
 | MT05 | zoom | verificar 200% e 400% |
@@ -62,9 +83,9 @@ Os dez cenários são cobertos por cinco funções de teste automatizado.
 ## Comando reproduzível
 
 ```bash
-npm test
+npm run test
+npm run test:e2e
 ```
 
 O teste deve retornar zero falhas. Alterações nas fórmulas exigem atualização simultânea
 do arquivo fictício, dos resultados esperados e deste documento.
-

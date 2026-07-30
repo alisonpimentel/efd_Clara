@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Metodologia do projeto",
   description: "Delimitação e método de avaliação do protótipo acadêmico EFD Clara.",
+  alternates: { canonical: "/metodologia" },
 };
 
 export default function MethodologyPage() {

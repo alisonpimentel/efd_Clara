@@ -36,6 +36,8 @@ export async function POST(request: Request) {
         interest = EXCLUDED.interest,
         privacy_consent = TRUE,
         communications_consent = EXCLUDED.communications_consent,
+        access_count = interested_people.access_count + 1,
+        last_access_at = NOW(),
         updated_at = NOW()
     `;
 

@@ -68,7 +68,7 @@ export function RegistrationGate({ onRegistered }: RegistrationGateProps) {
           <h2 id="access-title">Conheça seus dados em poucos minutos</h2>
           <p>
             Cadastre-se para usar gratuitamente e nos ajudar a medir o interesse neste
-            projeto acadêmico.
+            projeto acadêmico, incluindo a recorrência de acesso.
           </p>
           <form onSubmit={submit} noValidate>
             <div className="field">
