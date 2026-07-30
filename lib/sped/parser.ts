@@ -1,0 +1,182 @@
+import type {
+  FiscalDocument,
+  FiscalItem,
+  FiscalSummary,
+  Participant,
+  Product,
+  SpedParseResult,
+} from "./types";
+
+const SUPPORTED_RECORDS = new Set(["0000", "0150", "0200", "C100", "C170", "C190"]);
+const CANCELLED_STATUSES = new Set(["02", "03"]);
+
+function field(fields: string[], position: number) {
+  return (fields[position] ?? "").trim();
+}
+
+function normalizeDocument(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function parseBrazilianNumber(value: string) {
+  if (!value) return 0;
+  const normalized = value.trim().replace(/\./g, "").replace(",", ".");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeDate(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length !== 8) return "";
+  return `${digits.slice(4, 8)}-${digits.slice(2, 4)}-${digits.slice(0, 2)}`;
+}
+
+function splitSpedLine(line: string) {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith("|")) return [];
+  return trimmed.split("|");
+}
+
+export function parseSped(text: string): SpedParseResult {
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
+  const participants = new Map<string, Participant>();
+  const products = new Map<string, Product>();
+  const documents: FiscalDocument[] = [];
+  const items: FiscalItem[] = [];
+  const summaries: FiscalSummary[] = [];
+  const recordCounts: Record<string, number> = {};
+  const warnings: string[] = [];
+  let currentDocument: FiscalDocument | null = null;
+  let company = {
+    name: "",
+    document: "",
+    state: "",
+    startDate: "",
+    endDate: "",
+  };
+
+  for (const line of lines) {
+    const fields = splitSpedLine(line);
+    const register = field(fields, 1).toUpperCase();
+    if (!register) continue;
+    recordCounts[register] = (recordCounts[register] ?? 0) + 1;
+    if (!SUPPORTED_RECORDS.has(register)) continue;
+
+    if (register === "0000") {
+      company = {
+        startDate: normalizeDate(field(fields, 4)),
+        endDate: normalizeDate(field(fields, 5)),
+        name: field(fields, 6),
+        document: normalizeDocument(field(fields, 7) || field(fields, 8)),
+        state: field(fields, 9),
+      };
+      continue;
+    }
+
+    if (register === "0150") {
+      const code = field(fields, 2);
+      if (code) {
+        participants.set(code, {
+          code,
+          name: field(fields, 3) || `Participante ${code}`,
+          document: normalizeDocument(field(fields, 5) || field(fields, 6)),
+        });
+      }
+      continue;
+    }
+
+    if (register === "0200") {
+      const code = field(fields, 2);
+      if (code) {
+        products.set(code, {
+          code,
+          description: field(fields, 3) || `Item ${code}`,
+          unit: field(fields, 6),
+          ncm: field(fields, 8),
+        });
+      }
+      continue;
+    }
+
+    if (register === "C100") {
+      const participantCode = field(fields, 4);
+      const operation = field(fields, 2) === "0" ? "entry" : "exit";
+      currentDocument = {
+        id: documents.length + 1,
+        operation,
+        participantCode,
+        participantName: participants.get(participantCode)?.name ?? "",
+        model: field(fields, 5),
+        status: field(fields, 6),
+        number: field(fields, 8),
+        date: normalizeDate(field(fields, 10)),
+        total: parseBrazilianNumber(field(fields, 12)),
+        merchandiseTotal: parseBrazilianNumber(field(fields, 16)),
+        icms: parseBrazilianNumber(field(fields, 22)),
+        cancelled: CANCELLED_STATUSES.has(field(fields, 6)),
+      };
+      documents.push(currentDocument);
+      continue;
+    }
+
+    if (!currentDocument) {
+      warnings.push(`Registro ${register} encontrado sem um C100 anterior.`);
+      continue;
+    }
+
+    if (register === "C170") {
+      const productCode = field(fields, 3);
+      items.push({
+        documentId: currentDocument.id,
+        operation: currentDocument.operation,
+        productCode,
+        productDescription:
+          products.get(productCode)?.description || field(fields, 4) || `Item ${productCode}`,
+        quantity: parseBrazilianNumber(field(fields, 5)),
+        value: parseBrazilianNumber(field(fields, 7)),
+        cfop: field(fields, 11),
+      });
+      continue;
+    }
+
+    if (register === "C190") {
+      summaries.push({
+        documentId: currentDocument.id,
+        operation: currentDocument.operation,
+        cfop: field(fields, 3),
+        operationValue: parseBrazilianNumber(field(fields, 5)),
+        icms: parseBrazilianNumber(field(fields, 7)),
+      });
+    }
+  }
+
+  if (!recordCounts["0000"]) warnings.push("O registro 0000 não foi encontrado.");
+  if (!recordCounts["C100"]) warnings.push("Nenhum documento fiscal C100 foi encontrado.");
+  if (!recordCounts["C170"]) {
+    warnings.push("O arquivo não possui itens C170; a análise de produtos ficará indisponível.");
+  }
+  if (!recordCounts["C190"]) {
+    warnings.push("O arquivo não possui resumos C190; CFOP e ICMS podem ficar incompletos.");
+  }
+
+  const validDocuments = documents.filter((document) => !document.cancelled);
+  const validIds = new Set(validDocuments.map((document) => document.id));
+
+  return {
+    company,
+    participants: Array.from(participants.values()),
+    products: Array.from(products.values()),
+    documents,
+    items: items.filter((item) => validIds.has(item.documentId)),
+    summaries: summaries.filter((summary) => validIds.has(summary.documentId)),
+    recordCounts,
+    warnings: Array.from(new Set(warnings)),
+    lineCount: lines.filter((line) => line.trim()).length,
+  };
+}
+
+export const spedParserInternals = {
+  parseBrazilianNumber,
+  normalizeDate,
+};
+
