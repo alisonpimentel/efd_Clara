@@ -3,7 +3,7 @@
 ## Resultado técnico
 
 Foi implementada uma aplicação web capaz de ler localmente uma EFD ICMS/IPI, normalizar
-seis tipos de registro, organizar dados em SQLite WebAssembly temporário e apresentar
+dez tipos de registro, organizar dados em SQLite WebAssembly temporário e apresentar
 indicadores em quatro áreas. O artefato também oferece arquivo fictício, CSV, impressão,
 cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
@@ -38,15 +38,22 @@ Na base fictícia, o artefato reproduziu:
 - quatro documentos válidos;
 - um documento cancelado;
 - R$ 5.100,00 de ICMS escriturado;
-- R$ 10.625,00 de ticket médio.
+- R$ 10.625,00 de ticket médio geral;
+- R$ 7.750,00 de ticket médio de entrada;
+- R$ 13.500,00 de ticket médio de saída;
+- R$ 1.080,00 de ICMS a recolher informado no E110;
+- R$ 22.000,00 de inventário informado no H005;
+- quatro pontos na evolução temporal;
+- 100% de concentração nos três maiores clientes e fornecedores da base sintética.
 
 ## Resultado acadêmico defensável
 
 > O protótipo demonstrou, nos casos controlados, a viabilidade de reorganizar registros
 > selecionados da EFD ICMS/IPI em indicadores gerenciais acessíveis. Os valores calculados
 > corresponderam aos resultados esperados da base fictícia e documentos cancelados foram
-> excluídos das análises. O processamento ocorreu no navegador e o banco fiscal temporário
-> foi encerrado após a geração do resumo.
+> excluídos das análises. O protótipo também reproduziu a apuração declarada no E110 e o
+> inventário do Bloco H, sem recalcular obrigações. O processamento ocorreu no navegador e
+> o banco fiscal temporário foi encerrado após a geração do resumo.
 
 ## O que o resultado não demonstra
 

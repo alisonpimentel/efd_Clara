@@ -12,6 +12,9 @@
 | documento cancelado | 1 |
 | itens C170 válidos | 6 |
 | resumos C190 válidos | 4 |
+| apurações E110 | 1 |
+| inventários H005 | 1 |
+| itens de inventário H010 | 3 |
 
 ## Casos automatizados
 
@@ -36,6 +39,11 @@
 | CT17 | exportação | CSV conter totais e rankings esperados | passou |
 | CT18 | CPF | aceitar CPF válido e rejeitar repetição inválida | passou |
 | CT19 | senha administrativa | hash validar a senha correta e rejeitar outra | passou |
+| CT20 | evolução temporal | quatro datas e valores diários esperados | passou |
+| CT21 | concentração | três maiores representam 100% na base sintética | passou |
+| CT22 | apuração do ICMS | E110 reproduzir R$ 1.080,00 a recolher | passou |
+| CT23 | inventário | H005/H010 reproduzir R$ 22.000,00 e três itens | passou |
+| CT24 | estados opcionais | ausência de E110/H005 gerar aviso sem interromper | passou |
 
 Os cenários unitários são cobertos por quatorze funções de teste automatizado distribuídas
 em cinco suítes.
@@ -62,6 +70,12 @@ banco gratuito.
 | documentos cancelados | 1 |
 | ICMS escriturado | R$ 5.100,00 |
 | ticket médio | R$ 10.625,00 |
+| ticket médio de entrada | R$ 7.750,00 |
+| ticket médio de saída | R$ 13.500,00 |
+| ICMS nas entradas C190 | R$ 1.860,00 |
+| ICMS nas saídas C190 | R$ 3.240,00 |
+| ICMS a recolher E110 | R$ 1.080,00 |
+| inventário H005 | R$ 22.000,00 |
 | maior fornecedor | Distribuidora Horizonte Ltda - R$ 10.000,00 |
 | maior cliente | Mercado Novo Dia Ltda - R$ 18.000,00 |
 | produto de maior valor nas saídas | Café Torrado 500g - R$ 12.000,00 |

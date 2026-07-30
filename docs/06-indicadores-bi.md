@@ -2,61 +2,97 @@
 
 ## Princípio de desenho
 
-Cada visualização responde a uma pergunta de negócio. Os códigos do SPED permanecem na
-camada técnica; a interface prioriza termos como entradas, saídas, clientes, fornecedores,
-produtos e operação fiscal.
+O painel foi reorganizado por perguntas decisórias, e não pela quantidade de gráficos. A
+visão executiva responde “o que aconteceu no período?”; clientes e fornecedores respondem
+“há concentração?”; produtos e estoque respondem “quais itens concentram valor?”; e a
+visão fiscal responde “o que foi informado sobre ICMS e qualidade dos dados?”.
 
-## Indicadores principais
+Os códigos do SPED permanecem na camada técnica. A interface usa linguagem de negócio e
+sempre informa fonte, período, unidade e limitação.
+
+## Visão executiva
 
 | Indicador | Cálculo | Fonte | Decisão apoiada | Limitação |
 |---|---|---|---|---|
 | Entradas escrituradas | soma de `VL_DOC` das entradas válidas | C100 | dimensionar aquisições registradas | não equivale a pagamento |
 | Saídas escrituradas | soma de `VL_DOC` das saídas válidas | C100 | dimensionar vendas/operações registradas | não equivale a recebimento |
 | Diferença operacional | saídas menos entradas | C100 | comparar magnitudes do período | não é lucro |
-| Documentos válidos | contagem sem cancelados | C100 | entender volume documental | não mede itens |
-| Documentos cancelados | contagem das situações 02/03 | C100 | observar exceções | recorte do protótipo |
-| Ticket médio fiscal | entradas + saídas / documentos válidos | C100 | comparar valor médio documental | combina naturezas distintas |
-| ICMS escriturado | soma de `VL_ICMS` | C190 ou C100 | visualizar valor registrado | não calcula imposto a pagar |
+| Ticket médio de entrada | entradas / documentos de entrada | C100 | compreender porte médio das aquisições | não mede prazo ou pagamento |
+| Ticket médio de saída | saídas / documentos de saída | C100 | compreender porte médio das saídas | não mede margem |
+| Evolução temporal | soma diária de entradas e saídas | C100 | identificar datas de maior movimentação | depende de datas válidas |
+| Taxa de cancelamento | cancelados / total de documentos | C100 | direcionar conferência operacional | não determina a causa |
 
-## Rankings
+## Clientes e fornecedores
 
-| Ranking | Agrupamento | Medida | Dependência |
+| Indicador | Cálculo | Fonte | Decisão apoiada | Limitação |
+|---|---|---|---|---|
+| Clientes identificados | participantes distintos nas saídas | 0150 + C100 | dimensionar a base presente no arquivo | não equivale à carteira completa |
+| Fornecedores identificados | participantes distintos nas entradas | 0150 + C100 | dimensionar a base de fornecimento | não mede criticidade de insumo |
+| Concentração de clientes | valor dos três maiores / total de saídas | 0150 + C100 | observar dependência comercial | não estabelece risco isoladamente |
+| Concentração de fornecedores | valor dos três maiores / total de entradas | 0150 + C100 | apoiar negociação e diversificação | não considera contratos ou substituição |
+
+O protótipo sinaliza concentração a partir de 50% como uma pista para investigação. Esse
+limiar é uma regra exploratória do artefato, não uma norma contábil ou diagnóstico
+automático.
+
+## Produtos e inventário
+
+| Indicador | Cálculo | Fonte | Decisão apoiada | Limitação |
+|---|---|---|---|---|
+| Produtos de maior valor nas entradas | soma de `VL_ITEM` por produto | 0200 + C170 | identificar itens relevantes nas compras | não mede custo médio |
+| Produtos de maior valor nas saídas | soma de `VL_ITEM` por produto | 0200 + C170 | identificar itens relevantes nas saídas | não mede margem ou rentabilidade |
+| Inventário declarado | `VL_INV` | H005 | visualizar valor informado do estoque | o Bloco H não aparece em todo período |
+| Itens de maior valor no inventário | soma de `VL_ITEM` por item | H010 | direcionar conferência e gestão | depende do detalhamento entregue |
+| Composição de propriedade | valor por `IND_PROP` | H010 | separar bens próprios e de terceiros | não substitui conciliação física |
+
+## Fiscal-contábil
+
+| Indicador | Fonte | Utilidade | Cuidado interpretativo |
 |---|---|---|---|
-| fornecedores | participante de documentos de entrada | soma de `VL_DOC` | 0150 + C100 |
-| clientes | participante de documentos de saída | soma de `VL_DOC` | 0150 + C100 |
-| produtos adquiridos | item em documentos de entrada | soma de `VL_ITEM` | 0200 + C170 |
-| produtos nas saídas | item em documentos de saída | soma de `VL_ITEM` | 0200 + C170 |
-| CFOP | código de operação | soma de `VL_OPR` | C190 |
+| total de débitos | E110 | resumir débitos da apuração própria | valor declarado, não recalculado |
+| total de créditos | E110 | resumir créditos da apuração própria | valor declarado, não auditado |
+| saldo credor anterior | E110 | visualizar crédito trazido | depende da consistência da escrituração |
+| saldo devedor apurado | E110 | observar saldo antes de deduções | não substitui obrigação acessória |
+| deduções | E110 | compreender a passagem ao valor final | detalhes podem estar em registros filhos |
+| ICMS a recolher | E110 | mostrar valor informado para o período | não é uma guia gerada pelo protótipo |
+| crédito a transportar | E110 | mostrar saldo levado ao período seguinte | exige conferência profissional |
+| ICMS nas entradas e saídas | C190 | comparar destaque por direção | não substitui o E110 |
+| operações por CFOP | C190 | observar naturezas de operação relevantes | CFOP exige contexto fiscal |
 
-## Qualidade de dados
+## Qualidade e conciliação
 
 O painel apresenta:
 
 - documentos válidos sem participante identificado;
 - itens sem código de produto;
 - documentos sem data válida;
-- ausência de C170 ou C190.
+- ausência dos registros opcionais C170, C190, E110 ou H005;
+- diferença absoluta entre a soma de `VL_DOC` no C100 e `VL_OPR` no C190.
 
-Esses itens não são “erros fiscais” declarados. São limitações para a leitura gerencial
-proposta.
+A diferença entre C100 e C190 não é rotulada automaticamente como erro. A documentação
+oficial alerta que, a partir de 2026, componentes relacionados à CBS, IBS e IS podem fazer
+com que o valor total do documento no C100 não corresponda ao valor das operações do C190.
+A função do indicador é provocar conciliação, não emitir diagnóstico fiscal.
 
-## Exemplo interpretativo da base fictícia
+## Evidência quantitativa da base fictícia
 
 - entradas: R$ 15.500,00;
 - saídas: R$ 27.000,00;
 - diferença operacional: R$ 11.500,00;
-- documentos válidos: 4;
-- documentos cancelados: 1;
-- ticket médio fiscal: R$ 10.625,00;
-- ICMS escriturado: R$ 5.100,00.
+- ticket médio de entrada: R$ 7.750,00;
+- ticket médio de saída: R$ 13.500,00;
+- ICMS nos C190 de entrada: R$ 1.860,00;
+- ICMS nos C190 de saída: R$ 3.240,00;
+- ICMS a recolher no E110: R$ 1.080,00;
+- inventário declarado no H005: R$ 22.000,00.
 
 Texto admissível:
 
-> Na base fictícia, as saídas escrituradas superaram as entradas em R$ 11,5 mil. O
-> indicador descreve a diferença entre documentos fiscais e não permite concluir que houve
-> lucro ou geração de caixa.
+> Na base fictícia, as saídas escrituradas superaram as entradas em R$ 11,5 mil e o E110
+> informou R$ 1.080,00 de ICMS a recolher. O primeiro indicador descreve movimentações
+> documentais; o segundo reproduz a apuração declarada. Nenhum deles, isoladamente,
+> demonstra lucro ou fluxo de caixa.
 
 Texto que não deve ser usado:
 
-> A empresa obteve lucro de R$ 11,5 mil.
-
+> A empresa obteve lucro de R$ 11,5 mil e deve pagar imposto calculado pelo aplicativo.

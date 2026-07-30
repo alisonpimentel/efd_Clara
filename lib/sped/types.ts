@@ -52,6 +52,42 @@ export type FiscalSummary = {
   icms: number;
 };
 
+export type TaxAssessment = {
+  periodStart: string;
+  periodEnd: string;
+  totalDebits: number;
+  debitAdjustmentsFromDocuments: number;
+  totalDebitAdjustments: number;
+  creditReversals: number;
+  totalCredits: number;
+  creditAdjustmentsFromDocuments: number;
+  totalCreditAdjustments: number;
+  debitReversals: number;
+  priorCreditBalance: number;
+  assessedBalance: number;
+  totalDeductions: number;
+  icmsToCollect: number;
+  creditToCarry: number;
+  specialDebits: number;
+};
+
+export type InventoryItem = {
+  code: string;
+  description: string;
+  unit: string;
+  quantity: number;
+  unitValue: number;
+  totalValue: number;
+  ownership: "own" | "own-with-third-party" | "third-party" | "unknown";
+};
+
+export type Inventory = {
+  date: string;
+  totalValue: number;
+  reason: string;
+  items: InventoryItem[];
+};
+
 export type SpedParseResult = {
   company: SpedCompany;
   participants: Participant[];
@@ -59,6 +95,8 @@ export type SpedParseResult = {
   documents: FiscalDocument[];
   items: FiscalItem[];
   summaries: FiscalSummary[];
+  assessments: TaxAssessment[];
+  inventories: Inventory[];
   recordCounts: Record<string, number>;
   warnings: string[];
   lineCount: number;
@@ -68,6 +106,33 @@ export type RankingItem = {
   label: string;
   value: number;
   detail?: string;
+  share?: number;
+};
+
+export type TrendPoint = {
+  date: string;
+  entries: number;
+  exits: number;
+};
+
+export type ManagementInsight = {
+  tone: "positive" | "attention" | "neutral";
+  title: string;
+  description: string;
+};
+
+export type InventorySummary = {
+  date: string;
+  totalValue: number;
+  itemCount: number;
+  reason: string;
+  topItems: RankingItem[];
+  ownership: {
+    own: number;
+    ownWithThirdParty: number;
+    thirdParty: number;
+    unknown: number;
+  };
 };
 
 export type DashboardData = {
@@ -79,24 +144,38 @@ export type DashboardData = {
   cancelledDocuments: number;
   icmsRegistered: number;
   averageTicket: number;
+  averageEntryTicket: number;
+  averageExitTicket: number;
+  uniqueSuppliers: number;
+  uniqueCustomers: number;
+  supplierConcentration: number;
+  customerConcentration: number;
+  icmsOnEntries: number;
+  icmsOnExits: number;
+  trend: TrendPoint[];
   topSuppliers: RankingItem[];
   topCustomers: RankingItem[];
   topPurchasedProducts: RankingItem[];
   topSoldProducts: RankingItem[];
   cfopRanking: RankingItem[];
+  assessment: TaxAssessment | null;
+  inventory: InventorySummary | null;
+  insights: ManagementInsight[];
   quality: {
     documentsWithoutParticipant: number;
     itemsWithoutProduct: number;
     documentsWithoutDate: number;
+    c100C190Difference: number;
   };
   technical: {
     lineCount: number;
     documentCount: number;
     itemCount: number;
     summaryCount: number;
+    assessmentCount: number;
+    inventoryCount: number;
     processedAt: string;
     engine: string;
   };
   warnings: string[];
 };
-

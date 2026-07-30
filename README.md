@@ -10,8 +10,11 @@ iniciantes e estudantes.
 - um arquivo TXT por análise, com limite de 8 MB;
 - leitura e processamento integral no navegador;
 - SQLite WebAssembly temporário em memória;
-- suporte aos registros `0000`, `0150`, `0200`, `C100`, `C170` e `C190`;
-- visão geral, clientes e fornecedores, produtos e visão fiscal;
+- suporte aos registros `0000`, `0150`, `0200`, `C100`, `C170`, `C190`, `E100`,
+  `E110`, `H005` e `H010`;
+- visão executiva com evolução temporal e leituras gerenciais;
+- concentração de clientes e fornecedores, produtos e inventário;
+- apuração declarada do ICMS e qualidade para conciliação;
 - exportação CSV e impressão/salvamento em PDF;
 - arquivo demonstrativo fictício;
 - testes automatizados com valores esperados;
@@ -29,7 +32,8 @@ persistente contém apenas os cadastros de interesse e solicitações de privaci
 
 O ponto de entrada é [docs/00-indice.md](docs/00-indice.md). O material reúne problema,
 objetivos, escopo, requisitos, arquitetura, indicadores, metodologia, testes, resultados,
-limitações, modelo de negócio, privacidade, referências e um roteiro para o TCC.
+limitações, modelo de negócio, privacidade, fichamento das referências de BI e um roteiro
+para o TCC.
 
 ## Instalar, executar e verificar
 

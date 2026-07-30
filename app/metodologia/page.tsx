@@ -41,8 +41,13 @@ export default function MethodologyPage() {
         <h2>Escopo avaliado</h2>
         <ul>
           <li>um arquivo TXT por análise, limitado a 8 MB;</li>
-          <li>registros 0000, 0150, 0200, C100, C170 e C190;</li>
-          <li>totais, relações com clientes e fornecedores, produtos, CFOP e ICMS;</li>
+          <li>
+            registros 0000, 0150, 0200, C100, C170, C190, E100, E110, H005 e H010;
+          </li>
+          <li>
+            totais, evolução temporal, concentração, produtos, inventário, CFOP e
+            apuração declarada do ICMS;
+          </li>
           <li>conferência com uma base fictícia e resultados esperados;</li>
           <li>processamento no navegador e ausência de armazenamento fiscal.</li>
         </ul>

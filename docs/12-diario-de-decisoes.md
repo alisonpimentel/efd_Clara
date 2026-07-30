@@ -159,3 +159,36 @@
 - **Impacto:** facilita rastreamento, mas não garante posição no Google.
 - **Validação:** abrir `/robots.txt`, `/sitemap.xml` e conferir metadados.
 - **Uso no TCC:** canal digital de baixo custo.
+
+## D18 - Organizar o BI por decisões
+
+- **Motivo:** rankings isolados não constituíam uma análise gerencial suficientemente
+  consistente.
+- **Alternativas:** aumentar apenas a quantidade de gráficos ou manter o painel inicial.
+- **Escolha:** organizar o painel em retrato executivo, concentração, produtos/inventário
+  e fiscal/qualidade.
+- **Impacto:** cada seção responde a uma pergunta de negócio e liga o dado a uma ação de
+  investigação.
+- **Validação:** testes dos cálculos e verificação visual em desktop e celular.
+- **Uso no TCC:** desenho do artefato e proposta de valor.
+
+## D19 - Adotar Few, IBCS e Knaflic como referencial visual
+
+- **Motivo:** justificar academicamente as escolhas de visualização.
+- **Alternativas:** decisões apenas estéticas ou uso de um tema pronto sem fundamentação.
+- **Escolha:** visão de relance, séries temporais horizontais, comparações em barras,
+  escalas honestas, cores consistentes e narrativa do geral ao detalhe.
+- **Impacto:** remoção de elementos decorativos sem função e inclusão de fonte, pergunta e
+  valores exatos em cada visualização.
+- **Validação:** revisão contra o fichamento de fontes e inspeção de acessibilidade.
+- **Uso no TCC:** referencial teórico de BI e visualização.
+
+## D20 - Incluir E110 e Bloco H como visões opcionais
+
+- **Motivo:** entregar ao contador uma leitura mais relevante que os totais de documentos.
+- **Alternativas:** estimar imposto pelo C190 ou inferir estoque pelas entradas e saídas.
+- **Escolha:** reproduzir somente os valores oficialmente declarados no E110, H005 e H010.
+- **Impacto:** o painel apresenta apuração própria do ICMS e inventário quando disponíveis,
+  sem inventar dados quando os registros faltam.
+- **Validação:** base fictícia com valores conhecidos e estados de ausência.
+- **Uso no TCC:** escopo técnico, indicadores e limitações.

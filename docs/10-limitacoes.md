@@ -12,9 +12,13 @@
 ## Limitações analíticas
 
 - diferença entre entradas e saídas não é lucro;
-- ICMS escriturado não é imposto a recolher;
+- ICMS destacado no C190 não é imposto a recolher;
+- o valor de ICMS a recolher exibido vem do E110 e não é recalculado ou auditado;
 - rankings mostram concentração de valor, não margem;
-- ticket médio combina documentos de naturezas distintas;
+- o ticket médio geral combina naturezas distintas; por isso, a interface prioriza
+  tickets separados de entrada e saída;
+- concentração dos três maiores é uma pista exploratória, não um diagnóstico de risco;
+- o inventário depende da presença do Bloco H, que não aparece em todo arquivo ou período;
 - o protótipo não interpreta regras estaduais ou regimes especiais.
 
 ## Limitações técnicas
@@ -23,7 +27,7 @@
 - processamento depende de navegador moderno com WebAssembly;
 - arquivo muito complexo pode consumir memória perceptível;
 - não há validação completa do leiaute;
-- apenas seis registros são interpretados;
+- apenas dez registros são interpretados;
 - não há histórico nem recuperação da análise;
 - PDF depende do recurso de impressão do navegador.
 
@@ -56,4 +60,3 @@
 5. acrescentar comparação entre períodos somente após validar o MVP;
 6. avaliar autenticação e governança antes de qualquer histórico;
 7. realizar revisão jurídica e de segurança para uso comercial.
-

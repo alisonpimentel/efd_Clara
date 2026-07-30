@@ -2,12 +2,25 @@ import type {
   FiscalDocument,
   FiscalItem,
   FiscalSummary,
+  Inventory,
   Participant,
   Product,
   SpedParseResult,
+  TaxAssessment,
 } from "./types";
 
-const SUPPORTED_RECORDS = new Set(["0000", "0150", "0200", "C100", "C170", "C190"]);
+const SUPPORTED_RECORDS = new Set([
+  "0000",
+  "0150",
+  "0200",
+  "C100",
+  "C170",
+  "C190",
+  "E100",
+  "E110",
+  "H005",
+  "H010",
+]);
 const CANCELLED_STATUSES = new Set(["02", "03"]);
 
 function field(fields: string[], position: number) {
@@ -44,9 +57,13 @@ export function parseSped(text: string): SpedParseResult {
   const documents: FiscalDocument[] = [];
   const items: FiscalItem[] = [];
   const summaries: FiscalSummary[] = [];
+  const assessments: TaxAssessment[] = [];
+  const inventories: Inventory[] = [];
   const recordCounts: Record<string, number> = {};
   const warnings: string[] = [];
   let currentDocument: FiscalDocument | null = null;
+  let currentAssessmentPeriod = { start: "", end: "" };
+  let currentInventory: Inventory | null = null;
   let company = {
     name: "",
     document: "",
@@ -95,6 +112,73 @@ export function parseSped(text: string): SpedParseResult {
           ncm: field(fields, 8),
         });
       }
+      continue;
+    }
+
+    if (register === "E100") {
+      currentAssessmentPeriod = {
+        start: normalizeDate(field(fields, 2)),
+        end: normalizeDate(field(fields, 3)),
+      };
+      continue;
+    }
+
+    if (register === "E110") {
+      assessments.push({
+        periodStart: currentAssessmentPeriod.start,
+        periodEnd: currentAssessmentPeriod.end,
+        totalDebits: parseBrazilianNumber(field(fields, 2)),
+        debitAdjustmentsFromDocuments: parseBrazilianNumber(field(fields, 3)),
+        totalDebitAdjustments: parseBrazilianNumber(field(fields, 4)),
+        creditReversals: parseBrazilianNumber(field(fields, 5)),
+        totalCredits: parseBrazilianNumber(field(fields, 6)),
+        creditAdjustmentsFromDocuments: parseBrazilianNumber(field(fields, 7)),
+        totalCreditAdjustments: parseBrazilianNumber(field(fields, 8)),
+        debitReversals: parseBrazilianNumber(field(fields, 9)),
+        priorCreditBalance: parseBrazilianNumber(field(fields, 10)),
+        assessedBalance: parseBrazilianNumber(field(fields, 11)),
+        totalDeductions: parseBrazilianNumber(field(fields, 12)),
+        icmsToCollect: parseBrazilianNumber(field(fields, 13)),
+        creditToCarry: parseBrazilianNumber(field(fields, 14)),
+        specialDebits: parseBrazilianNumber(field(fields, 15)),
+      });
+      continue;
+    }
+
+    if (register === "H005") {
+      currentInventory = {
+        date: normalizeDate(field(fields, 2)),
+        totalValue: parseBrazilianNumber(field(fields, 3)),
+        reason: field(fields, 4),
+        items: [],
+      };
+      inventories.push(currentInventory);
+      continue;
+    }
+
+    if (register === "H010") {
+      if (!currentInventory) {
+        warnings.push("Registro H010 encontrado sem um H005 anterior.");
+        continue;
+      }
+      const productCode = field(fields, 2);
+      const ownershipCode = field(fields, 7);
+      currentInventory.items.push({
+        code: productCode,
+        description: products.get(productCode)?.description || `Item ${productCode}`,
+        unit: field(fields, 3),
+        quantity: parseBrazilianNumber(field(fields, 4)),
+        unitValue: parseBrazilianNumber(field(fields, 5)),
+        totalValue: parseBrazilianNumber(field(fields, 6)),
+        ownership:
+          ownershipCode === "0"
+            ? "own"
+            : ownershipCode === "1"
+              ? "own-with-third-party"
+              : ownershipCode === "2"
+                ? "third-party"
+                : "unknown",
+      });
       continue;
     }
 
@@ -158,6 +242,12 @@ export function parseSped(text: string): SpedParseResult {
   if (!recordCounts["C190"]) {
     warnings.push("O arquivo não possui resumos C190; CFOP e ICMS podem ficar incompletos.");
   }
+  if (!recordCounts["E110"]) {
+    warnings.push("O arquivo não possui E110; a apuração própria do ICMS não será exibida.");
+  }
+  if (!recordCounts["H005"]) {
+    warnings.push("O arquivo não possui inventário H005; a visão de estoque ficará indisponível.");
+  }
 
   const validDocuments = documents.filter((document) => !document.cancelled);
   const validIds = new Set(validDocuments.map((document) => document.id));
@@ -169,6 +259,8 @@ export function parseSped(text: string): SpedParseResult {
     documents,
     items: items.filter((item) => validIds.has(item.documentId)),
     summaries: summaries.filter((summary) => validIds.has(summary.documentId)),
+    assessments,
+    inventories,
     recordCounts,
     warnings: Array.from(new Set(warnings)),
     lineCount: lines.filter((line) => line.trim()).length,
@@ -179,4 +271,3 @@ export const spedParserInternals = {
   parseBrazilianNumber,
   normalizeDate,
 };
-

@@ -30,6 +30,50 @@ export function dashboardToCsv(data: DashboardData) {
     ["Resumo", "ICMS escriturado", data.icmsRegistered.toFixed(2), ""]
       .map(escapeCsv)
       .join(";"),
+    ["Resumo", "Ticket médio de entrada", data.averageEntryTicket.toFixed(2), ""]
+      .map(escapeCsv)
+      .join(";"),
+    ["Resumo", "Ticket médio de saída", data.averageExitTicket.toFixed(2), ""]
+      .map(escapeCsv)
+      .join(";"),
+    ["Resumo", "Concentração nos 3 maiores fornecedores", data.supplierConcentration, "percentual"]
+      .map(escapeCsv)
+      .join(";"),
+    ["Resumo", "Concentração nos 3 maiores clientes", data.customerConcentration, "percentual"]
+      .map(escapeCsv)
+      .join(";"),
+    ["Fiscal", "ICMS nas entradas", data.icmsOnEntries.toFixed(2), "C190"]
+      .map(escapeCsv)
+      .join(";"),
+    ["Fiscal", "ICMS nas saídas", data.icmsOnExits.toFixed(2), "C190"]
+      .map(escapeCsv)
+      .join(";"),
+    ...(data.assessment
+      ? [
+          ["Apuração E110", "Total de débitos", data.assessment.totalDebits.toFixed(2), ""]
+            .map(escapeCsv)
+            .join(";"),
+          ["Apuração E110", "Total de créditos", data.assessment.totalCredits.toFixed(2), ""]
+            .map(escapeCsv)
+            .join(";"),
+          ["Apuração E110", "ICMS a recolher", data.assessment.icmsToCollect.toFixed(2), ""]
+            .map(escapeCsv)
+            .join(";"),
+          ["Apuração E110", "Crédito a transportar", data.assessment.creditToCarry.toFixed(2), ""]
+            .map(escapeCsv)
+            .join(";"),
+        ]
+      : []),
+    ...(data.inventory
+      ? [
+          ["Inventário", "Valor total declarado", data.inventory.totalValue.toFixed(2), data.inventory.date]
+            .map(escapeCsv)
+            .join(";"),
+          ["Inventário", "Quantidade de itens", data.inventory.itemCount, "H010"]
+            .map(escapeCsv)
+            .join(";"),
+        ]
+      : []),
     ...rankingRows("Fornecedores", data.topSuppliers),
     ...rankingRows("Clientes", data.topCustomers),
     ...rankingRows("Produtos comprados", data.topPurchasedProducts),
@@ -50,4 +94,3 @@ export function downloadCsv(data: DashboardData) {
   link.click();
   URL.revokeObjectURL(url);
 }
-

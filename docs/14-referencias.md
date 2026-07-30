@@ -39,12 +39,29 @@ SQLITE. **Persistent storage options**. Disponível em:
 FEW, Stephen. **Information Dashboard Design: Displaying Data for At-a-Glance
 Monitoring**. 2. ed. Burlingame: Analytics Press, 2013.
 
+HEVNER, Alan R.; MARCH, Salvatore T.; PARK, Jinsoo; RAM, Sudha. Design science in
+information systems research. **MIS Quarterly**, v. 28, n. 1, p. 75-105, 2004.
+DOI: <https://doi.org/10.2307/25148625>.
+
+HICHERT, Rolf; FAISST, Jürgen. **International Business Communication Standards:
+IBCS Version 2.0**. IBCS Association, 2026. Disponível em:
+<https://www.ibcs.com/wp-content/uploads/2026/07/IBCS_v2_final_2026-07-02_jf-with-ad.pdf>.
+Acesso em: 30 jul. 2026.
+
 KIMBALL, Ralph; ROSS, Margy. **The Data Warehouse Toolkit: The Definitive Guide to
 Dimensional Modeling**. 3. ed. Indianapolis: Wiley, 2013.
+
+KNAFLIC, Cole Nussbaumer. **Storytelling with Data: A Data Visualization Guide for
+Business Professionals**. Hoboken: Wiley, 2015.
 
 PEFFERS, Ken et al. A design science research methodology for information systems
 research. **Journal of Management Information Systems**, v. 24, n. 3, p. 45-77,
 2007.
+
+SEBRAE. **Gestão por indicadores: como as métricas podem alavancar o seu negócio**.
+Atualizado em 20 jun. 2022. Disponível em:
+<https://sebrae.com.br/sites/PortalSebrae/artigos/gestao-por-indicadores-como-as-metricas-podem-alavancar-o-seu-negocio%2Ca3fe9e8ffe931810VgnVCM100000d701210aRCRD>.
+Acesso em: 30 jul. 2026.
 
 ## Materiais do MBA disponíveis no projeto
 
@@ -65,4 +82,3 @@ gestão.
 O Guia Prático define campos e regras do leiaute. Ele não deve ser usado como fonte para
 afirmar impacto empresarial. As referências de BI sustentam a organização visual; os
 resultados do protótipo devem ser citados como evidência própria do artefato.
-

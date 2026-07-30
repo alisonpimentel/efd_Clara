@@ -17,16 +17,39 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.cancelledDocuments, 1);
     assert.equal(dashboard.icmsRegistered, 5100);
     assert.equal(dashboard.averageTicket, 10625);
+    assert.equal(dashboard.averageEntryTicket, 7750);
+    assert.equal(dashboard.averageExitTicket, 13500);
+    assert.equal(dashboard.uniqueSuppliers, 2);
+    assert.equal(dashboard.uniqueCustomers, 2);
+    assert.equal(dashboard.supplierConcentration, 1);
+    assert.equal(dashboard.customerConcentration, 1);
+    assert.equal(dashboard.icmsOnEntries, 1860);
+    assert.equal(dashboard.icmsOnExits, 3240);
+    assert.equal(dashboard.trend.length, 4);
+    assert.equal(dashboard.trend[0]?.entries, 10000);
+    assert.equal(dashboard.trend[2]?.exits, 18000);
     assert.equal(dashboard.topSuppliers[0]?.label, "DISTRIBUIDORA HORIZONTE LTDA");
+    assert.equal(dashboard.topSuppliers[0]?.share, 10000 / 15500);
     assert.equal(dashboard.topCustomers[0]?.label, "MERCADO NOVO DIA LTDA");
     assert.equal(dashboard.topSoldProducts[0]?.label, "CAFE TORRADO 500G");
     assert.equal(dashboard.cfopRanking[0]?.label, "5102");
+    assert.equal(dashboard.assessment?.icmsToCollect, 1080);
+    assert.equal(dashboard.assessment?.totalDebits, 3240);
+    assert.equal(dashboard.inventory?.totalValue, 22000);
+    assert.equal(dashboard.inventory?.topItems[0]?.label, "CAFE TORRADO 500G");
+    assert.equal(dashboard.inventory?.ownership.own, 22000);
+    assert.ok(
+      dashboard.insights.some((insight) => insight.title.includes("clientes")),
+    );
     assert.equal(dashboard.technical.engine, "SQLite temporário em memória");
 
     const csv = dashboardToCsv(dashboard);
     assert.match(csv, /Total de entradas/);
     assert.match(csv, /15500\.00/);
     assert.match(csv, /MERCADO NOVO DIA LTDA/);
+    assert.match(csv, /ICMS a recolher/);
+    assert.match(csv, /1080\.00/);
+    assert.match(csv, /Valor total declarado/);
   });
 
   it("mantém valores zerados quando o arquivo não possui movimento válido", async () => {

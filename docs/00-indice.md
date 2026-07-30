@@ -21,6 +21,7 @@ normas de citação e às orientações recebidas.
 13. [Infraestrutura em nuvem](13-infraestrutura-cloud.md)
 14. [Segurança e privacidade](14-seguranca-e-privacidade.md)
 15. [Relatório de deploy](15-relatorio-de-deploy.md)
+16. [Referencial de BI e visualização](16-referencial-bi-e-visualizacao.md)
 
 Materiais complementares preservados:
 

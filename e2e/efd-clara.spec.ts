@@ -53,6 +53,24 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
   await page.locator("#sped-file").setInputFiles(samplePath);
   await expect(page.getByText("R$ 15.500,00", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("R$ 27.000,00", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Entradas e saídas ao longo do tempo" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Clientes e fornecedores" }).click();
+  await expect(
+    page.locator(".metric").filter({ hasText: "3 maiores clientes" }),
+  ).toContainText("100%");
+
+  await page.getByRole("button", { name: "Produtos e estoque" }).click();
+  await expect(page.getByRole("heading", { name: "Estoque declarado no Bloco H" })).toBeVisible();
+  await expect(page.getByText("R$ 22.000,00", { exact: true }).first()).toBeVisible();
+
+  await page.getByRole("button", { name: "Fiscal e qualidade" }).click();
+  await expect(page.getByRole("heading", { name: "Resumo do ICMS do período" })).toBeVisible();
+  await expect(page.getByText("R$ 1.080,00", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Visão executiva" }).click();
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Exportar CSV" }).click();

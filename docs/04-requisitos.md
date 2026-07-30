@@ -42,5 +42,11 @@
 - situação `02` ou `03` representa cancelamento no recorte do protótipo.
 - ranking de produtos depende de `C170`.
 - ranking de CFOP e ICMS usa `C190` quando disponível.
-- ausência de `C170` ou `C190` gera aviso, não falha total.
+- apuração própria do ICMS reproduz o `E110`, sem recalcular o tributo;
+- inventário reproduz `H005` e `H010`, quando disponíveis;
+- ausência de `C170`, `C190`, `E110` ou `H005` gera aviso, não falha total;
+- evolução temporal usa datas válidas do `C100`;
+- concentração considera a participação dos três maiores clientes ou fornecedores;
+- diferença entre totais `C100` e `C190` é apresentada para conciliação, não como erro
+  automático.
 - diferença operacional é `saídas - entradas` e nunca recebe o rótulo de lucro.

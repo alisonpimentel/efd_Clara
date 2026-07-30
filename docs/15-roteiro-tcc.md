@@ -90,8 +90,9 @@ Fontes: documentos 08, 09 e 10.
 - primeira tela e cadastro;
 - aviso de processamento local;
 - seleção do arquivo fictício;
-- visão geral com métricas;
-- ranking de clientes/fornecedores;
+- visão executiva com métricas e evolução temporal;
+- concentração e ranking de clientes/fornecedores;
+- produtos, inventário e apuração declarada do ICMS;
 - aviso de qualidade;
 - exportação;
 - página de metodologia;
@@ -117,4 +118,3 @@ Fontes: documentos 08, 09 e 10.
 - “os dados são 100% seguros”;
 - “os usuários validaram o produto”;
 - “a empresa teve lucro”.
-
