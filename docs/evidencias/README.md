@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `1885cb9`
-- **Deploy Vercel:** `dpl_61MSRaeu6WyjKQ4KYLG4S3aziMJM`
+- **Commit validado:** `3175eaf`
+- **Deploy Vercel:** `dpl_JAu9gJamCLxYbA43v3ouAmxWH3HY`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 
@@ -18,8 +18,14 @@
 - entradas de R$ 15.500,00 e saídas de R$ 27.000,00;
 - evolução temporal com quatro datas;
 - concentração dos três maiores clientes e fornecedores;
+- curvas ABC de clientes e produtos;
+- abrangência das saídas por CFOP;
+- valor médio escriturado por unidade e mix de SKUs;
+- distribuição das saídas por dia da semana;
+- cancelamentos separados entre entradas e saídas;
 - inventário de R$ 22.000,00 no Bloco H;
 - ICMS a recolher de R$ 1.080,00 reproduzido do E110;
+- 100% das entradas C190 com ICMS informado e indicador aparente de 4%;
 - razão social, fantasia, competência, endereço e contabilista extraídos;
 - CPF do contabilista mascarado na tela e ausente do CSV;
 - exportação CSV;
@@ -50,13 +56,16 @@ fiscal. O arquivo foi fornecido diretamente ao elemento local e processado no na
 
 - [dashboard desktop](dashboard-desktop-vercel.png)
 - [dashboard móvel](dashboard-mobile-vercel.png)
+- [curva ABC de clientes e abrangência por CFOP — produção](dashboard-clientes-abc-vercel.png)
+- [curva ABC de produtos e valor médio por unidade — produção](dashboard-produtos-abc-vercel.png)
+- [indicadores de ICMS e qualidade — produção](dashboard-icms-vercel.png)
 - [curva ABC de clientes e abrangência por CFOP — validação local](dashboard-clientes-abc-local.png)
 - [curva ABC de produtos e valor médio por unidade — validação local](dashboard-produtos-abc-local.png)
 - [indicadores de ICMS e qualidade — validação local](dashboard-icms-local.png)
 
-As três capturas marcadas como validação local registram o incremento de ICMS anterior à
-publicação. Elas foram geradas pelo teste E2E com a base fictícia e não devem ser
-confundidas com evidência do deploy enquanto o novo commit não estiver em produção.
+As capturas marcadas como produção foram geradas pelo teste E2E contra
+`https://efd-clara.vercel.app`. As capturas locais registram a etapa anterior e permitem
+comparar o mesmo artefato antes e depois da publicação.
 
 Os seis cadastros sintéticos encontrados nesta rodada foram excluídos ao final. Nenhum
 dado de usuário real foi removido, e a consulta final retornou zero cadastros de teste.

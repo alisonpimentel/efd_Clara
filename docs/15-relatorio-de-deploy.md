@@ -46,14 +46,15 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_61MSRaeu6WyjKQ4KYLG4S3aziMJM`
-- **Commit:** `1885cb9`
+- **Deploy:** `dpl_JAu9gJamCLxYbA43v3ouAmxWH3HY`
+- **Commit:** `3175eaf`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
 - **CSV e nova análise:** aprovados
-- **Novas abas:** concentração, estoque e apuração E110 aprovadas
+- **Novas abas:** curvas ABC, abrangência por CFOP, valor médio unitário, distribuição
+  semanal, cancelamentos e indicadores descritivos de ICMS aprovados
 - **Identificação:** entidade, competência, endereço e contabilista aprovados
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
