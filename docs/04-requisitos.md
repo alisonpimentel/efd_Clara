@@ -17,6 +17,7 @@
 | RF11 | Reiniciar | Nova análise elimina o resumo anterior da interface |
 | RF12 | Demonstrar | Uma EFD totalmente fictícia pode ser carregada no próprio site |
 | RF13 | Registrar direito do titular | Solicitações de acesso, correção, exclusão e revogação são gravadas |
+| RF14 | Consultar interessados | Somente o proprietário autenticado acessa resumo, lista e CSV |
 
 ## Requisitos não funcionais
 
@@ -43,4 +44,3 @@
 - ranking de CFOP e ICMS usa `C190` quando disponível.
 - ausência de `C170` ou `C190` gera aviso, não falha total.
 - diferença operacional é `saídas - entradas` e nunca recebe o rótulo de lucro.
-

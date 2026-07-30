@@ -16,6 +16,7 @@ iniciantes e estudantes.
 - arquivo demonstrativo fictício;
 - testes automatizados com valores esperados;
 - aviso de privacidade e canal interno para solicitações de titulares;
+- área administrativa privada em `/interessados`, com resumo e exportação da lista;
 - documentação acadêmica e diário de decisões.
 
 O arquivo fiscal não é enviado ao servidor e não existe histórico de SPED. O banco
@@ -45,4 +46,3 @@ valores nele contidos são fictícios.
 
 O EFD Clara é um artefato acadêmico. Não calcula lucro, fluxo de caixa ou conformidade
 tributária; não substitui sistemas contábeis nem orientação profissional.
-

@@ -53,6 +53,8 @@ servidor recebem os dados do cadastro ou uma solicitação de privacidade.
 | componentes de interface | Cadastro, upload, estados e painel |
 | `/api/interested` | Validar e registrar interessado |
 | `/api/privacy-request` | Registrar exercício de direito do titular |
+| `/interessados` | Exibir ao proprietário autenticado a lista e os totais |
+| `/api/admin/interested` | Exportar CSV somente após a mesma verificação de proprietário |
 | D1 | Persistir somente dados pessoais mínimos |
 
 ## Escolha do SQLite temporário
@@ -81,4 +83,3 @@ dispositivo comprometido, extensão maliciosa ou captura de tela pode expor dado
 aplicação também depende da segurança da hospedagem para servir código íntegro. Uma
 evolução comercial exigiria política de segurança, monitoração, análise jurídica e testes
 especializados.
-
