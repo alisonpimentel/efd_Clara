@@ -41,6 +41,17 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.cancellations.exit.cancelled, 1);
     assert.equal(dashboard.cancellations.exit.total, 3);
     assert.equal(dashboard.cancellations.exit.rate, 1 / 3);
+    assert.equal(dashboard.quality.documentsOutsidePeriod, 0);
+    assert.deepEqual(dashboard.quality.entryItemCoverage, {
+      documentsWithItems: 2,
+      totalDocuments: 2,
+      rate: 1,
+    });
+    assert.deepEqual(dashboard.quality.exitItemCoverage, {
+      documentsWithItems: 2,
+      totalDocuments: 2,
+      rate: 1,
+    });
     assert.equal(dashboard.customerAbc[0]?.label, "MERCADO NOVO DIA LTDA");
     assert.equal(dashboard.customerAbc[0]?.abcClass, "A");
     assert.equal(dashboard.customerAbc[0]?.cumulativeShare, 2 / 3);
@@ -83,6 +94,8 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.match(csv, /Razão social/);
     assert.match(csv, /EFD CLARA MERCADO/);
     assert.match(csv, /MARCIA CONTADORA DEMONSTRACAO/);
+    assert.match(csv, /Cobertura C170 nas entradas/);
+    assert.match(csv, /Documentos fora da competência/);
     assert.doesNotMatch(csv, /00000000191/);
   });
 
@@ -100,5 +113,25 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.activeDocuments, 0);
     assert.equal(dashboard.cancelledDocuments, 1);
     assert.equal(dashboard.averageTicket, 0);
+  });
+
+  it("expõe cobertura de itens e documentos fora da competência", async () => {
+    const text = await readFile(new URL("../public/exemplo-efd.txt", import.meta.url), "utf8");
+    const parsed = parseSped(text);
+    const activeExit = parsed.documents.find(
+      (document) => document.operation === "exit" && !document.cancelled,
+    );
+    assert.ok(activeExit);
+    activeExit.date = "2026-05-31";
+    parsed.items = parsed.items.filter((item) => item.operation === "entry");
+
+    const dashboard = await buildDashboard(parsed);
+
+    assert.equal(dashboard.quality.documentsOutsidePeriod, 1);
+    assert.deepEqual(dashboard.quality.exitItemCoverage, {
+      documentsWithItems: 0,
+      totalDocuments: 2,
+      rate: 0,
+    });
   });
 });

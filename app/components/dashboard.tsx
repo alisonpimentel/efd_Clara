@@ -881,7 +881,7 @@ export function Dashboard({
             />
           </div>
 
-          <div className="dashboard-grid dashboard-grid-wide">
+          <div className="dashboard-grid dashboard-grid-overview">
             <TrendChart values={data.trend} />
             <InsightPanel insights={data.insights} />
           </div>
@@ -1242,6 +1242,30 @@ export function Dashboard({
                 <dd>{data.quality.documentsWithoutDate}</dd>
               </div>
               <div>
+                <dt>Documentos fora da competência declarada</dt>
+                <dd>{data.quality.documentsOutsidePeriod}</dd>
+              </div>
+              <div>
+                <dt>Cobertura C170 nas entradas</dt>
+                <dd>
+                  {percentFormatter.format(data.quality.entryItemCoverage.rate)}
+                  <small>
+                    {data.quality.entryItemCoverage.documentsWithItems} de{" "}
+                    {data.quality.entryItemCoverage.totalDocuments} documento(s)
+                  </small>
+                </dd>
+              </div>
+              <div>
+                <dt>Cobertura C170 nas saídas</dt>
+                <dd>
+                  {percentFormatter.format(data.quality.exitItemCoverage.rate)}
+                  <small>
+                    {data.quality.exitItemCoverage.documentsWithItems} de{" "}
+                    {data.quality.exitItemCoverage.totalDocuments} documento(s)
+                  </small>
+                </dd>
+              </div>
+              <div>
                 <dt>Diferença absoluta entre totais C100 e C190</dt>
                 <dd>{money(data.quality.c100C190Difference)}</dd>
               </div>
@@ -1250,6 +1274,9 @@ export function Dashboard({
               Uma diferença entre C100 e C190 não é classificada automaticamente como erro.
               Desde 2026, componentes ligados à reforma tributária podem afetar a conciliação
               entre os valores dos documentos e das operações registrados na EFD ICMS/IPI.
+              Datas fora da competência podem representar escrituração extemporânea, e uma
+              cobertura C170 baixa limita as análises por produto; ambos exigem contexto
+              contábil antes de qualquer conclusão.
             </p>
             {data.warnings.length > 0 && (
               <div className="warning-list">

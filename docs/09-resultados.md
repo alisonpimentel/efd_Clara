@@ -9,10 +9,10 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os quatorze testes unitários foram executados sem falhas. Eles
+Em 30 de julho de 2026, os dezessete testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
-validação cadastral e exportação.
+validação cadastral, exportação e leitura de TXT em UTF-8 ou Windows-1252.
 
 Três testes de ponta a ponta também foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
@@ -20,9 +20,9 @@ inspeção dos corpos de requisição. A execução pública percorreu ainda as 
 concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes unitários: 14
+testes unitários: 17
 testes E2E: 3
-aprovados: 17
+aprovados: 20
 falhas: 0
 ```
 
@@ -33,6 +33,17 @@ Durante a ampliação do teste E2E, dois seletores iniciais foram corrigidos: um
 texto da aba anterior e outro encontrava duas ocorrências legítimas do mesmo valor de
 inventário. As correções tornaram o teste específico para o componente esperado; não foi
 identificado defeito nos cálculos ou na interface.
+
+Uma inspeção exploratória com EFD real, mantida exclusivamente no navegador do autor,
+encontrou dois defeitos que a base reduzida não evidenciava: caracteres acentuados
+substituídos pelo símbolo de erro e expansão horizontal provocada por nomes longos.
+O carregamento passou a testar UTF-8 estrito e, quando necessário, usar Windows-1252.
+As grades receberam contenção de largura, os painéis de conteúdo variável deixaram de
+ser esticados e a validação móvel passou a percorrer todas as áreas com rótulos extensos.
+Também foram acrescentados a quantidade de documentos fora da competência declarada e
+os percentuais de documentos de entrada e saída que possuem itens C170, porque essas
+condições delimitam a interpretação temporal e os rankings por produto.
+Nenhum dado identificável dessa EFD foi salvo como evidência.
 
 ## Evidência quantitativa
 

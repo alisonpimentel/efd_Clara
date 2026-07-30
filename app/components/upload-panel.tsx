@@ -2,6 +2,7 @@
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { validateSpedSelection } from "../../lib/sped/file-validation";
+import { decodeSpedBuffer } from "../../lib/sped/text-decoder";
 
 type UploadPanelProps = {
   onAnalyze: (text: string, fileName: string) => Promise<void>;
@@ -22,7 +23,7 @@ export function UploadPanel({ onAnalyze, error }: UploadPanelProps) {
     }
 
     const file = files[0] as File;
-    const text = await file.text();
+    const { text } = decodeSpedBuffer(await file.arrayBuffer());
     if (inputRef.current) inputRef.current.value = "";
     await onAnalyze(text, file.name);
   }

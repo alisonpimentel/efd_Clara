@@ -486,6 +486,34 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       db,
       "SELECT COUNT(*) FROM documents WHERE operation = 'exit' AND cancelled = 0",
     );
+    const activeEntryIds = new Set(
+      parsed.documents
+        .filter((document) => document.operation === "entry" && !document.cancelled)
+        .map((document) => document.id),
+    );
+    const activeExitIds = new Set(
+      parsed.documents
+        .filter((document) => document.operation === "exit" && !document.cancelled)
+        .map((document) => document.id),
+    );
+    const entryDocumentsWithItems = new Set(
+      parsed.items
+        .filter((item) => activeEntryIds.has(item.documentId))
+        .map((item) => item.documentId),
+    ).size;
+    const exitDocumentsWithItems = new Set(
+      parsed.items
+        .filter((item) => activeExitIds.has(item.documentId))
+        .map((item) => item.documentId),
+    ).size;
+    const documentsOutsidePeriod = parsed.documents.filter(
+      (document) =>
+        !document.cancelled &&
+        document.date &&
+        parsed.company.startDate &&
+        parsed.company.endDate &&
+        (document.date < parsed.company.startDate || document.date > parsed.company.endDate),
+    ).length;
     const topSuppliers = withShares(
       runRanking(
         db,
@@ -666,6 +694,17 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
           db,
           "SELECT COUNT(*) FROM documents WHERE cancelled = 0 AND TRIM(COALESCE(date, '')) = ''",
         ),
+        documentsOutsidePeriod,
+        entryItemCoverage: {
+          documentsWithItems: entryDocumentsWithItems,
+          totalDocuments: entryDocuments,
+          rate: entryDocuments > 0 ? entryDocumentsWithItems / entryDocuments : 0,
+        },
+        exitItemCoverage: {
+          documentsWithItems: exitDocumentsWithItems,
+          totalDocuments: exitDocuments,
+          rate: exitDocuments > 0 ? exitDocumentsWithItems / exitDocuments : 0,
+        },
         c100C190Difference,
       },
       technical: {

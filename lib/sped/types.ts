@@ -261,6 +261,17 @@ export type DashboardData = {
     documentsWithoutParticipant: number;
     itemsWithoutProduct: number;
     documentsWithoutDate: number;
+    documentsOutsidePeriod: number;
+    entryItemCoverage: {
+      documentsWithItems: number;
+      totalDocuments: number;
+      rate: number;
+    };
+    exitItemCoverage: {
+      documentsWithItems: number;
+      totalDocuments: number;
+      rate: number;
+    };
     c100C190Difference: number;
   };
   technical: {

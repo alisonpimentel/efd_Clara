@@ -657,7 +657,14 @@ summary:focus-visible,
 }
 
 .dashboard-toolbar h1 {
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
+  max-width: 900px;
+  overflow-wrap: anywhere;
+  font-size: clamp(2.4rem, 4.4vw, 4.1rem);
+  line-height: 0.98;
+}
+
+.dashboard-toolbar > div:first-child {
+  min-width: 0;
 }
 
 .dashboard-toolbar > div:first-child > p:last-child {
@@ -893,6 +900,7 @@ summary:focus-visible,
 }
 
 .dashboard-section {
+  min-width: 0;
   display: grid;
   gap: 18px;
 }
@@ -1035,23 +1043,30 @@ summary:focus-visible,
 }
 
 .dashboard-grid {
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 
 .dashboard-grid-wide {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-grid-overview {
   grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
 }
 
 .concentration-grid {
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 340px));
   gap: 12px;
 }
 
 .data-panel {
-  min-height: 470px;
+  min-width: 0;
   padding: clamp(22px, 3.5vw, 34px);
   border: 1px solid rgba(16, 44, 43, 0.09);
   border-radius: var(--radius-lg);
@@ -1079,6 +1094,7 @@ summary:focus-visible,
 
 .panel-heading h3 {
   margin: 0;
+  overflow-wrap: anywhere;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.7rem;
   font-weight: 500;
@@ -1110,6 +1126,7 @@ summary:focus-visible,
 }
 
 .bar-label span {
+  min-width: 0;
   max-width: 64%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1232,8 +1249,8 @@ summary:focus-visible,
 
 .geography-content {
   display: grid;
-  grid-template-columns: minmax(170px, 0.75fr) minmax(210px, 1.25fr);
-  gap: clamp(22px, 4vw, 46px);
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(28px, 5vw, 56px);
   align-items: center;
   margin-top: 34px;
 }
@@ -1293,11 +1310,13 @@ summary:focus-visible,
 }
 
 .geography-legend span {
+  min-width: 0;
   display: grid;
   gap: 3px;
 }
 
 .geography-legend span strong {
+  overflow-wrap: anywhere;
   font-size: 0.84rem;
 }
 
@@ -1327,6 +1346,7 @@ summary:focus-visible,
 }
 
 .unit-value-list li > div:first-child {
+  min-width: 0;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 4px 9px;
@@ -1458,6 +1478,7 @@ summary:focus-visible,
 
 .trend-panel {
   min-width: 0;
+  min-height: 470px;
 }
 
 .chart-legend {
@@ -1605,9 +1626,17 @@ summary:focus-visible,
 }
 
 .inventory-grid {
+  min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: 16px;
+  align-items: start;
+}
+
+.dashboard-grid > *,
+.inventory-grid > *,
+.concentration-grid > * {
+  min-width: 0;
 }
 
 .inventory-number {
@@ -1840,6 +1869,14 @@ summary:focus-visible,
 .technical-details dd {
   margin: 0;
   font-weight: 800;
+}
+
+.quality-panel dd small {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 .warning-list {
@@ -2146,6 +2183,7 @@ summary:focus-visible,
 
   .dashboard-grid,
   .dashboard-grid-wide,
+  .dashboard-grid-overview,
   .inventory-grid {
     grid-template-columns: 1fr;
   }
@@ -2229,7 +2267,6 @@ summary:focus-visible,
   }
 
   .privacy-explainer,
-  .metrics-grid,
   .admin-metrics,
   .concentration-grid,
   .assessment-metrics,
@@ -2251,13 +2288,40 @@ summary:focus-visible,
     flex: 1 1 45%;
   }
 
+  .dashboard-page {
+    padding-top: 28px;
+  }
+
+  .dashboard-toolbar {
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-toolbar h1 {
+    font-size: clamp(2.25rem, 11vw, 3rem);
+  }
+
   .dashboard-tabs {
     margin-inline: -16px;
     border-radius: 0;
   }
 
+  .identity-panel {
+    padding: 20px 16px;
+  }
+
+  .identity-heading {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .identity-heading h2 {
+    font-size: 2rem;
+  }
+
   .identity-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .identity-company {
@@ -2265,7 +2329,18 @@ summary:focus-visible,
   }
 
   .identity-card dl {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .identity-card {
+    padding: 18px;
+  }
+
+  .identity-contact {
+    margin-top: 16px;
+    padding-top: 12px;
   }
 
   .balance-panel {
@@ -2283,6 +2358,31 @@ summary:focus-visible,
 
   .data-panel {
     min-height: auto;
+    padding: 20px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric {
+    min-width: 0;
+    min-height: 146px;
+    padding: 18px;
+  }
+
+  .metric strong {
+    overflow-wrap: anywhere;
+    font-size: clamp(1.45rem, 6.2vw, 1.85rem);
+  }
+
+  .panel-heading {
+    gap: 12px;
+    padding-bottom: 18px;
+  }
+
+  .panel-heading h3 {
+    font-size: 1.5rem;
   }
 
   .weekday-panel {

@@ -20,6 +20,7 @@ resultados do painel.
 
 - seleção restrita a um arquivo TXT;
 - limite de 8 MB antes da leitura;
+- decodificação UTF-8/Windows-1252 executada localmente;
 - parser executado no componente cliente;
 - SQLite WebAssembly criado em memória e encerrado em `finally`;
 - nenhuma rota de upload fiscal;

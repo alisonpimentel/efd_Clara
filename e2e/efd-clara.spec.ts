@@ -141,14 +141,37 @@ test("interface permanece utilizável em celular", async ({ browser }, testInfo)
   const page = await context.newPage();
 
   await register(page, `mobile-${Date.now()}`);
-  await page.locator("#sped-file").setInputFiles(samplePath);
+  const mobileSample = (await readFile(samplePath, "utf8"))
+    .replace(
+      "MERCADO NOVO DIA LTDA",
+      "CLIENTE COM NOME EMPRESARIAL EXTENSO PARA VALIDAR A ORGANIZAÇÃO RESPONSIVA LTDA",
+    )
+    .replace("CAFE TORRADO 500G", "CABEÇOTE E PEÇA INDUSTRIAL DE ALTO VALOR");
+  await page.locator("#sped-file").setInputFiles({
+    name: "efd-windows-1252.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from(mobileSample, "latin1"),
+  });
   await expect(page.getByText("R$ 15.500,00", { exact: true }).first()).toBeVisible();
 
-  const dimensions = await page.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    clientWidth: document.documentElement.clientWidth,
-  }));
-  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+  const metricColumns = await page.locator(".metrics-grid").first().evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.split(" ").length,
+  );
+  expect(metricColumns).toBe(2);
+
+  for (const tab of ["Clientes e fornecedores", "Produtos e estoque", "ICMS e qualidade"]) {
+    await page.getByRole("button", { name: tab }).click();
+    if (tab === "Produtos e estoque") {
+      await expect(
+        page.getByText("CABEÇOTE E PEÇA INDUSTRIAL DE ALTO VALOR").first(),
+      ).toBeVisible();
+    }
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+  }
 
   await page.screenshot({
     path: testInfo.outputPath("dashboard-mobile.png"),

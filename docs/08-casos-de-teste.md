@@ -56,9 +56,11 @@
 | CT32 | distribuição semanal | quinta-feira com dois documentos e média de R$ 6.750,00 | passou |
 | CT33 | cancelamentos por direção | 0% nas entradas e 33,3% nas saídas | passou |
 | CT34 | indicadores de ICMS | 100% das entradas C190 com ICMS informado e carga aparente de 4% | passou |
+| CT35 | codificação do TXT | preservar UTF-8 e recuperar acentos de Windows-1252 | passou |
+| CT36 | cobertura e competência | apontar saída sem C170 e um documento fora do período | passou |
 
-Os cenários unitários são cobertos por quatorze funções de teste automatizado distribuídas
-em cinco suítes.
+Os cenários unitários são cobertos por dezessete funções de teste automatizado distribuídas
+em seis suítes.
 
 ## Testes de ponta a ponta
 
@@ -68,9 +70,15 @@ em cinco suítes.
 | E2E02 | viewport móvel de 375 × 812 px | passou sem rolagem horizontal |
 | E2E03 | inspeção dos corpos enviados pela rede | nenhum registro `0000` ou `C100` transmitido |
 | E2E04 | abas ABC, produtos e ICMS | gráficos novos renderizados e valores esperados visíveis |
+| E2E05 | nomes longos e TXT Windows-1252 em 375 × 812 px | acentos preservados e nenhuma rolagem horizontal nas quatro áreas |
 
 Os três testes E2E foram executados em Chrome real contra a aplicação local conectada ao
 banco gratuito.
+
+Uma EFD real fornecida pelo autor também foi usada para inspeção exploratória no navegador.
+O arquivo não foi copiado para o repositório, exportado como evidência ou incluído nos
+testes. Essa inspeção revelou a necessidade de suportar Windows-1252 e de acomodar nomes
+empresariais e descrições extensas.
 
 ## Valores esperados da demonstração
 

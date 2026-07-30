@@ -117,6 +117,30 @@ export function dashboardToCsv(data: DashboardData) {
     ["Produtos", "SKUs com saída", data.skuActivity.sold, "C170"]
       .map(escapeCsv)
       .join(";"),
+    [
+      "Qualidade",
+      "Documentos fora da competência",
+      data.quality.documentsOutsidePeriod,
+      "não classifica automaticamente erro",
+    ]
+      .map(escapeCsv)
+      .join(";"),
+    [
+      "Qualidade",
+      "Cobertura C170 nas entradas",
+      data.quality.entryItemCoverage.rate,
+      `${data.quality.entryItemCoverage.documentsWithItems} de ${data.quality.entryItemCoverage.totalDocuments} documentos`,
+    ]
+      .map(escapeCsv)
+      .join(";"),
+    [
+      "Qualidade",
+      "Cobertura C170 nas saídas",
+      data.quality.exitItemCoverage.rate,
+      `${data.quality.exitItemCoverage.documentsWithItems} de ${data.quality.exitItemCoverage.totalDocuments} documentos`,
+    ]
+      .map(escapeCsv)
+      .join(";"),
     ...(data.assessment
       ? [
           ["Apuração E110", "Total de débitos", data.assessment.totalDebits.toFixed(2), ""]

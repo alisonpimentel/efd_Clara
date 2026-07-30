@@ -235,3 +235,37 @@
 - **Validação:** maior cliente com 66,7% na base sintética e Café Torrado como produto de
   maior valor nas saídas.
 - **Uso no TCC:** indicador gerencial, fórmula e cuidado interpretativo.
+
+## D24 - Compatibilizar codificação e conteúdo real variável
+
+- **Motivo:** a inspeção de uma EFD real revelou acentos corrompidos e nomes capazes de
+  ampliar as grades além da largura do celular.
+- **Alternativas:** exigir somente UTF-8; alterar manualmente o arquivo; truncar todos os
+  textos; enviar o TXT a um servidor para conversão.
+- **Escolha:** tentar UTF-8 estrito no navegador e usar Windows-1252 quando os bytes não
+  formarem UTF-8 válido. As grades e seus filhos recebem largura mínima zero, quebra
+  segura e organização vertical quando os conteúdos possuem alturas muito diferentes.
+- **Impacto:** textos fiscais legados preservam acentos, as quatro áreas permanecem na
+  largura da tela e os painéis não criam grandes vazios artificiais.
+- **Privacidade:** a EFD real permaneceu na sessão do navegador e não foi copiada para
+  testes, repositório ou documentação.
+- **Validação:** duas codificações em teste unitário e fluxo móvel com nome empresarial
+  longo, descrição acentuada e inspeção das quatro abas.
+- **Uso no TCC:** avaliação do artefato, evolução orientada por teste e limitação dos dados
+  sintéticos.
+
+## D25 - Expor cobertura do C170 e datas fora da competência
+
+- **Motivo:** totais documentais podem existir sem itens detalhados, e documentos
+  escriturados no período podem trazer data de emissão anterior.
+- **Alternativas:** ocultar rankings vazios; inferir produtos pelo C190; excluir datas fora
+  do período; classificar automaticamente as ocorrências como erro.
+- **Escolha:** informar a cobertura de documentos com C170 separada por entrada e saída e
+  contar documentos ativos fora da competência declarada.
+- **Impacto:** o usuário entende por que uma análise de produtos pode estar indisponível e
+  identifica a necessidade de contextualizar escriturações extemporâneas.
+- **Limite:** os indicadores não concluem que há irregularidade nem determinam a causa da
+  ausência de itens ou da data externa ao período.
+- **Validação:** caso automatizado com cobertura de saída igual a zero e um documento fora
+  da competência.
+- **Uso no TCC:** qualidade de dados, transparência metodológica e limitações do artefato.
