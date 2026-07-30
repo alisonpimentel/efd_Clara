@@ -47,6 +47,11 @@ e preferência por linhas, colunas e barras em vez de pizzas e medidores.
 
 - linha horizontal para evolução diária;
 - barras horizontais para clientes, fornecedores, produtos e CFOP;
+- tabela com barra acumulada para a curva ABC, preservando posição, valor, participação e
+  classe;
+- composição circular somente para três categorias geográficas fixas, acompanhada de
+  valores e percentuais exatos; trata-se de uma exceção limitada à pergunta de composição;
+- colunas para comparar a distribuição semanal dentro da competência;
 - cores fixas: entradas em verde e saídas em amarelo;
 - eixos iniciados em zero e escala compartilhada entre as duas séries;
 - títulos formulados como perguntas de negócio;
@@ -123,6 +128,10 @@ prova que o EFD Clara melhora decisões. Esse efeito exigiria avaliação com us
 - C190 para resumos por CST, CFOP e alíquota;
 - E110 para apuração própria do ICMS;
 - H005 e H010 para inventário e itens;
+- primeiro dígito do CFOP no C190 para separar operações internas, interestaduais e
+  exteriores;
+- `VL_ITEM` e `QTD` do C170 para valor médio ponderado por item e unidade;
+- `VL_ICMS` do C190 para identificar entradas com crédito informado na escrituração;
 - tratamento explícito da possível diferença entre C100 e C190 em 2026.
 
 **Cuidado acadêmico:** o Guia Prático sustenta o significado e a posição dos campos. Ele

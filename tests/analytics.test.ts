@@ -27,6 +27,31 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.customerConcentration, 1);
     assert.equal(dashboard.icmsOnEntries, 1860);
     assert.equal(dashboard.icmsOnExits, 3240);
+    assert.equal(dashboard.icmsCreditEntryValue, 15500);
+    assert.equal(dashboard.totalEntryOperationValue, 15500);
+    assert.equal(dashboard.icmsCreditEntryShare, 1);
+    assert.equal(dashboard.apparentIcmsBurden, 0.04);
+    assert.deepEqual(dashboard.skuActivity, {
+      moved: 3,
+      purchased: 3,
+      sold: 3,
+      soldShareOfMoved: 1,
+    });
+    assert.equal(dashboard.cancellations.entry.rate, 0);
+    assert.equal(dashboard.cancellations.exit.cancelled, 1);
+    assert.equal(dashboard.cancellations.exit.total, 3);
+    assert.equal(dashboard.cancellations.exit.rate, 1 / 3);
+    assert.equal(dashboard.customerAbc[0]?.label, "MERCADO NOVO DIA LTDA");
+    assert.equal(dashboard.customerAbc[0]?.abcClass, "A");
+    assert.equal(dashboard.customerAbc[0]?.cumulativeShare, 2 / 3);
+    assert.equal(dashboard.productAbc[0]?.label, "CAFE TORRADO 500G");
+    assert.equal(dashboard.averageUnitValues[0]?.averageValue, 15);
+    assert.equal(dashboard.geographicShares[0]?.category, "internal");
+    assert.equal(dashboard.geographicShares[0]?.share, 2 / 3);
+    const thursday = dashboard.weekdayActivity.find((item) => item.weekday === 4);
+    assert.equal(thursday?.documentCount, 2);
+    assert.equal(thursday?.daysInPeriod, 4);
+    assert.equal(thursday?.averageValue, 6750);
     assert.equal(dashboard.trend.length, 4);
     assert.equal(dashboard.trend[0]?.entries, 10000);
     assert.equal(dashboard.trend[2]?.exits, 18000);
@@ -51,6 +76,9 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.match(csv, /MERCADO NOVO DIA LTDA/);
     assert.match(csv, /ICMS a recolher/);
     assert.match(csv, /1080\.00/);
+    assert.match(csv, /Curva ABC de clientes/);
+    assert.match(csv, /Entradas com ICMS informado/);
+    assert.match(csv, /Operações internas/);
     assert.match(csv, /Valor total declarado/);
     assert.match(csv, /Razão social/);
     assert.match(csv, /EFD CLARA MERCADO/);

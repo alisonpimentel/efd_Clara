@@ -281,8 +281,12 @@ export function parseSped(text: string): SpedParseResult {
         productDescription:
           products.get(productCode)?.description || field(fields, 4) || `Item ${productCode}`,
         quantity: parseBrazilianNumber(field(fields, 5)),
+        unit: field(fields, 6) || products.get(productCode)?.unit || "",
         value: parseBrazilianNumber(field(fields, 7)),
         cfop: field(fields, 11),
+        icmsBase: parseBrazilianNumber(field(fields, 13)),
+        icmsRate: parseBrazilianNumber(field(fields, 14)),
+        icms: parseBrazilianNumber(field(fields, 15)),
       });
       continue;
     }

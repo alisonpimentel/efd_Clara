@@ -48,6 +48,14 @@
 | CT24 | estados opcionais | ausência de E110/H005 gerar aviso sem interromper | passou |
 | CT25 | identificação inicial | fantasia, IE, endereço, competência e CRC esperados | passou |
 | CT26 | privacidade do contabilista | CPF mascarado na tela e ausente no CSV | passou |
+| CT27 | campos tributários do C170 | unidade, quantidade, base, alíquota e ICMS esperados | passou |
+| CT28 | curva ABC de clientes | maior cliente com 66,7% e classe A | passou |
+| CT29 | curva ABC de produtos | Café Torrado como item de maior valor | passou |
+| CT30 | valor médio por unidade | Café Torrado nas saídas com R$ 15,00 por UN | passou |
+| CT31 | abrangência por CFOP | 66,7% internas e 33,3% interestaduais | passou |
+| CT32 | distribuição semanal | quinta-feira com dois documentos e média de R$ 6.750,00 | passou |
+| CT33 | cancelamentos por direção | 0% nas entradas e 33,3% nas saídas | passou |
+| CT34 | indicadores de ICMS | 100% das entradas C190 com ICMS informado e carga aparente de 4% | passou |
 
 Os cenários unitários são cobertos por quatorze funções de teste automatizado distribuídas
 em cinco suítes.
@@ -59,6 +67,7 @@ em cinco suítes.
 | E2E01 | cadastro, aceite, 8 MB, dashboard, CSV e nova análise | passou |
 | E2E02 | viewport móvel de 375 × 812 px | passou sem rolagem horizontal |
 | E2E03 | inspeção dos corpos enviados pela rede | nenhum registro `0000` ou `C100` transmitido |
+| E2E04 | abas ABC, produtos e ICMS | gráficos novos renderizados e valores esperados visíveis |
 
 Os três testes E2E foram executados em Chrome real contra a aplicação local conectada ao
 banco gratuito.
@@ -79,6 +88,14 @@ banco gratuito.
 | ICMS nas entradas C190 | R$ 1.860,00 |
 | ICMS nas saídas C190 | R$ 3.240,00 |
 | ICMS a recolher E110 | R$ 1.080,00 |
+| entradas com ICMS informado | 100% |
+| indicador aparente de ICMS | 4% |
+| saídas internas | 66,7% |
+| saídas interestaduais | 33,3% |
+| cancelamento de entradas | 0% |
+| cancelamento de saídas | 33,3% |
+| SKUs movimentados/com saída | 3 / 3 |
+| valor médio do Café Torrado nas saídas | R$ 15,00 por UN |
 | inventário H005 | R$ 22.000,00 |
 | maior fornecedor | Distribuidora Horizonte Ltda - R$ 10.000,00 |
 | maior cliente | Mercado Novo Dia Ltda - R$ 18.000,00 |

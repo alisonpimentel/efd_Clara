@@ -30,6 +30,11 @@ describe("parser da EFD ICMS/IPI", () => {
     assert.equal(parsed.documents.length, 5);
     assert.equal(parsed.documents.filter((document) => document.cancelled).length, 1);
     assert.equal(parsed.items.length, 6, "o item do documento cancelado deve ser descartado");
+    assert.equal(parsed.items[0]?.unit, "UN");
+    assert.equal(parsed.items[0]?.quantity, 600);
+    assert.equal(parsed.items[0]?.icmsBase, 6000);
+    assert.equal(parsed.items[0]?.icmsRate, 12);
+    assert.equal(parsed.items[0]?.icms, 720);
     assert.equal(parsed.summaries.length, 4);
     assert.equal(parsed.documents[0]?.participantName, "DISTRIBUIDORA HORIZONTE LTDA");
     assert.equal(parsed.assessments.length, 1);

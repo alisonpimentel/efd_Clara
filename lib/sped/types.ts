@@ -73,8 +73,12 @@ export type FiscalItem = {
   productCode: string;
   productDescription: string;
   quantity: number;
+  unit: string;
   value: number;
   cfop: string;
+  icmsBase: number;
+  icmsRate: number;
+  icms: number;
 };
 
 export type FiscalSummary = {
@@ -141,12 +145,53 @@ export type RankingItem = {
   value: number;
   detail?: string;
   share?: number;
+  cumulativeShare?: number;
+  abcClass?: "A" | "B" | "C";
 };
 
 export type TrendPoint = {
   date: string;
   entries: number;
   exits: number;
+};
+
+export type AverageUnitValue = {
+  label: string;
+  unit: string;
+  operation: "entry" | "exit";
+  quantity: number;
+  totalValue: number;
+  averageValue: number;
+};
+
+export type GeographicShare = {
+  category: "internal" | "interstate" | "foreign" | "unclassified";
+  label: string;
+  value: number;
+  share: number;
+};
+
+export type WeekdayActivity = {
+  weekday: number;
+  label: string;
+  documentCount: number;
+  totalValue: number;
+  daysInPeriod: number;
+  averageDocuments: number;
+  averageValue: number;
+};
+
+export type CancellationSummary = {
+  entry: {
+    cancelled: number;
+    total: number;
+    rate: number;
+  };
+  exit: {
+    cancelled: number;
+    total: number;
+    rate: number;
+  };
 };
 
 export type ManagementInsight = {
@@ -192,7 +237,23 @@ export type DashboardData = {
   topCustomers: RankingItem[];
   topPurchasedProducts: RankingItem[];
   topSoldProducts: RankingItem[];
+  customerAbc: RankingItem[];
+  productAbc: RankingItem[];
+  averageUnitValues: AverageUnitValue[];
+  geographicShares: GeographicShare[];
+  weekdayActivity: WeekdayActivity[];
+  skuActivity: {
+    moved: number;
+    purchased: number;
+    sold: number;
+    soldShareOfMoved: number;
+  };
+  cancellations: CancellationSummary;
   cfopRanking: RankingItem[];
+  icmsCreditEntryValue: number;
+  totalEntryOperationValue: number;
+  icmsCreditEntryShare: number;
+  apparentIcmsBurden: number;
   assessment: TaxAssessment | null;
   inventory: InventorySummary | null;
   insights: ManagementInsight[];

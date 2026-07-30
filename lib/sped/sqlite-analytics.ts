@@ -2,12 +2,16 @@
 
 import initSqlJs, { type Database, type SqlJsStatic } from "sql.js";
 import type {
+  AverageUnitValue,
+  CancellationSummary,
   DashboardData,
+  GeographicShare,
   InventorySummary,
   ManagementInsight,
   RankingItem,
   SpedParseResult,
   TrendPoint,
+  WeekdayActivity,
 } from "./types";
 
 let sqlPromise: Promise<SqlJsStatic> | null = null;
@@ -62,9 +66,172 @@ function withShares(values: RankingItem[], total: number) {
   }));
 }
 
+function withAbc(values: RankingItem[]) {
+  const total = values.reduce((sum, item) => sum + item.value, 0);
+  let cumulative = 0;
+  return values.map((item) => {
+    const share = total > 0 ? item.value / total : 0;
+    cumulative += share;
+    return {
+      ...item,
+      share,
+      cumulativeShare: cumulative,
+      abcClass: (cumulative <= 0.8 ? "A" : cumulative <= 0.95 ? "B" : "C") as
+        | "A"
+        | "B"
+        | "C",
+    };
+  });
+}
+
 function concentration(values: RankingItem[], total: number) {
   if (!total) return 0;
   return values.slice(0, 3).reduce((sum, item) => sum + item.value, 0) / total;
+}
+
+function runAverageUnitValues(db: Database): AverageUnitValue[] {
+  const result = db.exec(`
+    SELECT
+      COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'),
+      COALESCE(NULLIF(unit, ''), 'sem unidade'),
+      operation,
+      SUM(quantity),
+      SUM(value),
+      CASE WHEN SUM(quantity) > 0 THEN SUM(value) / SUM(quantity) ELSE 0 END
+    FROM items
+    WHERE TRIM(COALESCE(product_code, '')) <> ''
+    GROUP BY product_code, product_description, unit, operation
+    HAVING SUM(quantity) > 0
+    ORDER BY SUM(value) DESC
+    LIMIT 12
+  `)[0];
+  if (!result) return [];
+  return result.values.map((row) => ({
+    label: String(row[0]),
+    unit: String(row[1]),
+    operation: String(row[2]) as "entry" | "exit",
+    quantity: Number(row[3] ?? 0),
+    totalValue: Number(row[4] ?? 0),
+    averageValue: Number(row[5] ?? 0),
+  }));
+}
+
+function runGeographicShares(db: Database): GeographicShare[] {
+  const labels: Record<GeographicShare["category"], string> = {
+    internal: "Operações internas",
+    interstate: "Operações interestaduais",
+    foreign: "Operações com o exterior",
+    unclassified: "Não classificadas",
+  };
+  const result = db.exec(`
+    SELECT
+      CASE
+        WHEN SUBSTR(TRIM(cfop), 1, 1) = '5' THEN 'internal'
+        WHEN SUBSTR(TRIM(cfop), 1, 1) = '6' THEN 'interstate'
+        WHEN SUBSTR(TRIM(cfop), 1, 1) = '7' THEN 'foreign'
+        ELSE 'unclassified'
+      END,
+      SUM(operation_value)
+    FROM summaries
+    WHERE operation = 'exit'
+    GROUP BY 1
+    ORDER BY SUM(operation_value) DESC
+  `)[0];
+  if (!result) return [];
+  const total = result.values.reduce((sum, row) => sum + Number(row[1] ?? 0), 0);
+  return result.values.map((row) => {
+    const category = String(row[0]) as GeographicShare["category"];
+    const value = Number(row[1] ?? 0);
+    return {
+      category,
+      label: labels[category],
+      value,
+      share: total > 0 ? value / total : 0,
+    };
+  });
+}
+
+const WEEKDAY_LABELS = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
+];
+
+function parseUtcDate(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function runWeekdayActivity(parsed: SpedParseResult): WeekdayActivity[] {
+  const daysInPeriod = Array.from({ length: 7 }, () => 0);
+  const start = parseUtcDate(parsed.company.startDate);
+  const end = parseUtcDate(parsed.company.endDate);
+
+  if (start && end && start <= end) {
+    for (
+      let cursor = new Date(start);
+      cursor <= end;
+      cursor.setUTCDate(cursor.getUTCDate() + 1)
+    ) {
+      daysInPeriod[cursor.getUTCDay()] += 1;
+    }
+  }
+
+  const buckets = WEEKDAY_LABELS.map((label, weekday) => ({
+    weekday,
+    label,
+    documentCount: 0,
+    totalValue: 0,
+    daysInPeriod: daysInPeriod[weekday],
+    averageDocuments: 0,
+    averageValue: 0,
+  }));
+
+  for (const document of parsed.documents) {
+    if (document.cancelled || document.operation !== "exit") continue;
+    const date = parseUtcDate(document.date);
+    if (!date) continue;
+    const bucket = buckets[date.getUTCDay()];
+    bucket.documentCount += 1;
+    bucket.totalValue += document.total;
+  }
+
+  for (const bucket of buckets) {
+    if (bucket.daysInPeriod > 0) {
+      bucket.averageDocuments = bucket.documentCount / bucket.daysInPeriod;
+      bucket.averageValue = bucket.totalValue / bucket.daysInPeriod;
+    }
+  }
+
+  return buckets;
+}
+
+function runCancellations(db: Database): CancellationSummary {
+  function summary(operation: "entry" | "exit") {
+    const total = runValue(
+      db,
+      `SELECT COUNT(*) FROM documents WHERE operation = '${operation}'`,
+    );
+    const cancelled = runValue(
+      db,
+      `SELECT COUNT(*) FROM documents WHERE operation = '${operation}' AND cancelled = 1`,
+    );
+    return {
+      cancelled,
+      total,
+      rate: total > 0 ? cancelled / total : 0,
+    };
+  }
+
+  return {
+    entry: summary("entry"),
+    exit: summary("exit"),
+  };
 }
 
 function summarizeInventory(parsed: SpedParseResult): InventorySummary | null {
@@ -213,7 +380,13 @@ function createSchema(db: Database) {
       operation TEXT NOT NULL,
       product_code TEXT,
       product_description TEXT,
-      value REAL NOT NULL
+      quantity REAL NOT NULL,
+      unit TEXT,
+      value REAL NOT NULL,
+      cfop TEXT,
+      icms_base REAL NOT NULL,
+      icms_rate REAL NOT NULL,
+      icms REAL NOT NULL
     );
     CREATE TABLE summaries (
       document_id INTEGER NOT NULL,
@@ -242,14 +415,22 @@ function loadData(db: Database, parsed: SpedParseResult) {
   }
   documentStatement.free();
 
-  const itemStatement = db.prepare("INSERT INTO items VALUES (?, ?, ?, ?, ?)");
+  const itemStatement = db.prepare(
+    "INSERT INTO items VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+  );
   for (const item of parsed.items) {
     itemStatement.run([
       item.documentId,
       item.operation,
       item.productCode,
       item.productDescription,
+      item.quantity,
+      item.unit,
       item.value,
+      item.cfop,
+      item.icmsBase,
+      item.icmsRate,
+      item.icms,
     ]);
   }
   itemStatement.free();
@@ -344,6 +525,46 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
     );
     const assessment = parsed.assessments.at(-1) ?? null;
     const inventory = summarizeInventory(parsed);
+    const customerAbc = withAbc(
+      runRanking(
+        db,
+        `SELECT COALESCE(NULLIF(participant_name, ''), 'Não identificado'), SUM(total), COUNT(*)
+         FROM documents
+         WHERE operation = 'exit' AND cancelled = 0
+         GROUP BY participant_name
+         ORDER BY SUM(total) DESC`,
+      ),
+    );
+    const productAbc = withAbc(
+      runRanking(
+        db,
+        `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
+         FROM items
+         WHERE operation = 'exit'
+         GROUP BY product_code, product_description
+         ORDER BY SUM(value) DESC`,
+      ),
+    );
+    const totalEntryOperationValue = runValue(
+      db,
+      "SELECT COALESCE(SUM(operation_value), 0) FROM summaries WHERE operation = 'entry'",
+    );
+    const icmsCreditEntryValue = runValue(
+      db,
+      "SELECT COALESCE(SUM(operation_value), 0) FROM summaries WHERE operation = 'entry' AND icms > 0",
+    );
+    const movedSkus = runValue(
+      db,
+      "SELECT COUNT(DISTINCT product_code) FROM items WHERE TRIM(COALESCE(product_code, '')) <> ''",
+    );
+    const purchasedSkus = runValue(
+      db,
+      "SELECT COUNT(DISTINCT product_code) FROM items WHERE operation = 'entry' AND TRIM(COALESCE(product_code, '')) <> ''",
+    );
+    const soldSkus = runValue(
+      db,
+      "SELECT COUNT(DISTINCT product_code) FROM items WHERE operation = 'exit' AND TRIM(COALESCE(product_code, '')) <> ''",
+    );
     const insights = buildInsights({
       supplierConcentration,
       customerConcentration,
@@ -403,6 +624,18 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
          ORDER BY SUM(value) DESC
          LIMIT 5`,
       ), totalExits),
+      customerAbc,
+      productAbc,
+      averageUnitValues: runAverageUnitValues(db),
+      geographicShares: runGeographicShares(db),
+      weekdayActivity: runWeekdayActivity(parsed),
+      skuActivity: {
+        moved: movedSkus,
+        purchased: purchasedSkus,
+        sold: soldSkus,
+        soldShareOfMoved: movedSkus > 0 ? soldSkus / movedSkus : 0,
+      },
+      cancellations: runCancellations(db),
       cfopRanking: runRanking(
         db,
         `SELECT COALESCE(NULLIF(cfop, ''), 'Não informado'), SUM(operation_value), COUNT(*)
@@ -411,6 +644,12 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
          ORDER BY SUM(operation_value) DESC
          LIMIT 8`,
       ),
+      icmsCreditEntryValue,
+      totalEntryOperationValue,
+      icmsCreditEntryShare:
+        totalEntryOperationValue > 0 ? icmsCreditEntryValue / totalEntryOperationValue : 0,
+      apparentIcmsBurden:
+        assessment && totalExits > 0 ? assessment.icmsToCollect / totalExits : 0,
       assessment,
       inventory,
       insights,

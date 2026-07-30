@@ -206,3 +206,32 @@
   ao servidor.
 - **Validação:** base fictícia, testes do parser, CSV, desktop e celular.
 - **Uso no TCC:** contexto do artefato, rastreabilidade e privacidade desde a concepção.
+
+## D22 - Concentrar o recorte tributário em ICMS
+
+- **Motivo:** o projeto utiliza a EFD ICMS/IPI e já interpreta C100, C170, C190 e E110;
+  incluir PIS/Cofins aumentaria o escopo e não sustentaria uma análise completa desses
+  tributos.
+- **Alternativas:** combinar ICMS, PIS e Cofins; analisar somente gestão comercial; criar
+  auditoria tributária automática.
+- **Escolha:** manter análises comerciais derivadas da movimentação fiscal e concentrar a
+  leitura tributária no ICMS informado.
+- **Impacto:** inclusão de curva ABC, abrangência por CFOP, valor médio unitário,
+  cancelamento por direção, entradas com ICMS informado e indicador aparente de ICMS.
+- **Limite:** nenhum indicador determina direito ao crédito, alíquota efetiva, erro fiscal
+  ou valor devido recalculado pelo protótipo.
+- **Validação:** fórmulas reproduzidas na base fictícia, testes unitários, fluxo E2E,
+  inspeção visual em desktop e celular e exportação CSV.
+- **Uso no TCC:** delimitação temática, construção do artefato, resultados e limitações.
+
+## D23 - Usar classes ABC sem afirmar o princípio 80/20
+
+- **Motivo:** a concentração acumulada é útil para priorização, mas a proporção 80/20 não
+  pode ser presumida.
+- **Alternativas:** mostrar somente os cinco maiores ou afirmar Pareto como resultado.
+- **Escolha:** calcular participação e percentual acumulado, com classe A até 80%, B até
+  95% e C no restante.
+- **Impacto:** o usuário visualiza concentração de clientes e produtos com valores exatos.
+- **Validação:** maior cliente com 66,7% na base sintética e Café Torrado como produto de
+  maior valor nas saídas.
+- **Uso no TCC:** indicador gerencial, fórmula e cuidado interpretativo.

@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { downloadCsv } from "../../lib/sped/export";
 import type {
+  AverageUnitValue,
   DashboardData,
+  GeographicShare,
   ManagementInsight,
   RankingItem,
   TrendPoint,
+  WeekdayActivity,
 } from "../../lib/sped/types";
 
 const moneyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -213,6 +216,217 @@ function BarList({
         </div>
       )}
       <p className="data-source">{source}</p>
+    </section>
+  );
+}
+
+function AbcPanel({
+  title,
+  question,
+  values,
+  source,
+}: {
+  title: string;
+  question: string;
+  values: RankingItem[];
+  source: string;
+}) {
+  return (
+    <section className="data-panel abc-panel">
+      <PanelHeading kicker="Curva ABC" title={title} question={question} />
+      {values.length ? (
+        <div className="abc-table-wrap">
+          <table className="abc-table">
+            <thead>
+              <tr>
+                <th>Posição</th>
+                <th>Nome</th>
+                <th>Valor</th>
+                <th>Participação</th>
+                <th>Acumulado</th>
+                <th>Classe</th>
+              </tr>
+            </thead>
+            <tbody>
+              {values.slice(0, 10).map((item, index) => (
+                <tr key={`${item.label}-${index}`}>
+                  <td>{index + 1}</td>
+                  <td title={item.label}>{item.label}</td>
+                  <td>{money(item.value)}</td>
+                  <td>{percentFormatter.format(item.share ?? 0)}</td>
+                  <td>
+                    <span className="abc-progress">
+                      <i
+                        style={{
+                          width: `${Math.min((item.cumulativeShare ?? 0) * 100, 100)}%`,
+                        }}
+                      />
+                    </span>
+                    <small>{percentFormatter.format(item.cumulativeShare ?? 0)}</small>
+                  </td>
+                  <td>
+                    <b className={`abc-badge abc-${item.abcClass?.toLowerCase()}`}>
+                      {item.abcClass}
+                    </b>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="empty-chart">
+          <strong>Curva indisponível</strong>
+          <p>Não existem valores suficientes para classificar esta competência.</p>
+        </div>
+      )}
+      <p className="data-source">{source}</p>
+    </section>
+  );
+}
+
+const geographyColors: Record<GeographicShare["category"], string> = {
+  internal: "#0e675e",
+  interstate: "#d6b316",
+  foreign: "#d7654f",
+  unclassified: "#9aa9a4",
+};
+
+function GeographicChart({ values }: { values: GeographicShare[] }) {
+  const stops = values.map((item, index) => {
+    const start =
+      values.slice(0, index).reduce((sum, previous) => sum + previous.share, 0) * 100;
+    const end = start + item.share * 100;
+    return `${geographyColors[item.category]} ${start}% ${end}%`;
+  });
+  const label = values
+    .map((item) => `${item.label}: ${percentFormatter.format(item.share)}`)
+    .join("; ");
+
+  return (
+    <section className="data-panel geography-panel">
+      <PanelHeading
+        kicker="Abrangência por CFOP"
+        title="Internas, interestaduais e exterior"
+        question="De onde vem o valor das saídas escrituradas?"
+      />
+      {values.length ? (
+        <div className="geography-content">
+          <div
+            className="donut-chart"
+            role="img"
+            aria-label={label}
+            style={{
+              background: `conic-gradient(${stops.join(", ")})`,
+            }}
+          >
+            <span>
+              <strong>{percentFormatter.format(values[0]?.share ?? 0)}</strong>
+              <small>maior faixa</small>
+            </span>
+          </div>
+          <ul className="geography-legend">
+            {values.map((item) => (
+              <li key={item.category}>
+                <i style={{ background: geographyColors[item.category] }} aria-hidden="true" />
+                <span>
+                  <strong>{item.label}</strong>
+                  <small>{money(item.value)}</small>
+                </span>
+                <b>{percentFormatter.format(item.share)}</b>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="empty-chart">
+          <strong>Classificação indisponível</strong>
+          <p>O arquivo não possui resumos C190 de saída com CFOP.</p>
+        </div>
+      )}
+      <p className="data-source">
+        Fonte: valores C190 de saída classificados pelo primeiro dígito do CFOP. Não
+        equivale ao faturamento contábil.
+      </p>
+    </section>
+  );
+}
+
+function AverageUnitPanel({ values }: { values: AverageUnitValue[] }) {
+  const max = Math.max(...values.map((item) => item.averageValue), 1);
+  return (
+    <section className="data-panel unit-value-panel">
+      <PanelHeading
+        kicker="Valor médio ponderado"
+        title="Valor escriturado por unidade"
+        question="Quais itens apresentam maior valor médio na unidade informada?"
+      />
+      {values.length ? (
+        <ol className="unit-value-list">
+          {values.map((item, index) => (
+            <li key={`${item.label}-${item.unit}-${item.operation}-${index}`}>
+              <div>
+                <span className={`operation-tag operation-${item.operation}`}>
+                  {item.operation === "entry" ? "Entrada" : "Saída"}
+                </span>
+                <strong title={item.label}>{item.label}</strong>
+                <small>
+                  {numberFormatter.format(item.quantity)} {item.unit} · total{" "}
+                  {money(item.totalValue)}
+                </small>
+              </div>
+              <div className="unit-value-result">
+                <strong>{money(item.averageValue)}</strong>
+                <small>por {item.unit}</small>
+                <span aria-hidden="true">
+                  <i style={{ width: `${(item.averageValue / max) * 100}%` }} />
+                </span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <div className="empty-chart">
+          <strong>Valor médio indisponível</strong>
+          <p>São necessários itens C170 com quantidade maior que zero.</p>
+        </div>
+      )}
+      <p className="data-source">
+        Fórmula: soma de VL_ITEM ÷ soma de QTD, sem misturar unidades. É valor
+        escriturado, não preço comercial nem margem.
+      </p>
+    </section>
+  );
+}
+
+function WeekdayChart({ values }: { values: WeekdayActivity[] }) {
+  const max = Math.max(...values.map((item) => item.averageValue), 1);
+  return (
+    <section className="data-panel weekday-panel">
+      <PanelHeading
+        kicker="Ritmo da competência"
+        title="Saídas por dia da semana"
+        question="Em quais dias ocorre maior valor médio de emissão?"
+      />
+      <div className="weekday-chart">
+        {values.map((item) => (
+          <div key={item.weekday}>
+            <span>{item.label.slice(0, 3)}</span>
+            <div className="weekday-track">
+              <i
+                style={{ height: `${Math.max((item.averageValue / max) * 100, item.averageValue ? 5 : 0)}%` }}
+                title={`${item.label}: ${money(item.averageValue)} por ocorrência do dia na competência`}
+              />
+            </div>
+            <strong>{compactMoneyFormatter.format(item.averageValue)}</strong>
+            <small>{numberFormatter.format(item.documentCount)} doc.</small>
+          </div>
+        ))}
+      </div>
+      <p className="data-source">
+        Média por ocorrência de cada dia na competência, incluindo dias sem emissão. É
+        distribuição semanal do período, não sazonalidade histórica.
+      </p>
     </section>
   );
 }
@@ -612,7 +826,7 @@ export function Dashboard({
           ["overview", "Visão executiva"],
           ["relationships", "Clientes e fornecedores"],
           ["products", "Produtos e estoque"],
-          ["fiscal", "Fiscal e qualidade"],
+          ["fiscal", "ICMS e qualidade"],
         ].map(([value, label]) => (
           <button
             key={value}
@@ -671,6 +885,35 @@ export function Dashboard({
             <TrendChart values={data.trend} />
             <InsightPanel insights={data.insights} />
           </div>
+          <div className="dashboard-grid">
+            <WeekdayChart values={data.weekdayActivity} />
+            <section className="data-panel cancellation-panel">
+              <PanelHeading
+                kicker="Qualidade operacional"
+                title="Cancelamentos por direção"
+                question="Os cancelamentos estão nas entradas ou nas saídas?"
+              />
+              <div className="cancellation-comparison">
+                <Metric
+                  label="Entradas canceladas"
+                  value={percentFormatter.format(data.cancellations.entry.rate)}
+                  note={`${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total} documento(s)`}
+                  tone={data.cancellations.entry.rate >= 0.05 ? "attention" : "default"}
+                />
+                <Metric
+                  label="Saídas canceladas"
+                  value={percentFormatter.format(data.cancellations.exit.rate)}
+                  note={`${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total} documento(s)`}
+                  tone={data.cancellations.exit.rate >= 0.05 ? "attention" : "default"}
+                />
+              </div>
+              <p className="fiscal-explainer">
+                O indicador mede quantidade de documentos com situação cancelada. Ele não
+                identifica a causa nem avalia a regularidade do cancelamento.
+              </p>
+              <p className="data-source">Fonte: IND_OPER e COD_SIT dos registros C100.</p>
+            </section>
+          </div>
         </div>
       )}
 
@@ -716,6 +959,15 @@ export function Dashboard({
               source="Fonte: participantes 0150 associados aos documentos C100 de saída."
             />
           </div>
+          <div className="dashboard-grid dashboard-grid-wide">
+            <AbcPanel
+              title="Concentração das saídas por cliente"
+              question="Quanto do valor acumulado depende dos principais clientes?"
+              values={data.customerAbc}
+              source="Fonte: C100 de saída e participantes 0150. Classes A até 80%, B até 95% e C no restante."
+            />
+            <GeographicChart values={data.geographicShares} />
+          </div>
         </div>
       )}
 
@@ -724,6 +976,24 @@ export function Dashboard({
           <div className="section-intro">
             <p className="eyebrow">Movimentação e inventário</p>
             <h2>Quais itens concentram valor e o que consta no estoque declarado?</h2>
+          </div>
+          <div className="metrics-grid">
+            <Metric
+              label="SKUs movimentados"
+              value={numberFormatter.format(data.skuActivity.moved)}
+              note="Itens distintos com entrada ou saída no C170"
+            />
+            <Metric
+              label="SKUs com saída"
+              value={numberFormatter.format(data.skuActivity.sold)}
+              note={`${percentFormatter.format(data.skuActivity.soldShareOfMoved)} dos itens movimentados`}
+              tone="positive"
+            />
+            <Metric
+              label="SKUs com entrada"
+              value={numberFormatter.format(data.skuActivity.purchased)}
+              note="Não equivale ao catálogo completo do ERP"
+            />
           </div>
           <div className="dashboard-grid">
             <BarList
@@ -742,6 +1012,15 @@ export function Dashboard({
               emptyMessage="Os registros C170 de saída não estão disponíveis neste arquivo."
               source="Fonte: itens C170 dos documentos de saída válidos."
             />
+          </div>
+          <div className="dashboard-grid dashboard-grid-wide">
+            <AbcPanel
+              title="Concentração das saídas por produto"
+              question="Quais itens formam a maior parcela do valor acumulado?"
+              values={data.productAbc}
+              source="Fonte: itens C170 de saída. A classificação descreve valor escriturado e não margem."
+            />
+            <AverageUnitPanel values={data.averageUnitValues} />
           </div>
 
           {data.inventory ? (
@@ -812,6 +1091,10 @@ export function Dashboard({
           <div className="section-intro">
             <p className="eyebrow">Leitura fiscal-contábil</p>
             <h2>O que o arquivo informa sobre ICMS e qualidade da escrituração?</h2>
+            <p>
+              Esta visão reproduz valores declarados e cria proporções descritivas. Ela não
+              determina direito ao crédito nem recalcula a obrigação tributária.
+            </p>
           </div>
           {data.assessment ? (
             <section className="assessment-panel">
@@ -900,6 +1183,34 @@ export function Dashboard({
                 substituem a apuração do E110.
               </p>
               <p className="data-source">Fonte: campo VL_ICMS dos registros C190.</p>
+            </section>
+            <section className="data-panel icms-indicators-panel">
+              <PanelHeading
+                kicker="Indicadores descritivos"
+                title="Crédito informado e carga aparente"
+                question="Que proporções podem orientar uma conferência do período?"
+              />
+              <div className="fiscal-comparison">
+                <Metric
+                  label="Entradas com ICMS informado"
+                  value={percentFormatter.format(data.icmsCreditEntryShare)}
+                  note={`${money(data.icmsCreditEntryValue)} de ${money(data.totalEntryOperationValue)} nos C190`}
+                  tone="positive"
+                />
+                <Metric
+                  label="ICMS a recolher ÷ saídas"
+                  value={percentFormatter.format(data.apparentIcmsBurden)}
+                  note="Indicador aparente; não é alíquota efetiva"
+                />
+              </div>
+              <p className="fiscal-explainer">
+                “Entradas com ICMS informado” considera operações de entrada cujo C190
+                possui VL_ICMS maior que zero. Não é uma conclusão jurídica sobre direito
+                ao crédito.
+              </p>
+              <p className="data-source">
+                Fonte: C190 e E110. Denominadores usam valores escriturados disponíveis.
+              </p>
             </section>
             <BarList
               kicker="Natureza das operações"

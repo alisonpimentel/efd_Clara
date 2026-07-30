@@ -7,7 +7,23 @@ function escapeCsv(value: string | number) {
 
 function rankingRows(section: string, values: RankingItem[]) {
   return values.map((item) =>
-    [section, item.label, item.value.toFixed(2), item.detail ?? ""].map(escapeCsv).join(";"),
+    [
+      section,
+      item.label,
+      item.value.toFixed(2),
+      [
+        item.detail ?? "",
+        item.share !== undefined ? `participação ${(item.share * 100).toFixed(2)}%` : "",
+        item.cumulativeShare !== undefined
+          ? `acumulado ${(item.cumulativeShare * 100).toFixed(2)}%`
+          : "",
+        item.abcClass ? `classe ${item.abcClass}` : "",
+      ]
+        .filter(Boolean)
+        .join(" | "),
+    ]
+      .map(escapeCsv)
+      .join(";"),
   );
 }
 
@@ -73,6 +89,34 @@ export function dashboardToCsv(data: DashboardData) {
     ["Fiscal", "ICMS nas saídas", data.icmsOnExits.toFixed(2), "C190"]
       .map(escapeCsv)
       .join(";"),
+    [
+      "Fiscal",
+      "Entradas com ICMS informado",
+      data.icmsCreditEntryShare,
+      `${data.icmsCreditEntryValue.toFixed(2)} de ${data.totalEntryOperationValue.toFixed(2)} no C190`,
+    ]
+      .map(escapeCsv)
+      .join(";"),
+    [
+      "Fiscal",
+      "ICMS a recolher dividido pelas saídas",
+      data.apparentIcmsBurden,
+      "indicador aparente; não é alíquota efetiva",
+    ]
+      .map(escapeCsv)
+      .join(";"),
+    ["Operacional", "Cancelamentos de entrada", data.cancellations.entry.rate, `${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total}`]
+      .map(escapeCsv)
+      .join(";"),
+    ["Operacional", "Cancelamentos de saída", data.cancellations.exit.rate, `${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total}`]
+      .map(escapeCsv)
+      .join(";"),
+    ["Produtos", "SKUs movimentados", data.skuActivity.moved, "C170"]
+      .map(escapeCsv)
+      .join(";"),
+    ["Produtos", "SKUs com saída", data.skuActivity.sold, "C170"]
+      .map(escapeCsv)
+      .join(";"),
     ...(data.assessment
       ? [
           ["Apuração E110", "Total de débitos", data.assessment.totalDebits.toFixed(2), ""]
@@ -101,9 +145,36 @@ export function dashboardToCsv(data: DashboardData) {
       : []),
     ...rankingRows("Fornecedores", data.topSuppliers),
     ...rankingRows("Clientes", data.topCustomers),
+    ...rankingRows("Curva ABC de clientes", data.customerAbc),
     ...rankingRows("Produtos comprados", data.topPurchasedProducts),
     ...rankingRows("Produtos vendidos", data.topSoldProducts),
+    ...rankingRows("Curva ABC de produtos", data.productAbc),
     ...rankingRows("CFOP", data.cfopRanking),
+    ...data.geographicShares.map((item) =>
+      ["Abrangência", item.label, item.value.toFixed(2), `${(item.share * 100).toFixed(2)}%`]
+        .map(escapeCsv)
+        .join(";"),
+    ),
+    ...data.averageUnitValues.map((item) =>
+      [
+        "Valor médio por unidade",
+        item.label,
+        item.averageValue.toFixed(2),
+        `${item.operation} | ${item.quantity} ${item.unit} | total ${item.totalValue.toFixed(2)}`,
+      ]
+        .map(escapeCsv)
+        .join(";"),
+    ),
+    ...data.weekdayActivity.map((item) =>
+      [
+        "Distribuição semanal",
+        item.label,
+        item.averageValue.toFixed(2),
+        `${item.documentCount} documento(s) | ${item.daysInPeriod} ocorrência(s) no período`,
+      ]
+        .map(escapeCsv)
+        .join(";"),
+    ),
   ];
   return `\uFEFF${rows.join("\r\n")}`;
 }

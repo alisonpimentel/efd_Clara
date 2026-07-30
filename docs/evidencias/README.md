@@ -50,6 +50,13 @@ fiscal. O arquivo foi fornecido diretamente ao elemento local e processado no na
 
 - [dashboard desktop](dashboard-desktop-vercel.png)
 - [dashboard móvel](dashboard-mobile-vercel.png)
+- [curva ABC de clientes e abrangência por CFOP — validação local](dashboard-clientes-abc-local.png)
+- [curva ABC de produtos e valor médio por unidade — validação local](dashboard-produtos-abc-local.png)
+- [indicadores de ICMS e qualidade — validação local](dashboard-icms-local.png)
+
+As três capturas marcadas como validação local registram o incremento de ICMS anterior à
+publicação. Elas foram geradas pelo teste E2E com a base fictícia e não devem ser
+confundidas com evidência do deploy enquanto o novo commit não estiver em produção.
 
 Os seis cadastros sintéticos encontrados nesta rodada foram excluídos ao final. Nenhum
 dado de usuário real foi removido, e a consulta final retornou zero cadastros de teste.

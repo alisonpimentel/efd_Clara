@@ -48,6 +48,13 @@ Na base fictícia, o artefato reproduziu:
 - R$ 7.750,00 de ticket médio de entrada;
 - R$ 13.500,00 de ticket médio de saída;
 - R$ 1.080,00 de ICMS a recolher informado no E110;
+- 100% do valor das entradas C190 da base fictícia com ICMS informado;
+- 4% no indicador aparente de ICMS a recolher sobre as saídas;
+- 66,7% das saídas classificadas como internas e 33,3% como interestaduais;
+- 0% de cancelamento nas entradas e 33,3% nas saídas;
+- três SKUs movimentados e três com saída;
+- curva ABC de clientes e produtos com participação e valor acumulado;
+- R$ 15,00 por unidade como valor médio escriturado do Café Torrado nas saídas;
 - R$ 22.000,00 de inventário informado no H005;
 - razão social, fantasia, endereço, competência e contabilista da escrituração;
 - quatro pontos na evolução temporal;
@@ -61,6 +68,11 @@ Na base fictícia, o artefato reproduziu:
 > excluídos das análises. O protótipo também reproduziu a apuração declarada no E110 e o
 > inventário do Bloco H, sem recalcular obrigações. O processamento ocorreu no navegador e
 > o banco fiscal temporário foi encerrado após a geração do resumo.
+
+Os indicadores adicionais confirmaram que é tecnicamente possível derivar concentração,
+abrangência por CFOP, valor médio por unidade, distribuição semanal e proporções de ICMS
+com dados já presentes na escrituração. O resultado é uma demonstração do artefato sobre
+base controlada, não evidência de impacto empresarial nem auditoria tributária.
 
 ## O que o resultado não demonstra
 

@@ -14,8 +14,11 @@ iniciantes e estudantes.
   `C190`, `E100`, `E110`, `H005` e `H010`;
 - conferência de razão social, nome fantasia, competência, endereço e contabilista;
 - visão executiva com evolução temporal e leituras gerenciais;
-- concentração de clientes e fornecedores, produtos e inventário;
-- apuração declarada do ICMS e qualidade para conciliação;
+- concentração de clientes e fornecedores, curvas ABC e abrangência das saídas por CFOP;
+- valor médio escriturado por unidade, mix de SKUs, produtos e inventário;
+- distribuição das saídas por dia da semana e cancelamentos separados por direção;
+- apuração declarada do ICMS, entradas com ICMS informado, indicador aparente e qualidade
+  para conciliação;
 - exportação CSV e impressão/salvamento em PDF;
 - arquivo demonstrativo fictício;
 - testes automatizados com valores esperados;

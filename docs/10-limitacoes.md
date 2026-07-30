@@ -15,11 +15,23 @@
 - ICMS destacado no C190 não é imposto a recolher;
 - o valor de ICMS a recolher exibido vem do E110 e não é recalculado ou auditado;
 - rankings mostram concentração de valor, não margem;
+- curva ABC classifica o valor acumulado da competência e não comprova a regra empírica
+  80/20;
+- valor médio por unidade é calculado com `VL_ITEM` e `QTD`; não representa
+  necessariamente preço comercial, custo contábil ou margem;
+- SKUs movimentados são os itens presentes nos C170 disponíveis, não todo o catálogo do
+  sistema empresarial;
+- classificação interna, interestadual e exterior depende do CFOP informado;
+- distribuição por dia da semana em uma competência não constitui sazonalidade histórica;
+- a proporção de entradas com ICMS informado não determina direito jurídico ao crédito;
+- ICMS a recolher dividido pelas saídas é denominado indicador aparente, não alíquota
+  efetiva;
 - o ticket médio geral combina naturezas distintas; por isso, a interface prioriza
   tickets separados de entrada e saída;
 - concentração dos três maiores é uma pista exploratória, não um diagnóstico de risco;
 - o inventário depende da presença do Bloco H, que não aparece em todo arquivo ou período;
 - o protótipo não interpreta regras estaduais ou regimes especiais.
+- o protótipo não realiza auditoria de combinações CFOP/CST nem emite diagnóstico fiscal.
 
 ## Limitações técnicas
 

@@ -69,14 +69,40 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
   await expect(
     page.locator(".metric").filter({ hasText: "3 maiores clientes" }),
   ).toContainText("100%");
+  await expect(
+    page.getByRole("heading", { name: "Concentração das saídas por cliente" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Internas, interestaduais e exterior" }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath("dashboard-clientes-abc.png"),
+    fullPage: true,
+  });
 
   await page.getByRole("button", { name: "Produtos e estoque" }).click();
   await expect(page.getByRole("heading", { name: "Estoque declarado no Bloco H" })).toBeVisible();
   await expect(page.getByText("R$ 22.000,00", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Valor escriturado por unidade" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Concentração das saídas por produto" }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath("dashboard-produtos-abc.png"),
+    fullPage: true,
+  });
 
-  await page.getByRole("button", { name: "Fiscal e qualidade" }).click();
+  await page.getByRole("button", { name: "ICMS e qualidade" }).click();
   await expect(page.getByRole("heading", { name: "Resumo do ICMS do período" })).toBeVisible();
   await expect(page.getByText("R$ 1.080,00", { exact: true })).toBeVisible();
+  await expect(page.getByText("100%", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("4%", { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath("dashboard-icms.png"),
+    fullPage: true,
+  });
 
   await page.getByRole("button", { name: "Visão executiva" }).click();
 

@@ -37,6 +37,8 @@ contextuais e não constituem indicadores de desempenho.
 | Ticket médio de saída | saídas / documentos de saída | C100 | compreender porte médio das saídas | não mede margem |
 | Evolução temporal | soma diária de entradas e saídas | C100 | identificar datas de maior movimentação | depende de datas válidas |
 | Taxa de cancelamento | cancelados / total de documentos | C100 | direcionar conferência operacional | não determina a causa |
+| Cancelamento por direção | cancelados de entrada ou saída / total da respectiva direção | C100 | distinguir ocorrência recebida da emitida | não avalia a regularidade do cancelamento |
+| Distribuição semanal | saídas por dia da semana / ocorrências do dia na competência | C100 | reconhecer o ritmo operacional do mês | um período não caracteriza sazonalidade |
 
 ## Clientes e fornecedores
 
@@ -46,10 +48,16 @@ contextuais e não constituem indicadores de desempenho.
 | Fornecedores identificados | participantes distintos nas entradas | 0150 + C100 | dimensionar a base de fornecimento | não mede criticidade de insumo |
 | Concentração de clientes | valor dos três maiores / total de saídas | 0150 + C100 | observar dependência comercial | não estabelece risco isoladamente |
 | Concentração de fornecedores | valor dos três maiores / total de entradas | 0150 + C100 | apoiar negociação e diversificação | não considera contratos ou substituição |
+| Curva ABC de clientes | participação e percentual acumulado do valor das saídas por participante | 0150 + C100 | reconhecer dependência e priorizar análise | saídas não equivalem necessariamente a faturamento |
+| Abrangência geográfica | participação dos CFOPs iniciados por 5, 6 e 7 | C190 | comparar operações internas, interestaduais e exterior | depende da classificação fiscal informada |
 
 O protótipo sinaliza concentração a partir de 50% como uma pista para investigação. Esse
 limiar é uma regra exploratória do artefato, não uma norma contábil ou diagnóstico
 automático.
+
+Na curva ABC, a classe A alcança até 80% do valor acumulado, a B vai até 95% e a C contém
+o restante. A classificação é descritiva. O protótipo não afirma que 20% dos clientes
+necessariamente geram 80% das saídas; essa proporção deve ser observada nos próprios dados.
 
 ## Produtos e inventário
 
@@ -57,6 +65,10 @@ automático.
 |---|---|---|---|---|
 | Produtos de maior valor nas entradas | soma de `VL_ITEM` por produto | 0200 + C170 | identificar itens relevantes nas compras | não mede custo médio |
 | Produtos de maior valor nas saídas | soma de `VL_ITEM` por produto | 0200 + C170 | identificar itens relevantes nas saídas | não mede margem ou rentabilidade |
+| Curva ABC de produtos | participação e percentual acumulado de `VL_ITEM` nas saídas | 0200 + C170 | localizar itens que concentram valor | não mede margem |
+| Valor médio por unidade | soma de `VL_ITEM` / soma de `QTD`, por item, unidade e direção | C170 | acompanhar valores médios escriturados | não mistura unidades nem equivale necessariamente ao preço comercial |
+| SKUs movimentados | itens distintos com entrada ou saída | C170 | dimensionar variedade presente na competência | não equivale ao catálogo completo do ERP |
+| SKUs com saída | itens distintos com saída / itens distintos movimentados | C170 | observar amplitude do mix no período | o denominador não é o cadastro total do 0200 |
 | Inventário declarado | `VL_INV` | H005 | visualizar valor informado do estoque | o Bloco H não aparece em todo período |
 | Itens de maior valor no inventário | soma de `VL_ITEM` por item | H010 | direcionar conferência e gestão | depende do detalhamento entregue |
 | Composição de propriedade | valor por `IND_PROP` | H010 | separar bens próprios e de terceiros | não substitui conciliação física |
@@ -73,7 +85,13 @@ automático.
 | ICMS a recolher | E110 | mostrar valor informado para o período | não é uma guia gerada pelo protótipo |
 | crédito a transportar | E110 | mostrar saldo levado ao período seguinte | exige conferência profissional |
 | ICMS nas entradas e saídas | C190 | comparar destaque por direção | não substitui o E110 |
+| entradas com ICMS informado | valor de entradas em C190 com `VL_ICMS > 0` / valor total das entradas C190 | indicar quanto da base de entradas possui crédito escriturado | não determina juridicamente o direito ao crédito |
+| carga aparente de ICMS | ICMS a recolher no E110 / saídas válidas do C100 | oferecer uma proporção simples para conferência | não é alíquota efetiva e combina bases com naturezas diferentes |
 | operações por CFOP | C190 | observar naturezas de operação relevantes | CFOP exige contexto fiscal |
+
+O projeto permanece restrito ao ICMS. PIS e Cofins não são agregados aos indicadores,
+pois uma análise mais adequada desses tributos exigiria outro recorte e, em especial,
+dados da EFD-Contribuições.
 
 ## Qualidade e conciliação
 
@@ -100,6 +118,12 @@ A função do indicador é provocar conciliação, não emitir diagnóstico fisc
 - ICMS nos C190 de entrada: R$ 1.860,00;
 - ICMS nos C190 de saída: R$ 3.240,00;
 - ICMS a recolher no E110: R$ 1.080,00;
+- entradas C190 com ICMS informado: 100% na base sintética;
+- ICMS a recolher dividido pelas saídas escrituradas: 4%, apresentado como indicador
+  aparente;
+- saídas internas: 66,7%; interestaduais: 33,3%;
+- cancelamentos: 0% nas entradas e 33,3% nas saídas;
+- três SKUs movimentados e três com saída;
 - inventário declarado no H005: R$ 22.000,00.
 
 Texto admissível:
