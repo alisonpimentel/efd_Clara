@@ -90,6 +90,7 @@ Fontes: documentos 08, 09 e 10.
 - primeira tela e cadastro;
 - aviso de processamento local;
 - seleção do arquivo fictício;
+- conferência da entidade, competência e contabilista;
 - visão executiva com métricas e evolução temporal;
 - concentração e ranking de clientes/fornecedores;
 - produtos, inventário e apuração declarada do ICMS;

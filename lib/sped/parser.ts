@@ -1,4 +1,5 @@
 import type {
+  Accountant,
   FiscalDocument,
   FiscalItem,
   FiscalSummary,
@@ -11,6 +12,8 @@ import type {
 
 const SUPPORTED_RECORDS = new Set([
   "0000",
+  "0005",
+  "0100",
   "0150",
   "0200",
   "C100",
@@ -64,12 +67,29 @@ export function parseSped(text: string): SpedParseResult {
   let currentDocument: FiscalDocument | null = null;
   let currentAssessmentPeriod = { start: "", end: "" };
   let currentInventory: Inventory | null = null;
+  let accountant: Accountant | null = null;
   let company = {
     name: "",
+    tradeName: "",
     document: "",
     state: "",
+    stateRegistration: "",
+    municipalityCode: "",
+    municipalRegistration: "",
+    suframa: "",
+    profile: "",
+    activityIndicator: "",
     startDate: "",
     endDate: "",
+    address: {
+      postalCode: "",
+      street: "",
+      number: "",
+      complement: "",
+      district: "",
+    },
+    phone: "",
+    email: "",
   };
 
   for (const line of lines) {
@@ -81,11 +101,55 @@ export function parseSped(text: string): SpedParseResult {
 
     if (register === "0000") {
       company = {
+        ...company,
         startDate: normalizeDate(field(fields, 4)),
         endDate: normalizeDate(field(fields, 5)),
         name: field(fields, 6),
         document: normalizeDocument(field(fields, 7) || field(fields, 8)),
         state: field(fields, 9),
+        stateRegistration: field(fields, 10),
+        municipalityCode: field(fields, 11),
+        municipalRegistration: field(fields, 12),
+        suframa: field(fields, 13),
+        profile: field(fields, 14),
+        activityIndicator: field(fields, 15),
+      };
+      continue;
+    }
+
+    if (register === "0005") {
+      company = {
+        ...company,
+        tradeName: field(fields, 2),
+        address: {
+          postalCode: normalizeDocument(field(fields, 3)),
+          street: field(fields, 4),
+          number: field(fields, 5),
+          complement: field(fields, 6),
+          district: field(fields, 7),
+        },
+        phone: normalizeDocument(field(fields, 8)),
+        email: field(fields, 10),
+      };
+      continue;
+    }
+
+    if (register === "0100") {
+      accountant = {
+        name: field(fields, 2),
+        document: normalizeDocument(field(fields, 3)),
+        crc: field(fields, 4),
+        officeDocument: normalizeDocument(field(fields, 5)),
+        address: {
+          postalCode: normalizeDocument(field(fields, 6)),
+          street: field(fields, 7),
+          number: field(fields, 8),
+          complement: field(fields, 9),
+          district: field(fields, 10),
+        },
+        phone: normalizeDocument(field(fields, 11)),
+        email: field(fields, 13),
+        municipalityCode: field(fields, 14),
       };
       continue;
     }
@@ -235,6 +299,12 @@ export function parseSped(text: string): SpedParseResult {
   }
 
   if (!recordCounts["0000"]) warnings.push("O registro 0000 não foi encontrado.");
+  if (!recordCounts["0005"]) {
+    warnings.push("O registro 0005 não foi encontrado; endereço e nome fantasia não serão exibidos.");
+  }
+  if (!recordCounts["0100"]) {
+    warnings.push("O registro 0100 não foi encontrado; o contabilista não será exibido.");
+  }
   if (!recordCounts["C100"]) warnings.push("Nenhum documento fiscal C100 foi encontrado.");
   if (!recordCounts["C170"]) {
     warnings.push("O arquivo não possui itens C170; a análise de produtos ficará indisponível.");
@@ -261,6 +331,7 @@ export function parseSped(text: string): SpedParseResult {
     summaries: summaries.filter((summary) => validIds.has(summary.documentId)),
     assessments,
     inventories,
+    accountant,
     recordCounts,
     warnings: Array.from(new Set(warnings)),
     lineCount: lines.filter((line) => line.trim()).length,

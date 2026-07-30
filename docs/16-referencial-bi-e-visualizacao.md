@@ -117,6 +117,8 @@ prova que o EFD Clara melhora decisões. Esse efeito exigiria avaliação com us
 **Aplicação no EFD Clara:**
 
 - C100 para documentos;
+- 0000 e 0005 para entidade, competência e endereço;
+- 0100 para o contabilista responsável;
 - C170 para itens;
 - C190 para resumos por CST, CFOP e alíquota;
 - E110 para apuração própria do ICMS;
@@ -138,6 +140,7 @@ não sustenta alegações de ganho gerencial, usabilidade ou impacto econômico.
 | construção e teste do protótipo | Hevner et al. |
 | indicador ligado a uma decisão | Sebrae |
 | fórmulas e campos oficiais | Guia Prático da EFD |
+| conferência da entidade e responsável | registros 0000, 0005 e 0100 |
 
 ## Limite da revisão
 

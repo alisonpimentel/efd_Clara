@@ -27,7 +27,10 @@
 - processamento depende de navegador moderno com WebAssembly;
 - arquivo muito complexo pode consumir memória perceptível;
 - não há validação completa do leiaute;
-- apenas dez registros são interpretados;
+- apenas doze registros são interpretados;
+- município é exibido pelo código IBGE informado; o protótipo não consulta serviços
+  externos para converter o código em nome;
+- dados cadastrais refletem o conteúdo da EFD e não são validados em cadastros externos;
 - não há histórico nem recuperação da análise;
 - PDF depende do recurso de impressão do navegador.
 

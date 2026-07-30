@@ -53,6 +53,14 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
   await page.locator("#sped-file").setInputFiles(samplePath);
   await expect(page.getByText("R$ 15.500,00", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("R$ 27.000,00", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Identificação da escrituração" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "EFD CLARA MERCADO" })).toBeVisible();
+  await expect(page.getByText("junho de 2026", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "MARCIA CONTADORA DEMONSTRACAO" }),
+  ).toBeVisible();
+  await expect(page.getByText("1SP000000/O-0", { exact: true })).toBeVisible();
+  await expect(page.getByText("***.000.001-**", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Entradas e saídas ao longo do tempo" }),
   ).toBeVisible();

@@ -11,6 +11,8 @@ describe("indicadores gerados em SQLite temporário", () => {
     const dashboard = await buildDashboard(parseSped(text));
 
     assert.equal(dashboard.totalEntries, 15500);
+    assert.equal(dashboard.company.tradeName, "EFD CLARA MERCADO");
+    assert.equal(dashboard.accountant?.crc, "1SP000000/O-0");
     assert.equal(dashboard.totalExits, 27000);
     assert.equal(dashboard.operationDifference, 11500);
     assert.equal(dashboard.activeDocuments, 4);
@@ -50,6 +52,10 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.match(csv, /ICMS a recolher/);
     assert.match(csv, /1080\.00/);
     assert.match(csv, /Valor total declarado/);
+    assert.match(csv, /Razão social/);
+    assert.match(csv, /EFD CLARA MERCADO/);
+    assert.match(csv, /MARCIA CONTADORA DEMONSTRACAO/);
+    assert.doesNotMatch(csv, /00000000191/);
   });
 
   it("mantém valores zerados quando o arquivo não possui movimento válido", async () => {

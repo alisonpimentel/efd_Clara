@@ -192,3 +192,17 @@
   sem inventar dados quando os registros faltam.
 - **Validação:** base fictícia com valores conhecidos e estados de ausência.
 - **Uso no TCC:** escopo técnico, indicadores e limitações.
+
+## D21 - Conferir os registros iniciais antes do BI
+
+- **Motivo:** evitar que o usuário analise uma competência ou estabelecimento diferente
+  do pretendido.
+- **Alternativas:** manter somente a razão social no título ou exibir todos os campos sem
+  hierarquia.
+- **Escolha:** bloco compacto com 0000, 0005 e 0100 antes dos indicadores.
+- **Impacto:** razão social, fantasia, período, endereço, perfil e contabilista podem ser
+  conferidos antes da leitura gerencial.
+- **Privacidade:** CPF do contabilista mascarado e excluído do CSV; nenhum campo é enviado
+  ao servidor.
+- **Validação:** base fictícia, testes do parser, CSV, desktop e celular.
+- **Uso no TCC:** contexto do artefato, rastreabilidade e privacidade desde a concepção.

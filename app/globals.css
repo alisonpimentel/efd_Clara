@@ -672,6 +672,184 @@ summary:focus-visible,
   gap: 8px;
 }
 
+.identity-panel {
+  margin-bottom: 18px;
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid rgba(16, 44, 43, 0.1);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(191, 229, 209, 0.45), transparent 48%),
+    #eef2ec;
+}
+
+.identity-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 22px;
+}
+
+.identity-heading h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.identity-heading > p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.identity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(230px, 0.72fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.identity-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid rgba(16, 44, 43, 0.1);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.identity-card > span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--teal);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.identity-card h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 2.7vw, 2.15rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.identity-company > p {
+  margin: 8px 0 0;
+  color: #c2d8d2;
+  font-size: 0.8rem;
+}
+
+.identity-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px 18px;
+  margin: 24px 0 0;
+}
+
+.identity-card dl > div {
+  min-width: 0;
+}
+
+.identity-card dt {
+  color: #70817d;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.identity-card dd {
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.86rem;
+  font-weight: 760;
+}
+
+.identity-company {
+  color: white;
+  background: var(--ink);
+}
+
+.identity-company > span,
+.identity-company dt {
+  color: #a8cfc5;
+}
+
+.identity-company dd {
+  color: white;
+}
+
+.identity-contact {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(117, 145, 137, 0.28);
+}
+
+.identity-contact strong {
+  font-size: 0.76rem;
+}
+
+.identity-contact p {
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.identity-company .identity-contact p {
+  color: #c2d8d2;
+}
+
+.identity-period {
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.5), transparent 45%),
+    var(--lime);
+}
+
+.identity-period > strong {
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.identity-period dl {
+  grid-template-columns: 1fr;
+}
+
+.identity-empty {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--ink-soft);
+}
+
+.identity-empty strong {
+  color: var(--ink);
+}
+
+.identity-empty p {
+  margin: 7px 0 0;
+  line-height: 1.5;
+}
+
+.identity-source {
+  margin: 18px 0 0;
+  color: #637773;
+  font-size: 0.72rem;
+}
+
 .interpretation-note {
   padding: 16px 20px;
   border-left: 5px solid var(--lime);
@@ -1678,6 +1856,19 @@ summary:focus-visible,
     flex-direction: column;
   }
 
+  .identity-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .identity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .identity-company {
+    grid-column: 1 / -1;
+  }
+
   .admin-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -1754,6 +1945,18 @@ summary:focus-visible,
   .dashboard-tabs {
     margin-inline: -16px;
     border-radius: 0;
+  }
+
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-company {
+    grid-column: auto;
+  }
+
+  .identity-card dl {
+    grid-template-columns: 1fr;
   }
 
   .balance-panel {

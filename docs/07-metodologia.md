@@ -27,7 +27,8 @@ organizacionais. Não se afirma que todo o ciclo de avaliação com usuários fo
 ## Etapas executadas
 
 1. consulta ao Guia Prático da EFD ICMS/IPI;
-2. seleção dos registros 0000, 0150, 0200, C100, C170, C190, E100, E110, H005 e H010;
+2. seleção dos registros 0000, 0005, 0100, 0150, 0200, C100, C170, C190, E100,
+   E110, H005 e H010;
 3. definição das perguntas de negócio, fórmulas e referencial de visualização;
 4. modelagem de requisitos e arquitetura;
 5. criação de base fictícia controlada;

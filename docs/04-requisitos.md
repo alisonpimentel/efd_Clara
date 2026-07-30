@@ -18,6 +18,7 @@
 | RF12 | Demonstrar | Uma EFD totalmente fictícia pode ser carregada no próprio site |
 | RF13 | Registrar direito do titular | Solicitações de acesso, correção, exclusão e revogação são gravadas |
 | RF14 | Consultar interessados | Somente o proprietário autenticado acessa resumo, lista e CSV |
+| RF15 | Conferir identificação | Razão social, competência, endereço e contabilista aparecem antes dos indicadores |
 
 ## Requisitos não funcionais
 
@@ -39,6 +40,8 @@
 - `IND_OPER = 0` representa entrada; os demais valores válidos do recorte representam
   saída.
 - totais de entrada e saída usam `VL_DOC` do `C100`.
+- identificação principal usa `0000`; endereço e fantasia usam `0005`;
+- o contabilista usa `0100`, com CPF mascarado e sem CPF na exportação;
 - situação `02` ou `03` representa cancelamento no recorte do protótipo.
 - ranking de produtos depende de `C170`.
 - ranking de CFOP e ICMS usa `C190` quando disponível.

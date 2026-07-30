@@ -15,6 +15,8 @@
 | apurações E110 | 1 |
 | inventários H005 | 1 |
 | itens de inventário H010 | 3 |
+| registro de entidade 0005 | 1 |
+| registro de contabilista 0100 | 1 |
 
 ## Casos automatizados
 
@@ -44,6 +46,8 @@
 | CT22 | apuração do ICMS | E110 reproduzir R$ 1.080,00 a recolher | passou |
 | CT23 | inventário | H005/H010 reproduzir R$ 22.000,00 e três itens | passou |
 | CT24 | estados opcionais | ausência de E110/H005 gerar aviso sem interromper | passou |
+| CT25 | identificação inicial | fantasia, IE, endereço, competência e CRC esperados | passou |
+| CT26 | privacidade do contabilista | CPF mascarado na tela e ausente no CSV | passou |
 
 Os cenários unitários são cobertos por quatorze funções de teste automatizado distribuídas
 em cinco suítes.

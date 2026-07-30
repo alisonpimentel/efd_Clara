@@ -16,7 +16,15 @@ describe("parser da EFD ICMS/IPI", () => {
     const parsed = parseSped(text);
 
     assert.equal(parsed.company.name, "COMERCIO DEMONSTRACAO LTDA");
+    assert.equal(parsed.company.tradeName, "EFD CLARA MERCADO");
     assert.equal(parsed.company.startDate, "2026-06-01");
+    assert.equal(parsed.company.stateRegistration, "110042490114");
+    assert.equal(parsed.company.municipalityCode, "3550308");
+    assert.equal(parsed.company.address.street, "RUA DO EXEMPLO");
+    assert.equal(parsed.company.address.postalCode, "01001000");
+    assert.equal(parsed.accountant?.name, "MARCIA CONTADORA DEMONSTRACAO");
+    assert.equal(parsed.accountant?.crc, "1SP000000/O-0");
+    assert.equal(parsed.accountant?.document, "00000000191");
     assert.equal(parsed.participants.length, 4);
     assert.equal(parsed.products.length, 3);
     assert.equal(parsed.documents.length, 5);
@@ -46,5 +54,7 @@ describe("parser da EFD ICMS/IPI", () => {
     assert.ok(parsed.warnings.some((warning) => warning.includes("C190")));
     assert.ok(parsed.warnings.some((warning) => warning.includes("E110")));
     assert.ok(parsed.warnings.some((warning) => warning.includes("H005")));
+    assert.ok(parsed.warnings.some((warning) => warning.includes("0005")));
+    assert.ok(parsed.warnings.some((warning) => warning.includes("0100")));
   });
 });

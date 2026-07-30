@@ -7,8 +7,9 @@
 - um arquivo TXT por análise;
 - limite máximo de 8 MB;
 - EFD ICMS/IPI;
-- registros `0000`, `0150`, `0200`, `C100`, `C170`, `C190`, `E100`, `E110`,
-  `H005` e `H010`;
+- registros `0000`, `0005`, `0100`, `0150`, `0200`, `C100`, `C170`, `C190`,
+  `E100`, `E110`, `H005` e `H010`;
+- conferência cadastral da entidade, competência e contabilista responsável;
 - documentos de entrada e saída;
 - exclusão de documentos com situação cancelada (`02` e `03`) dos totais;
 - base SQLite temporária em memória;

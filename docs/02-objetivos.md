@@ -10,8 +10,8 @@ processamento local e sem armazenamento do arquivo fiscal.
 
 1. identificar os registros necessários para a análise proposta;
 2. implementar a leitura de arquivos TXT da EFD ICMS/IPI com limite de 8 MB;
-3. relacionar empresa, participantes, produtos, documentos, itens, resumos fiscais,
-   apuração do ICMS e inventário;
+3. relacionar empresa, contabilista, participantes, produtos, documentos, itens, resumos
+   fiscais, apuração do ICMS e inventário;
 4. estruturar temporariamente os dados em SQLite WebAssembly na memória do navegador;
 5. calcular indicadores de entradas, saídas, evolução, concentração, documentos,
    participantes, produtos, inventário, CFOP e ICMS;

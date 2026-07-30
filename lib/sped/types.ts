@@ -1,9 +1,42 @@
 export type SpedCompany = {
   name: string;
+  tradeName: string;
   document: string;
   state: string;
+  stateRegistration: string;
+  municipalityCode: string;
+  municipalRegistration: string;
+  suframa: string;
+  profile: string;
+  activityIndicator: string;
   startDate: string;
   endDate: string;
+  address: {
+    postalCode: string;
+    street: string;
+    number: string;
+    complement: string;
+    district: string;
+  };
+  phone: string;
+  email: string;
+};
+
+export type Accountant = {
+  name: string;
+  document: string;
+  crc: string;
+  officeDocument: string;
+  municipalityCode: string;
+  address: {
+    postalCode: string;
+    street: string;
+    number: string;
+    complement: string;
+    district: string;
+  };
+  phone: string;
+  email: string;
 };
 
 export type Participant = {
@@ -97,6 +130,7 @@ export type SpedParseResult = {
   summaries: FiscalSummary[];
   assessments: TaxAssessment[];
   inventories: Inventory[];
+  accountant: Accountant | null;
   recordCounts: Record<string, number>;
   warnings: string[];
   lineCount: number;
@@ -137,6 +171,7 @@ export type InventorySummary = {
 
 export type DashboardData = {
   company: SpedCompany;
+  accountant: Accountant | null;
   totalEntries: number;
   totalExits: number;
   operationDifference: number;

@@ -10,8 +10,9 @@ iniciantes e estudantes.
 - um arquivo TXT por análise, com limite de 8 MB;
 - leitura e processamento integral no navegador;
 - SQLite WebAssembly temporário em memória;
-- suporte aos registros `0000`, `0150`, `0200`, `C100`, `C170`, `C190`, `E100`,
-  `E110`, `H005` e `H010`;
+- suporte aos registros `0000`, `0005`, `0100`, `0150`, `0200`, `C100`, `C170`,
+  `C190`, `E100`, `E110`, `H005` e `H010`;
+- conferência de razão social, nome fantasia, competência, endereço e contabilista;
 - visão executiva com evolução temporal e leituras gerenciais;
 - concentração de clientes e fornecedores, produtos e inventário;
 - apuração declarada do ICMS e qualidade para conciliação;

@@ -10,6 +10,22 @@ visão fiscal responde “o que foi informado sobre ICMS e qualidade dos dados?�
 Os códigos do SPED permanecem na camada técnica. A interface usa linguagem de negócio e
 sempre informa fonte, período, unidade e limitação.
 
+## Contexto da escrituração
+
+Antes dos indicadores, o painel apresenta um bloco de conferência:
+
+| Informação | Registro e campo | Finalidade |
+|---|---|---|
+| razão social | 0000 `NOME` | confirmar a entidade analisada |
+| CNPJ ou CPF, UF e IE | 0000 | confirmar identificação fiscal |
+| competência | 0000 `DT_INI` e `DT_FIN` | delimitar o período dos indicadores |
+| perfil e atividade | 0000 | contextualizar o arquivo |
+| nome fantasia e endereço | 0005 | conferir o estabelecimento |
+| contabilista e CRC | 0100 | identificar o responsável informado |
+
+O CPF do contabilista é mascarado na interface e não entra no CSV. Esses dados são
+contextuais e não constituem indicadores de desempenho.
+
 ## Visão executiva
 
 | Indicador | Cálculo | Fonte | Decisão apoiada | Limitação |

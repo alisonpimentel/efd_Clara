@@ -38,6 +38,88 @@ function dateLabel(value: string) {
   return `${day}/${month}/${year}`;
 }
 
+function taxIdLabel(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 14) {
+    return digits.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+      "$1.$2.$3/$4-$5",
+    );
+  }
+  if (digits.length === 11) {
+    return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+  }
+  return value || "não informado";
+}
+
+function maskedCpf(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length !== 11) return value ? "documento informado" : "não informado";
+  return `***.${digits.slice(3, 6)}.${digits.slice(6, 9)}-**`;
+}
+
+function postalCodeLabel(value: string) {
+  const digits = value.replace(/\D/g, "");
+  return digits.length === 8 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : value;
+}
+
+function phoneLabel(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 11) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  }
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return value;
+}
+
+function addressLabel(address: {
+  postalCode: string;
+  street: string;
+  number: string;
+  complement: string;
+  district: string;
+}) {
+  const line = [
+    address.street,
+    address.number,
+    address.complement,
+    address.district,
+  ].filter(Boolean);
+  const postalCode = postalCodeLabel(address.postalCode);
+  return [...line, postalCode ? `CEP ${postalCode}` : ""].filter(Boolean).join(", ");
+}
+
+const MONTHS = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+
+function competenceLabel(start: string, end: string) {
+  if (start && end && start.slice(0, 7) === end.slice(0, 7)) {
+    const [year, month] = start.split("-");
+    return `${MONTHS[Number(month) - 1]} de ${year}`;
+  }
+  return `${dateLabel(start)} a ${dateLabel(end)}`;
+}
+
+function activityLabel(value: string) {
+  if (value === "0") return "Industrial ou equiparado";
+  if (value === "1") return "Outros estabelecimentos";
+  return "não informada";
+}
+
 function Metric({
   label,
   value,
@@ -366,6 +448,8 @@ export function Dashboard({
   const [tab, setTab] = useState<Tab>("overview");
   const companyLabel = data.company.name || "Empresa não identificada";
   const period = `${dateLabel(data.company.startDate)} a ${dateLabel(data.company.endDate)}`;
+  const companyAddress = addressLabel(data.company.address);
+  const accountantAddress = data.accountant ? addressLabel(data.accountant.address) : "";
   const cancellationRate =
     data.activeDocuments + data.cancelledDocuments
       ? data.cancelledDocuments / (data.activeDocuments + data.cancelledDocuments)
@@ -393,6 +477,130 @@ export function Dashboard({
           </button>
         </div>
       </div>
+
+      <section className="identity-panel" aria-labelledby="identity-title">
+        <div className="identity-heading">
+          <div>
+            <p className="eyebrow">Registros iniciais da EFD</p>
+            <h2 id="identity-title">Identificação da escrituração</h2>
+          </div>
+          <p>
+            Confira estes dados antes da análise. Eles foram lidos dos registros 0000,
+            0005 e 0100.
+          </p>
+        </div>
+        <div className="identity-grid">
+          <article className="identity-card identity-company">
+            <span>Empresa informante</span>
+            <h3>{data.company.tradeName || companyLabel}</h3>
+            {data.company.tradeName && <p>{companyLabel}</p>}
+            <dl>
+              <div>
+                <dt>{data.company.document.length === 11 ? "CPF" : "CNPJ"}</dt>
+                <dd>{taxIdLabel(data.company.document)}</dd>
+              </div>
+              <div>
+                <dt>Inscrição estadual</dt>
+                <dd>{data.company.stateRegistration || "não informada"}</dd>
+              </div>
+              <div>
+                <dt>UF</dt>
+                <dd>{data.company.state || "não informada"}</dd>
+              </div>
+              <div>
+                <dt>Município IBGE</dt>
+                <dd>{data.company.municipalityCode || "não informado"}</dd>
+              </div>
+            </dl>
+            <div className="identity-contact">
+              <strong>Endereço cadastrado</strong>
+              <p>{companyAddress || "Não informado no registro 0005."}</p>
+              {(data.company.phone || data.company.email) && (
+                <p>
+                  {[phoneLabel(data.company.phone), data.company.email]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              )}
+            </div>
+          </article>
+
+          <article className="identity-card identity-period">
+            <span>Competência</span>
+            <strong>{competenceLabel(data.company.startDate, data.company.endDate)}</strong>
+            <dl>
+              <div>
+                <dt>Período exato</dt>
+                <dd>{period}</dd>
+              </div>
+              <div>
+                <dt>Perfil</dt>
+                <dd>{data.company.profile ? `Perfil ${data.company.profile}` : "não informado"}</dd>
+              </div>
+              <div>
+                <dt>Atividade</dt>
+                <dd>{activityLabel(data.company.activityIndicator)}</dd>
+              </div>
+              {data.company.municipalRegistration && (
+                <div>
+                  <dt>Inscrição municipal</dt>
+                  <dd>{data.company.municipalRegistration}</dd>
+                </div>
+              )}
+              {data.company.suframa && (
+                <div>
+                  <dt>SUFRAMA</dt>
+                  <dd>{data.company.suframa}</dd>
+                </div>
+              )}
+            </dl>
+          </article>
+
+          <article className="identity-card identity-accountant">
+            <span>Contabilista responsável</span>
+            {data.accountant ? (
+              <>
+                <h3>{data.accountant.name || "Nome não informado"}</h3>
+                <dl>
+                  <div>
+                    <dt>CRC</dt>
+                    <dd>{data.accountant.crc || "não informado"}</dd>
+                  </div>
+                  <div>
+                    <dt>CPF protegido</dt>
+                    <dd>{maskedCpf(data.accountant.document)}</dd>
+                  </div>
+                  {data.accountant.officeDocument && (
+                    <div>
+                      <dt>CNPJ do escritório</dt>
+                      <dd>{taxIdLabel(data.accountant.officeDocument)}</dd>
+                    </div>
+                  )}
+                </dl>
+                <div className="identity-contact">
+                  {accountantAddress && <p>{accountantAddress}</p>}
+                  {(data.accountant.phone || data.accountant.email) && (
+                    <p>
+                      {[phoneLabel(data.accountant.phone), data.accountant.email]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="identity-empty">
+                <strong>Registro 0100 não encontrado</strong>
+                <p>O arquivo não informou os dados do contabilista responsável.</p>
+              </div>
+            )}
+          </article>
+        </div>
+        <p className="identity-source">
+          Os dados desta seção permanecem no navegador e não são enviados ao cadastro de
+          interessados.
+        </p>
+      </section>
 
       <div className="interpretation-note">
         <strong>Leia assim:</strong> entradas e saídas representam documentos escriturados.

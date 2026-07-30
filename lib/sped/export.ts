@@ -14,6 +14,31 @@ function rankingRows(section: string, values: RankingItem[]) {
 export function dashboardToCsv(data: DashboardData) {
   const rows = [
     ["seção", "indicador", "valor", "detalhe"].map(escapeCsv).join(";"),
+    ["Identificação", "Razão social", data.company.name, ""].map(escapeCsv).join(";"),
+    ["Identificação", "Nome fantasia", data.company.tradeName, ""]
+      .map(escapeCsv)
+      .join(";"),
+    ["Identificação", "CNPJ ou CPF", data.company.document, ""]
+      .map(escapeCsv)
+      .join(";"),
+    ["Identificação", "Inscrição estadual", data.company.stateRegistration, data.company.state]
+      .map(escapeCsv)
+      .join(";"),
+    ["Identificação", "Município IBGE", data.company.municipalityCode, ""]
+      .map(escapeCsv)
+      .join(";"),
+    ["Identificação", "Competência inicial", data.company.startDate, data.company.endDate]
+      .map(escapeCsv)
+      .join(";"),
+    ...(data.accountant
+      ? [
+          ["Contabilista", "Nome", data.accountant.name, ""].map(escapeCsv).join(";"),
+          ["Contabilista", "CRC", data.accountant.crc, ""].map(escapeCsv).join(";"),
+          ["Contabilista", "CNPJ do escritório", data.accountant.officeDocument, ""]
+            .map(escapeCsv)
+            .join(";"),
+        ]
+      : []),
     ["Resumo", "Total de entradas", data.totalEntries.toFixed(2), ""]
       .map(escapeCsv)
       .join(";"),

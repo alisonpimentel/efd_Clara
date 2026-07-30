@@ -356,6 +356,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
 
     return {
       company: parsed.company,
+      accountant: parsed.accountant,
       totalEntries,
       totalExits,
       operationDifference: totalExits - totalEntries,
