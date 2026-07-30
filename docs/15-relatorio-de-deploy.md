@@ -31,6 +31,8 @@
 - testes adicionais para 8 MB, arquivo único, cadastro e exportação.
 - autenticação administrativa com CPF em HMAC e senha em hash com sal;
 - relatório de recorrência e preparação técnica de SEO.
+- evolução temporal, concentração, apuração E110 e inventário H005/H010;
+- gráficos responsivos fundamentados em Few, IBCS e Knaflic.
 
 ## Situação do deploy
 
@@ -42,14 +44,16 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_Dgj8cj88ZrGzRtYQAVr3sMcRhrjj`
-- **Commit:** `7c51ba3`
+- **Deploy:** `dpl_HNsmDNwndycFKqhABsCypngCLADE`
+- **Commit:** `ddc776e`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
 - **CSV e nova análise:** aprovados
+- **Novas abas:** concentração, estoque e apuração E110 aprovadas
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
+- **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
 - **Área administrativa:** configuração protegida e relatório redirecionado para login
 
@@ -62,4 +66,5 @@ informar pessoalmente o CPF e a senha ao final. A tela `/admin/configurar` está
 protegida pela credencial temporária local. Depois da criação única, o acesso ocorrerá em
 `/admin/login`.
 
-Os cadastros sintéticos dos testes foram removidos do banco após a validação.
+Os dez cadastros sintéticos encontrados após as execuções locais e públicas foram
+removidos do banco; a verificação final indicou zero cadastros de teste restantes.

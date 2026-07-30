@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `7c51ba3`
-- **Deploy Vercel:** `dpl_Dgj8cj88ZrGzRtYQAVr3sMcRhrjj`
+- **Commit validado:** `ddc776e`
+- **Deploy Vercel:** `dpl_HNsmDNwndycFKqhABsCypngCLADE`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 
@@ -16,6 +16,10 @@
 - confirmação de seletor sem suporte a múltiplos arquivos;
 - seleção local da EFD fictícia;
 - entradas de R$ 15.500,00 e saídas de R$ 27.000,00;
+- evolução temporal com quatro datas;
+- concentração dos três maiores clientes e fornecedores;
+- inventário de R$ 22.000,00 no Bloco H;
+- ICMS a recolher de R$ 1.080,00 reproduzido do E110;
 - exportação CSV;
 - botão de nova análise e remoção do painel anterior;
 - viewport desktop;
@@ -45,5 +49,5 @@ fiscal. O arquivo foi fornecido diretamente ao elemento local e processado no na
 - [dashboard desktop](dashboard-desktop-vercel.png)
 - [dashboard móvel](dashboard-mobile-vercel.png)
 
-Os sete cadastros sintéticos criados pelos testes foram excluídos após a validação. Nenhum
-dado de usuário real foi removido.
+Os dez cadastros sintéticos encontrados após as execuções foram excluídos ao final. Nenhum
+dado de usuário real foi removido, e a consulta final retornou zero cadastros de teste.

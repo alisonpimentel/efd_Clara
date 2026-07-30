@@ -16,7 +16,8 @@ validação cadastral e exportação.
 
 Três testes de ponta a ponta também foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
-inspeção dos corpos de requisição. Nenhum registro fiscal foi transmitido.
+inspeção dos corpos de requisição. A execução pública percorreu ainda as abas de
+concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
 testes unitários: 14
@@ -27,6 +28,11 @@ falhas: 0
 
 O lint e o build de produção também foram concluídos. O build abrange a página principal,
 metodologia, privacidade, área administrativa e três rotas de API.
+
+Durante a ampliação do teste E2E, dois seletores iniciais foram corrigidos: um procurava
+texto da aba anterior e outro encontrava duas ocorrências legítimas do mesmo valor de
+inventário. As correções tornaram o teste específico para o componente esperado; não foi
+identificado defeito nos cálculos ou na interface.
 
 ## Evidência quantitativa
 
