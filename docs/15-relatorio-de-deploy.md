@@ -39,18 +39,27 @@ provisionado com o identificador de plano `free_v3`, na região de São Paulo, e
 a produção, preview e desenvolvimento. Nenhum plano pago foi selecionado e nenhum cartão
 foi cadastrado por esta execução.
 
-## Evidências pendentes
+## Publicação validada
 
-Após a aceitação e publicação, registrar:
+- **URL de produção:** https://efd-clara.vercel.app
+- **Deploy:** `dpl_Dgj8cj88ZrGzRtYQAVr3sMcRhrjj`
+- **Commit:** `7c51ba3`
+- **Status:** Ready
+- **Testes públicos:** 3 E2E aprovados
+- **Desktop:** aprovado
+- **Celular 375 × 812 px:** aprovado
+- **CSV e nova análise:** aprovados
+- **Inspeção de rede:** nenhum registro fiscal em corpos enviados
+- **SEO técnico:** página, robots e sitemap respondendo
+- **Área administrativa:** configuração protegida e relatório redirecionado para login
 
-- URL de produção;
-- identificador do deploy;
-- commit publicado;
-- resultado do cadastro;
-- teste responsivo;
-- exportações;
-- inspeção de rede;
-- confirmação de ausência de conteúdo fiscal no backend;
-- confirmação dos planos Hobby e Free.
+As capturas e o protocolo estão em [evidências](evidencias/README.md).
 
-Não considerar esta seção encerrada antes desses testes.
+## Pendência deliberada
+
+A conta definitiva de administrador ainda não foi criada, pois o proprietário solicitou
+informar pessoalmente o CPF e a senha ao final. A tela `/admin/configurar` está pronta e
+protegida pela credencial temporária local. Depois da criação única, o acesso ocorrerá em
+`/admin/login`.
+
+Os cadastros sintéticos dos testes foram removidos do banco após a validação.
