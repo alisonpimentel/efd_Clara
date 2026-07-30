@@ -17,7 +17,7 @@
 | arquivo demonstrativo | identificado como fictício |
 | `npm install` | concluído |
 | `npm run lint` | aprovado |
-| `npm run test` | 14 testes aprovados, zero falhas |
+| `npm run test` | 17 testes aprovados, zero falhas |
 | `npm run test:e2e` | 3 testes aprovados, zero falhas |
 | `npm run build` | concluído |
 | auditoria de dependências de produção | zero vulnerabilidades |
@@ -35,6 +35,9 @@
 - gráficos responsivos fundamentados em Few, IBCS e Knaflic.
 - conferência inicial pelos registros 0000, 0005 e 0100, com CPF do contabilista
   mascarado e ausente do CSV.
+- detecção local de UTF-8 ou Windows-1252 para preservar descrições acentuadas;
+- contenção de nomes extensos e reorganização de painéis com alturas variáveis;
+- cobertura C170 por direção e documentos fora da competência na área de qualidade.
 
 ## Situação do deploy
 
@@ -46,18 +49,20 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_JAu9gJamCLxYbA43v3ouAmxWH3HY`
-- **Commit:** `3175eaf`
+- **Deploy:** `dpl_HLNBBvF9f6orYRkTeSX8E9v5i6Cf`
+- **Commit:** `1d60686`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
+- **Codificação Windows-1252 e nomes extensos:** aprovados
 - **CSV e nova análise:** aprovados
 - **Novas abas:** curvas ABC, abrangência por CFOP, valor médio unitário, distribuição
   semanal, cancelamentos e indicadores descritivos de ICMS aprovados
 - **Identificação:** entidade, competência, endereço e contabilista aprovados
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
+- **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
 - **Área administrativa:** configuração protegida e relatório redirecionado para login
 
@@ -70,6 +75,5 @@ informar pessoalmente o CPF e a senha ao final. A tela `/admin/configurar` está
 protegida pela credencial temporária local. Depois da criação única, o acesso ocorrerá em
 `/admin/login`.
 
-Na rodada desta evolução, os seis cadastros sintéticos encontrados após as execuções
-locais e públicas foram removidos; a verificação final indicou zero cadastros de teste
-restantes.
+Na rodada desta evolução, os cadastros sintéticos gerados pelas execuções locais e
+públicas foram removidos; a verificação final indicou zero cadastros de teste restantes.
