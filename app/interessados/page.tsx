@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ensureDatabaseSchema, getDb } from "../../db";
 import { isProjectOwner } from "../../lib/server/owner-access";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +15,8 @@ type InterestedRow = {
   name: string;
   email: string;
   interest: string;
-  communications_consent: number;
-  created_at: string;
+  communications_consent: boolean;
+  created_at: Date | string;
 };
 
 const profileLabels: Record<string, string> = {
@@ -28,24 +28,13 @@ const profileLabels: Record<string, string> = {
 };
 
 async function loadInterestedPeople() {
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS interested_people (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      interest TEXT NOT NULL,
-      privacy_consent INTEGER NOT NULL,
-      communications_consent INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )`,
-  ).run();
-  const result = await env.DB.prepare(
-    `SELECT id, name, email, interest, communications_consent, created_at
-     FROM interested_people
-     ORDER BY created_at DESC`,
-  ).all<InterestedRow>();
-  return result.results;
+  await ensureDatabaseSchema();
+  const sql = getDb();
+  return await sql`
+    SELECT id, name, email, interest, communications_consent, created_at
+    FROM interested_people
+    ORDER BY created_at DESC
+  ` as InterestedRow[];
 }
 
 export default async function InterestedPage() {
@@ -71,7 +60,7 @@ export default async function InterestedPage() {
     return totals;
   }, {});
   const communications = people.filter(
-    (person) => person.communications_consent === 1,
+    (person) => person.communications_consent,
   ).length;
 
   return (
@@ -138,7 +127,7 @@ export default async function InterestedPage() {
                   <td>{person.email}</td>
                   <td>{profileLabels[person.interest] ?? person.interest}</td>
                   <td>{person.communications_consent ? "Sim" : "Não"}</td>
-                  <td>{new Date(`${person.created_at}Z`).toLocaleString("pt-BR")}</td>
+                  <td>{new Date(person.created_at).toLocaleString("pt-BR")}</td>
                 </tr>
               ))}
             </tbody>
@@ -148,4 +137,3 @@ export default async function InterestedPage() {
     </main>
   );
 }
-

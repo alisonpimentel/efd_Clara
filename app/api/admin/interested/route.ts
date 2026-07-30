@@ -1,12 +1,12 @@
-import { env } from "cloudflare:workers";
+import { ensureDatabaseSchema, getDb } from "../../../../db";
 import { isProjectOwner } from "../../../../lib/server/owner-access";
 
 type InterestedExportRow = {
   name: string;
   email: string;
   interest: string;
-  communications_consent: number;
-  created_at: string;
+  communications_consent: boolean;
+  created_at: Date | string;
 };
 
 function csvCell(value: string | number) {
@@ -18,19 +18,21 @@ export async function GET() {
     return Response.json({ error: "Acesso não autorizado." }, { status: 403 });
   }
 
-  const result = await env.DB.prepare(
-    `SELECT name, email, interest, communications_consent, created_at
-     FROM interested_people
-     ORDER BY created_at DESC`,
-  ).all<InterestedExportRow>();
+  await ensureDatabaseSchema();
+  const sql = getDb();
+  const result = await sql`
+    SELECT name, email, interest, communications_consent, created_at
+    FROM interested_people
+    ORDER BY created_at DESC
+  ` as InterestedExportRow[];
   const rows = [
     ["nome", "email", "perfil", "aceitou_novidades", "data_cadastro"],
-    ...result.results.map((person) => [
+    ...result.map((person) => [
       person.name,
       person.email,
       person.interest,
       person.communications_consent ? "sim" : "não",
-      person.created_at,
+      new Date(person.created_at).toISOString(),
     ]),
   ];
   const csv = `\uFEFF${rows.map((row) => row.map(csvCell).join(";")).join("\r\n")}`;
@@ -43,4 +45,3 @@ export async function GET() {
     },
   });
 }
-

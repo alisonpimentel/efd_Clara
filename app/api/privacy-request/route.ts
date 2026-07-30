@@ -1,18 +1,6 @@
-import { env } from "cloudflare:workers";
+import { ensureDatabaseSchema, getDb } from "../../../db";
 
 const REQUEST_TYPES = new Set(["access", "correction", "deletion", "revoke"]);
-
-async function ensureTable() {
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS privacy_requests (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL,
-      request_type TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )`,
-  ).run();
-}
 
 export async function POST(request: Request) {
   try {
@@ -32,12 +20,12 @@ export async function POST(request: Request) {
       return Response.json({ error: "Selecione uma solicitação válida." }, { status: 400 });
     }
 
-    await ensureTable();
-    await env.DB.prepare(
-      "INSERT INTO privacy_requests (email, request_type) VALUES (?, ?)",
-    )
-      .bind(email, requestType)
-      .run();
+    const sql = getDb();
+    await ensureDatabaseSchema();
+    await sql`
+      INSERT INTO privacy_requests (email, request_type)
+      VALUES (${email}, ${requestType})
+    `;
     return Response.json({ ok: true }, { status: 201 });
   } catch {
     return Response.json(
@@ -46,4 +34,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

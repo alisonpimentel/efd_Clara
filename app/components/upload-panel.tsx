@@ -1,8 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
-
-const MAX_FILE_SIZE = 8 * 1024 * 1024;
+import { validateSpedSelection } from "../../lib/sped/file-validation";
 
 type UploadPanelProps = {
   onAnalyze: (text: string, fileName: string) => Promise<void>;
@@ -14,32 +13,30 @@ export function UploadPanel({ onAnalyze, error }: UploadPanelProps) {
   const [dragActive, setDragActive] = useState(false);
   const [localError, setLocalError] = useState("");
 
-  async function validateAndRead(file: File) {
+  async function validateAndRead(files: FileList | File[]) {
     setLocalError("");
-    if (file.size > MAX_FILE_SIZE) {
-      setLocalError("O arquivo ultrapassa o limite de 8 MB.");
-      return;
-    }
-    if (!file.name.toLowerCase().endsWith(".txt")) {
-      setLocalError("Selecione um arquivo TXT da EFD ICMS/IPI.");
+    const validation = validateSpedSelection(files);
+    if (!validation.ok) {
+      setLocalError(validation.error);
       return;
     }
 
+    const file = files[0] as File;
     const text = await file.text();
     if (inputRef.current) inputRef.current.value = "";
     await onAnalyze(text, file.name);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (file) void validateAndRead(file);
+    const files = event.target.files;
+    if (files?.length) void validateAndRead(files);
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setDragActive(false);
-    const file = event.dataTransfer.files?.[0];
-    if (file) void validateAndRead(file);
+    const files = event.dataTransfer.files;
+    if (files.length) void validateAndRead(files);
   }
 
   async function loadExample() {
@@ -128,4 +125,3 @@ export function UploadPanel({ onAnalyze, error }: UploadPanelProps) {
     </section>
   );
 }
-

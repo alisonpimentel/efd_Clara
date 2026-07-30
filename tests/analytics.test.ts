@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { parseSped } from "../lib/sped/parser";
+import { dashboardToCsv } from "../lib/sped/export";
 import { buildDashboard } from "../lib/sped/sqlite-analytics";
 
 describe("indicadores gerados em SQLite temporário", () => {
@@ -21,6 +22,11 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.topSoldProducts[0]?.label, "CAFE TORRADO 500G");
     assert.equal(dashboard.cfopRanking[0]?.label, "5102");
     assert.equal(dashboard.technical.engine, "SQLite temporário em memória");
+
+    const csv = dashboardToCsv(dashboard);
+    assert.match(csv, /Total de entradas/);
+    assert.match(csv, /15500\.00/);
+    assert.match(csv, /MERCADO NOVO DIA LTDA/);
   });
 
   it("mantém valores zerados quando o arquivo não possui movimento válido", async () => {
@@ -39,4 +45,3 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.averageTicket, 0);
   });
 });
-
