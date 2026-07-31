@@ -88,9 +88,14 @@ export function EfdClaraApp() {
             <small>BI fiscal em linguagem simples</small>
           </span>
         </Link>
-        <div className="topbar-note">
-          <span className="privacy-dot" aria-hidden="true" />
-          Seu arquivo fica no seu navegador
+        <div className="topbar-links">
+          <Link className="mode-link" href="/integrada">
+            Análise integrada
+          </Link>
+          <div className="topbar-note">
+            <span className="privacy-dot" aria-hidden="true" />
+            Seu arquivo fica no seu navegador
+          </div>
         </div>
       </header>
 

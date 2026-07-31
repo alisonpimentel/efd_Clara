@@ -5,9 +5,13 @@ import Link from "next/link";
 
 type RegistrationGateProps = {
   onRegistered: () => void;
+  variant?: "single" | "integrated";
 };
 
-export function RegistrationGate({ onRegistered }: RegistrationGateProps) {
+export function RegistrationGate({
+  onRegistered,
+  variant = "single",
+}: RegistrationGateProps) {
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -50,15 +54,23 @@ export function RegistrationGate({ onRegistered }: RegistrationGateProps) {
       <section className="hero">
         <div className="hero-copy">
           <p className="eyebrow">Protótipo acadêmico · acesso gratuito</p>
-          <h1>Seu arquivo fiscal, finalmente em linguagem de negócio.</h1>
+          <h1>
+            {variant === "integrated"
+              ? "Duas escriturações, uma visão empresarial."
+              : "Seu arquivo fiscal, finalmente em linguagem de negócio."}
+          </h1>
           <p className="hero-lead">
-            Transforme uma EFD ICMS/IPI em uma leitura visual de compras, saídas,
-            clientes, fornecedores e produtos — sem instalar nada e sem enviar o
-            arquivo para a internet.
+            {variant === "integrated"
+              ? "Cruze uma EFD ICMS/IPI com a EFD-Contribuições da mesma competência para enxergar movimentação, tributos, conciliação e qualidade — sem enviar os arquivos para a internet."
+              : "Transforme uma EFD ICMS/IPI em uma leitura visual de compras, saídas, clientes, fornecedores e produtos — sem instalar nada e sem enviar o arquivo para a internet."}
           </p>
           <div className="trust-row" aria-label="Características do produto">
-            <span>1 arquivo por análise</span>
-            <span>Até 8 MB</span>
+            <span>
+              {variant === "integrated"
+                ? "2 arquivos por análise"
+                : "1 arquivo por análise"}
+            </span>
+            <span>{variant === "integrated" ? "Até 8 MB cada" : "Até 8 MB"}</span>
             <span>Processamento local</span>
           </div>
         </div>
@@ -137,15 +149,25 @@ export function RegistrationGate({ onRegistered }: RegistrationGateProps) {
           <li>
             <span>01</span>
             <div>
-              <strong>Escolha a EFD</strong>
-              <p>Um arquivo TXT da EFD ICMS/IPI, com até 8 MB.</p>
+              <strong>
+                {variant === "integrated" ? "Escolha as duas EFDs" : "Escolha a EFD"}
+              </strong>
+              <p>
+                {variant === "integrated"
+                  ? "Uma EFD ICMS/IPI e uma EFD-Contribuições da mesma competência."
+                  : "Um arquivo TXT da EFD ICMS/IPI, com até 8 MB."}
+              </p>
             </div>
           </li>
           <li>
             <span>02</span>
             <div>
               <strong>Analise localmente</strong>
-              <p>O navegador organiza os registros em uma base temporária.</p>
+              <p>
+                {variant === "integrated"
+                  ? "O navegador valida o estabelecimento e concilia documentos e itens."
+                  : "O navegador organiza os registros em uma base temporária."}
+              </p>
             </div>
           </li>
           <li>

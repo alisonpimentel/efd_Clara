@@ -3,6 +3,10 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 const samplePath = path.resolve("public/exemplo-efd.txt");
+const contributionsSamplePath = path.resolve(
+  "public/exemplo-efd-contribuicoes.txt",
+);
+const integratedEstablishment = "12345678000195";
 
 async function register(page: Page, suffix: string) {
   await page.goto("/");
@@ -151,6 +155,63 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
   expect(requests.some((request) => request.url.includes("/api/interested"))).toBe(
     true,
   );
+});
+
+test("análise integrada preserva privacidade, fontes e estados verdadeiros", async ({
+  page,
+}) => {
+  const requests: Array<{ url: string; method: string; body: string }> = [];
+  page.on("request", (request) => {
+    requests.push({
+      url: request.url(),
+      method: request.method(),
+      body: request.postData() ?? "",
+    });
+  });
+
+  await register(page, `integrada-${Date.now()}`);
+  await page.goto("/integrada");
+  await expect(
+    page.getByRole("heading", {
+      name: "Duas escriturações, uma visão coerente.",
+    }),
+  ).toBeVisible();
+
+  const inputs = page.locator(".integrated-file-slot input[type=file]");
+  await expect(inputs).toHaveCount(2);
+  await inputs.nth(0).setInputFiles(samplePath);
+  await inputs.nth(1).setInputFiles(contributionsSamplePath);
+  await page
+    .getByRole("button", { name: "Validar e cruzar os arquivos" })
+    .click();
+
+  await expect(
+    page.getByRole("heading", { name: "COMERCIO DEMONSTRACAO LTDA" }),
+  ).toBeVisible();
+  await expect(page.getByText("R$ 15.500,00", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("R$ 27.000,00", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("R$ 5.100,00", { exact: true })).toBeVisible();
+  await expect(page.getByText("R$ 189,75", { exact: true })).toBeVisible();
+  await expect(page.getByText("R$ 874,00", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("region", {
+      name: "Quanto das duas fontes pôde ser ligado?",
+    }),
+  ).toContainText("80%");
+  await expect(
+    page.getByRole("region", {
+      name: "O que exige atenção antes de interpretar?",
+    }),
+  ).toContainText("Chaves eletrônicas informadas e inválidas");
+
+  const fiscalPosts = requests.filter(
+    (request) =>
+      request.method === "POST" &&
+      (request.body.includes("|0000|") ||
+        request.body.includes("|C100|") ||
+        request.body.includes(integratedEstablishment)),
+  );
+  expect(fiscalPosts).toEqual([]);
 });
 
 test("interface permanece utilizável em celular", async ({ browser }, testInfo) => {

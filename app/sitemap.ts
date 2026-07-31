@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://efd-clara.vercel.app";
-  const lastModified = new Date("2026-07-30T00:00:00-03:00");
+  const lastModified = new Date("2026-07-31T00:00:00-03:00");
 
   return [
     {
@@ -10,6 +10,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly",
       priority: 1,
+    },
+    {
+      url: `${siteUrl}/integrada`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${siteUrl}/metodologia`,
