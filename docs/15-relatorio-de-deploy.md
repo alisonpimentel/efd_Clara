@@ -17,7 +17,7 @@
 | arquivo demonstrativo | identificado como fictício |
 | `npm install` | concluído |
 | `npm run lint` | aprovado |
-| `npm run test` | 18 testes aprovados, zero falhas |
+| `npm run test` | 21 testes aprovados, zero falhas |
 | `npm run test:e2e` | 3 testes aprovados, zero falhas |
 | `npm run build` | concluído |
 | auditoria de dependências de produção | zero vulnerabilidades |
@@ -40,6 +40,8 @@
 - separação entre `DT_DOC` e `DT_E_S`, usando a data de entrada/saída como referência;
 - disponibilidade C170 por direção, sem apresentá-la como nota de qualidade;
 - distinção entre NF-e/NFC-e própria sem C170 e outras ausências de itens.
+- validação do registro `0000` antes do parser, recusando EFD-Contribuições e outros
+  módulos SPED incompatíveis.
 
 ## Situação do deploy
 
@@ -51,8 +53,8 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_6tRie9ZGkbVCR3UKbnvQ3z8SZMe3`
-- **Commit:** `9c979e3`
+- **Deploy:** `dpl_AxrHyS3y2EY1UKUqkM4EebYH1T4v`
+- **Commit:** `2e4ddfa`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
@@ -65,6 +67,8 @@ foi cadastrado por esta execução.
 - **Datas:** emissão anterior preservada e `DT_E_S` usada na competência quando disponível
 - **C170:** ausência nas saídas de emissão própria explicada como limite da análise por
   produto, sem reduzir uma nota de qualidade
+- **Módulo SPED:** EFD-Contribuições recusada antes da leitura dos campos e EFD ICMS/IPI
+  válida processada na sequência
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado

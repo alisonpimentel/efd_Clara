@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `9c979e3`
-- **Deploy Vercel:** `dpl_6tRie9ZGkbVCR3UKbnvQ3z8SZMe3`
+- **Commit validado:** `2e4ddfa`
+- **Deploy Vercel:** `dpl_AxrHyS3y2EY1UKUqkM4EebYH1T4v`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 
@@ -32,6 +32,8 @@
 - emissão anterior escriturada no período apresentada como contexto, não como erro;
 - disponibilidade de C170 por direção, distinguindo emissão própria eletrônica;
 - mensagem explícita de que C170 não é uma nota de qualidade;
+- recusa preventiva de EFD-Contribuições antes de interpretar razão social, competência
+  e documentos;
 - exportação CSV;
 - botão de nova análise e remoção do painel anterior;
 - viewport desktop;
@@ -63,6 +65,7 @@ fiscal. O arquivo foi fornecido diretamente ao elemento local e processado no na
 - [curva ABC de clientes e abrangência por CFOP — produção](dashboard-clientes-abc-vercel.png)
 - [curva ABC de produtos e valor médio por unidade — produção](dashboard-produtos-abc-vercel.png)
 - [indicadores de ICMS e limites — produção](dashboard-icms-vercel.png)
+- [recusa de EFD-Contribuições — produção](layout-incompativel-vercel.png)
 - [recusa de EFD-Contribuições — validação local](layout-incompativel-local.png)
 - [dashboard móvel com disponibilidade C170 — validação local](dashboard-mobile-local.png)
 - [curva ABC de clientes e abrangência por CFOP — validação local](dashboard-clientes-abc-local.png)
@@ -73,5 +76,6 @@ As capturas marcadas como produção foram geradas pelo teste E2E contra
 `https://efd-clara.vercel.app`. As capturas locais registram a etapa anterior e permitem
 comparar o mesmo artefato antes e depois da publicação.
 
-Os seis cadastros sintéticos encontrados nesta rodada foram excluídos ao final. Nenhum
+Os oito cadastros sintéticos encontrados nas rodadas local e pública desta evolução foram
+excluídos ao final. Nenhum
 dado de usuário real foi removido, e a consulta final retornou zero cadastros de teste.
