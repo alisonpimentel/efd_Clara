@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `3175eaf`
-- **Deploy Vercel:** `dpl_JAu9gJamCLxYbA43v3ouAmxWH3HY`
+- **Commit validado:** `9c979e3`
+- **Deploy Vercel:** `dpl_6tRie9ZGkbVCR3UKbnvQ3z8SZMe3`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 
@@ -28,6 +28,10 @@
 - 100% das entradas C190 com ICMS informado e indicador aparente de 4%;
 - razão social, fantasia, competência, endereço e contabilista extraídos;
 - CPF do contabilista mascarado na tela e ausente do CSV;
+- separação entre data de emissão e data de entrada/saída;
+- emissão anterior escriturada no período apresentada como contexto, não como erro;
+- disponibilidade de C170 por direção, distinguindo emissão própria eletrônica;
+- mensagem explícita de que C170 não é uma nota de qualidade;
 - exportação CSV;
 - botão de nova análise e remoção do painel anterior;
 - viewport desktop;

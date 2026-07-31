@@ -17,7 +17,7 @@
 | arquivo demonstrativo | identificado como fictício |
 | `npm install` | concluído |
 | `npm run lint` | aprovado |
-| `npm run test` | 17 testes aprovados, zero falhas |
+| `npm run test` | 18 testes aprovados, zero falhas |
 | `npm run test:e2e` | 3 testes aprovados, zero falhas |
 | `npm run build` | concluído |
 | auditoria de dependências de produção | zero vulnerabilidades |
@@ -37,7 +37,9 @@
   mascarado e ausente do CSV.
 - detecção local de UTF-8 ou Windows-1252 para preservar descrições acentuadas;
 - contenção de nomes extensos e reorganização de painéis com alturas variáveis;
-- cobertura C170 por direção e documentos fora da competência na área de qualidade.
+- separação entre `DT_DOC` e `DT_E_S`, usando a data de entrada/saída como referência;
+- disponibilidade C170 por direção, sem apresentá-la como nota de qualidade;
+- distinção entre NF-e/NFC-e própria sem C170 e outras ausências de itens.
 
 ## Situação do deploy
 
@@ -49,8 +51,8 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_HLNBBvF9f6orYRkTeSX8E9v5i6Cf`
-- **Commit:** `1d60686`
+- **Deploy:** `dpl_6tRie9ZGkbVCR3UKbnvQ3z8SZMe3`
+- **Commit:** `9c979e3`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
@@ -60,11 +62,16 @@ foi cadastrado por esta execução.
 - **Novas abas:** curvas ABC, abrangência por CFOP, valor médio unitário, distribuição
   semanal, cancelamentos e indicadores descritivos de ICMS aprovados
 - **Identificação:** entidade, competência, endereço e contabilista aprovados
+- **Datas:** emissão anterior preservada e `DT_E_S` usada na competência quando disponível
+- **C170:** ausência nas saídas de emissão própria explicada como limite da análise por
+  produto, sem reduzir uma nota de qualidade
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
 - **Área administrativa:** configuração protegida e relatório redirecionado para login
+- **Build público:** concluído em 16 segundos; aviso não bloqueante sobre atualização
+  futura da versão principal do Node.js
 
 As capturas e o protocolo estão em [evidências](evidencias/README.md).
 
