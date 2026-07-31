@@ -322,3 +322,28 @@
   contém somente empresa e documentos fictícios.
 - **Uso no TCC:** avaliação do artefato por cenário negativo, gestão de escopo, qualidade
   semântica e prevenção de erro de entrada.
+
+## D28 - Separar disponibilidade total e cobertura elegível do C170
+
+- **Problema observado:** a tela mostrava 81 de 279 entradas com C170 (29%) e 0 de 1.294
+  saídas (0%), embora as ausências restantes fossem classificadas como geralmente
+  esperadas por se tratarem de emissão própria.
+- **Risco de interpretação:** o usuário poderia ler 29% e 0% como falha de qualidade ou
+  tentar elevar artificialmente o resultado a 100%.
+- **Alternativas consideradas:** ocultar o percentual; alterar o denominador sem explicar;
+  exibir apenas 100%; manter somente o percentual geral; integrar XML/ERP.
+- **Escolha:** conservar a disponibilidade total e acrescentar a cobertura entre
+  documentos elegíveis. O denominador elegível exclui NF-e/NFC-e própria sem C170. Quando
+  esse denominador é zero, o resultado é `não aplicável`.
+- **Fórmulas:** disponibilidade total = documentos com C170 / documentos ativos;
+  cobertura elegível = documentos com C170 / (documentos ativos - emissões próprias
+  eletrônicas sem C170).
+- **Resultado observado:** entradas com 29% de disponibilidade total e 100% de cobertura
+  elegível; saídas com 0% de disponibilidade total e cobertura elegível não aplicável.
+- **Limite:** a regra não substitui legislação estadual, PVA, XML, ERP ou avaliação
+  profissional. Cobertura elegível de 100% não significa detalhamento de 100% das
+  operações.
+- **Validação:** testes dos denominadores, CSV, cenário móvel com denominador zero,
+  inspeção visual e fluxo completo.
+- **Uso no TCC:** construção responsável de indicadores, tratamento de denominador nulo e
+  prevenção de comunicação enganosa em BI.

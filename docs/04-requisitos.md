@@ -20,6 +20,7 @@
 | RF14 | Consultar interessados | Somente o proprietário autenticado acessa resumo, lista e CSV |
 | RF15 | Conferir identificação | Razão social, competência, endereço e contabilista aparecem antes dos indicadores |
 | RF16 | Validar o módulo SPED | Somente o leiaute da EFD ICMS/IPI segue para o parser; EFD-Contribuições e outros módulos são recusados com orientação |
+| RF17 | Explicar disponibilidade do C170 | Mostrar percentual total, cobertura elegível e `não aplicável` quando o denominador elegível for zero |
 
 ## Requisitos não funcionais
 
@@ -49,6 +50,8 @@
 - apuração própria do ICMS reproduz o `E110`, sem recalcular o tributo;
 - inventário reproduz `H005` e `H010`, quando disponíveis;
 - ausência de `C170`, `C190`, `E110` ou `H005` gera aviso, não falha total;
+- disponibilidade total de C170 usa todos os documentos ativos; cobertura elegível
+  exclui NF-e/NFC-e própria sem C170 e não é calculada com denominador zero;
 - evolução temporal usa datas válidas do `C100`;
 - concentração considera a participação dos três maiores clientes ou fornecedores;
 - diferença entre totais `C100` e `C190` é apresentada para conciliação, não como erro

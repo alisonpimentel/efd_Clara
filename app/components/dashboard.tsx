@@ -175,12 +175,17 @@ function ItemAvailabilityRow({
       <dt>Itens C170 disponíveis nas {direction}</dt>
       <dd>
         {value.totalDocuments
-          ? `${numberFormatter.format(value.documentsWithItems)} de ${numberFormatter.format(value.totalDocuments)}`
+          ? `${numberFormatter.format(value.documentsWithItems)} de ${numberFormatter.format(value.totalDocuments)} com itens`
           : "sem documentos"}
         <small>
           {value.totalDocuments
-            ? `${percentFormatter.format(value.rate)} dos documentos permite análise por produto`
+            ? `${percentFormatter.format(value.rate)} de disponibilidade total para análise por produto`
             : "não há base para calcular disponibilidade"}
+        </small>
+        <small className="eligibility-result">
+          {value.eligibleRate === null
+            ? "Cobertura entre documentos elegíveis: não aplicável — nenhum documento no denominador"
+            : `${percentFormatter.format(value.eligibleRate)} entre documentos elegíveis (${numberFormatter.format(value.documentsWithItems)} de ${numberFormatter.format(value.eligibleDocuments)})`}
         </small>
         {value.electronicOwnIssueWithoutItems > 0 && (
           <small>
@@ -1307,10 +1312,11 @@ export function Dashboard({
             <aside className="availability-explainer" aria-label="Como interpretar o C170">
               <strong>C170 não é uma nota de qualidade.</strong>
               <p>
-                O percentual mostra somente quantos documentos possuem itens disponíveis
-                para rankings e valores unitários. Na NF-e de emissão própria, a ausência
-                do C170 pode ser prevista pelo leiaute; C100, C190 e E110 continuam
-                sustentando as análises documental e de ICMS.
+                A disponibilidade total mostra quantos documentos possuem itens. A cobertura
+                elegível exclui do denominador NF-e/NFC-e de emissão própria sem C170, cuja
+                ausência pode ser prevista pelo leiaute. Quando todos os documentos estão
+                nessa situação, a cobertura é “não aplicável”, e não 0%. C100, C190 e E110
+                continuam sustentando as análises documental e de ICMS.
               </p>
             </aside>
             <p className="quality-context">

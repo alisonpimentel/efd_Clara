@@ -16,7 +16,7 @@ validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e s
 data de emissão e data de entrada ou saída. Três desses testes verificam a identificação
 do módulo SPED antes do parser.
 
-Três fluxos de ponta a ponta, contendo seis verificações funcionais e visuais, também
+Três fluxos de ponta a ponta, contendo sete verificações funcionais e visuais, também
 foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
 inspeção dos corpos de requisição. A execução pública percorreu ainda as abas de
@@ -61,6 +61,15 @@ recorte esperado; datas nos campos 6 e 7 identificam EFD-Contribuições e geram
 orientação específica. Outros leiautes também são interrompidos. Dessa forma, o artefato
 prefere não gerar resultado a apresentar uma razão social ou competência semanticamente
 falsa.
+
+Uma terceira revisão semântica separou disponibilidade total e cobertura elegível do
+C170. No arquivo real observado, 81 de 279 entradas possuíam itens, equivalentes a 29% de
+disponibilidade total; as outras 198 eram NF-e/NFC-e próprias sem C170. Assim, a cobertura
+entre documentos elegíveis era 81 de 81, ou 100%. Nas saídas, os 1.294 documentos eram de
+emissão própria sem C170: a disponibilidade total permanecia 0%, mas a cobertura elegível
+passou a ser apresentada como não aplicável, pois o denominador era zero. Somente essas
+contagens foram utilizadas na análise; o arquivo e suas identificações não foram
+preservados.
 
 ## Evidência quantitativa
 

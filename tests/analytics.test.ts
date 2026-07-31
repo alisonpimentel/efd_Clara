@@ -49,6 +49,8 @@ describe("indicadores gerados em SQLite temporário", () => {
       rate: 1,
       electronicOwnIssueWithoutItems: 0,
       otherWithoutItems: 0,
+      eligibleDocuments: 2,
+      eligibleRate: 1,
     });
     assert.deepEqual(dashboard.quality.exitItemAvailability, {
       documentsWithItems: 2,
@@ -56,6 +58,8 @@ describe("indicadores gerados em SQLite temporário", () => {
       rate: 1,
       electronicOwnIssueWithoutItems: 0,
       otherWithoutItems: 0,
+      eligibleDocuments: 2,
+      eligibleRate: 1,
     });
     assert.equal(dashboard.customerAbc[0]?.label, "MERCADO NOVO DIA LTDA");
     assert.equal(dashboard.customerAbc[0]?.abcClass, "A");
@@ -149,6 +153,8 @@ describe("indicadores gerados em SQLite temporário", () => {
       rate: 0,
       electronicOwnIssueWithoutItems: 2,
       otherWithoutItems: 0,
+      eligibleDocuments: 0,
+      eligibleRate: null,
     });
   });
 });

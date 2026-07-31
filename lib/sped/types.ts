@@ -272,6 +272,8 @@ export type DashboardData = {
       rate: number;
       electronicOwnIssueWithoutItems: number;
       otherWithoutItems: number;
+      eligibleDocuments: number;
+      eligibleRate: number | null;
     };
     exitItemAvailability: {
       documentsWithItems: number;
@@ -279,6 +281,8 @@ export type DashboardData = {
       rate: number;
       electronicOwnIssueWithoutItems: number;
       otherWithoutItems: number;
+      eligibleDocuments: number;
+      eligibleRate: number | null;
     };
     c100C190Difference: number;
   };

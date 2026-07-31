@@ -1886,6 +1886,11 @@ summary:focus-visible,
   line-height: 1.4;
 }
 
+.quality-panel dd .eligibility-result {
+  color: var(--teal-dark);
+  font-weight: 800;
+}
+
 .availability-explainer {
   margin-top: 24px;
   padding: 18px 20px;

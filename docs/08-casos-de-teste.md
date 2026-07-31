@@ -62,6 +62,7 @@
 | CT38 | leiaute EFD ICMS/IPI | reconhecer datas nos campos 4 e 5 do registro 0000 e permitir o parser | passou |
 | CT39 | EFD-Contribuições | reconhecer datas nos campos 6 e 7, recusar o arquivo e orientar sobre o SPED Fiscal | passou |
 | CT40 | outro módulo SPED | recusar leiaute incompatível sem montar o dashboard | passou |
+| CT41 | dois denominadores do C170 | manter disponibilidade total, calcular cobertura elegível e usar `não aplicável` quando o denominador for zero | passou |
 
 Os cenários unitários são cobertos por 21 funções de teste automatizado distribuídas em
 sete suítes.
@@ -76,8 +77,9 @@ sete suítes.
 | E2E04 | abas ABC, produtos e ICMS | gráficos novos renderizados e valores esperados visíveis |
 | E2E05 | nomes longos e TXT Windows-1252 em 375 × 812 px | acentos preservados e nenhuma rolagem horizontal nas quatro áreas |
 | E2E06 | EFD-Contribuições selecionada como TXT | mensagem instrutiva e nenhum dashboard incorreto |
+| E2E07 | saída própria sem C170 | disponibilidade total de 0% e cobertura elegível `não aplicável` |
 
-As seis verificações E2E da tabela foram agrupadas em três fluxos automatizados e
+As sete verificações E2E da tabela foram agrupadas em três fluxos automatizados e
 executadas em Chrome real contra a aplicação local conectada ao banco gratuito.
 
 Uma EFD real fornecida pelo autor também foi usada para inspeção exploratória no navegador.

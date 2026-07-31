@@ -137,7 +137,7 @@ export function dashboardToCsv(data: DashboardData) {
       "Disponibilidade",
       "Itens C170 disponíveis nas entradas",
       data.quality.entryItemAvailability.rate,
-      `${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.totalDocuments} documentos | ${data.quality.entryItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.entryItemAvailability.otherWithoutItems} outro(s) sem itens`,
+      `${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.totalDocuments} documentos | cobertura elegível: ${data.quality.entryItemAvailability.eligibleRate === null ? "não aplicável" : data.quality.entryItemAvailability.eligibleRate} (${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.eligibleDocuments}) | ${data.quality.entryItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.entryItemAvailability.otherWithoutItems} outro(s) sem itens`,
     ]
       .map(escapeCsv)
       .join(";"),
@@ -145,7 +145,7 @@ export function dashboardToCsv(data: DashboardData) {
       "Disponibilidade",
       "Itens C170 disponíveis nas saídas",
       data.quality.exitItemAvailability.rate,
-      `${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.totalDocuments} documentos | ${data.quality.exitItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.exitItemAvailability.otherWithoutItems} outro(s) sem itens`,
+      `${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.totalDocuments} documentos | cobertura elegível: ${data.quality.exitItemAvailability.eligibleRate === null ? "não aplicável" : data.quality.exitItemAvailability.eligibleRate} (${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.eligibleDocuments}) | ${data.quality.exitItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.exitItemAvailability.otherWithoutItems} outro(s) sem itens`,
     ]
       .map(escapeCsv)
       .join(";"),

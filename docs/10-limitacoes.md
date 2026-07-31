@@ -9,6 +9,8 @@
   própria, modelos 55 e 65, a ausência pode ser esperada;
 - quando o C170 não está disponível, curvas ABC, mix, quantidade e valor médio por produto
   representam somente a parcela detalhada; uma visão completa pode exigir XML ou ERP;
+- cobertura elegível de 100% não significa que 100% das operações possuam itens; a
+  disponibilidade total deve ser lida em conjunto;
 - descrições e relacionamentos dependem da qualidade de 0150 e 0200;
 - um único arquivo não permite análise histórica.
 
@@ -36,6 +38,8 @@
 - concentração dos três maiores é uma pista exploratória, não um diagnóstico de risco;
 - o inventário depende da presença do Bloco H, que não aparece em todo arquivo ou período;
 - o protótipo não interpreta regras estaduais ou regimes especiais.
+- a elegibilidade do C170 é um critério metodológico do artefato, não conclusão sobre
+  obrigação ou conformidade fiscal;
 - o protótipo não realiza auditoria de combinações CFOP/CST nem emite diagnóstico fiscal.
 
 ## Limitações técnicas

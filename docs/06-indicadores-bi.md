@@ -122,9 +122,16 @@ O painel apresenta:
 
 ### Como interpretar o C170
 
-O percentual de documentos com C170 não é uma nota de qualidade da EFD. Ele informa
-apenas quanto das operações pode alimentar rankings, curva ABC, quantidade e valor médio
-por produto.
+O percentual de documentos com C170 não é uma nota de qualidade da EFD. O protótipo
+separa dois indicadores:
+
+| Indicador | Fórmula | Interpretação |
+|---|---|---|
+| disponibilidade total | documentos com C170 / documentos ativos | parcela de toda a movimentação que pode alimentar análise por produto |
+| cobertura elegível | documentos com C170 / documentos elegíveis | presença de itens após retirar do denominador NF-e/NFC-e própria sem C170 |
+
+Quando não existe nenhum documento elegível, a cobertura é apresentada como **não
+aplicável**. Mostrar 0% nesse caso sugeriria uma falha inexistente.
 
 Para NF-e ou NFC-e de emissão própria, modelos 55 e 65, a ausência de C170 pode ser
 esperada conforme as regras de escrituração do C100. O protótipo, por isso, mostra
@@ -134,6 +141,12 @@ separadamente:
 - documentos eletrônicos de emissão própria sem C170, cuja ausência é geralmente
   esperada;
 - outros documentos sem itens, que merecem conferência antes de uma análise por produto.
+
+O critério de elegibilidade é uma regra transparente do protótipo, não uma validação
+fiscal. Regras estaduais e situações específicas podem exigir análise profissional.
+Mesmo quando a cobertura elegível é 100%, a disponibilidade total pode ser baixa; isso
+significa que todos os documentos do denominador esperado possuem C170, mas não que todos
+os documentos da empresa possuem detalhamento por item.
 
 Mesmo sem C170, permanecem disponíveis as análises documentais e fiscais sustentadas por
 C100, C190 e E110. O sistema não inventa produtos nem tenta reconstruir itens a partir de

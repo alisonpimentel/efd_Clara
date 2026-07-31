@@ -209,7 +209,17 @@ test("interface permanece utilizável em celular", async ({ browser }, testInfo)
         page.locator(".quality-panel dl > div").filter({
           hasText: "Itens C170 disponíveis nas saídas",
         }),
-      ).toContainText("0 de 2");
+      ).toContainText("0 de 2 com itens");
+      await expect(
+        page.locator(".quality-panel dl > div").filter({
+          hasText: "Itens C170 disponíveis nas entradas",
+        }),
+      ).toContainText("100% entre documentos elegíveis");
+      await expect(
+        page.locator(".quality-panel dl > div").filter({
+          hasText: "Itens C170 disponíveis nas saídas",
+        }),
+      ).toContainText("não aplicável");
       await expect(page.getByText(/2 NF-e\/NFC-e de emissão própria/)).toBeVisible();
       await expect(page.getByText("C170 não é uma nota de qualidade.")).toBeVisible();
     }

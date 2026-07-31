@@ -523,12 +523,16 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         (document) =>
           document.issuer === "own" && (document.model === "55" || document.model === "65"),
       ).length;
+      const eligibleDocuments = documents.length - electronicOwnIssueWithoutItems;
       return {
         documentsWithItems: documentIdsWithItems.size,
         totalDocuments: documents.length,
         rate: documents.length > 0 ? documentIdsWithItems.size / documents.length : 0,
         electronicOwnIssueWithoutItems,
         otherWithoutItems: withoutItems.length - electronicOwnIssueWithoutItems,
+        eligibleDocuments,
+        eligibleRate:
+          eligibleDocuments > 0 ? documentIdsWithItems.size / eligibleDocuments : null,
       };
     };
     const documentsOutsideReferencePeriod = parsed.documents.filter(
