@@ -11,6 +11,7 @@ import {
   detectEfdKind,
   parseIntegratedEfd,
 } from "../lib/integrated/parser";
+import { orderIntegratedTextSources } from "../lib/integrated/source-pair";
 import { validateEfdPair } from "../lib/integrated/pair-validation";
 import { matchDocuments } from "../lib/integrated/matching";
 import { buildIntegratedOperational } from "../lib/integrated/analytics";
@@ -60,6 +61,29 @@ test("datas e chaves inválidas não são promovidas a valores válidos", () => 
 test("detecta os dois leiautes pelo registro 0000", () => {
   assert.equal(detectEfdKind(icmsText), "efd-icms-ipi");
   assert.equal(detectEfdKind(contributionsText), "efd-contribuicoes");
+});
+
+test("ordena as duas escriturações automaticamente mesmo quando selecionadas ao contrário", () => {
+  const ordered = orderIntegratedTextSources(
+    { text: contributionsText, fileName: "primeiro-contribuicoes.txt" },
+    { text: icmsText, fileName: "segundo-icms.txt" },
+  );
+  assert.equal(ordered.icms.fileName, "segundo-icms.txt");
+  assert.equal(
+    ordered.contributions.fileName,
+    "primeiro-contribuicoes.txt",
+  );
+});
+
+test("recusa dois arquivos do mesmo tipo com mensagem instrutiva", () => {
+  assert.throws(
+    () =>
+      orderIntegratedTextSources(
+        { text: icmsText, fileName: "primeiro.txt" },
+        { text: icmsText, fileName: "segundo.txt" },
+      ),
+    /Os dois arquivos foram reconhecidos como EFD ICMS\/IPI/,
+  );
 });
 
 test("parser da EFD ICMS/IPI preserva a hierarquia C100, C170 e C190", () => {

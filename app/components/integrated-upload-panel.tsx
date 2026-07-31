@@ -7,32 +7,41 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  efdKindLabel,
+  type IntegratedTextSource,
+} from "../../lib/integrated/source-pair";
+import type { EfdKind } from "../../lib/integrated/types";
 import { validateSpedSelection } from "../../lib/sped/file-validation";
 import { decodeSpedBuffer } from "../../lib/sped/text-decoder";
 
-export type IntegratedTextPair = {
-  icms: { text: string; fileName: string };
-  contributions: { text: string; fileName: string };
+type DetectedFile = {
+  file: File;
+  kind: EfdKind;
 };
 
 type Props = {
   error: string;
-  onAnalyze: (pair: IntegratedTextPair) => Promise<void>;
+  processing: boolean;
+  onAnalyze: (
+    sources: readonly [IntegratedTextSource, IntegratedTextSource],
+  ) => Promise<void>;
+  onClearError: () => void;
 };
 
 type SlotProps = {
-  kind: "icms" | "contributions";
+  slot: "A" | "B";
   title: string;
   description: string;
-  file: File | null;
-  onFile: (file: File) => void;
+  selected: DetectedFile | null;
+  onFile: (file: File) => Promise<void>;
 };
 
 function FileSlot({
-  kind,
+  slot,
   title,
   description,
-  file,
+  selected,
   onFile,
 }: SlotProps) {
   const inputId = useId();
@@ -40,7 +49,7 @@ function FileSlot({
   const [dragActive, setDragActive] = useState(false);
 
   function acceptFiles(files: FileList) {
-    if (files.length === 1) onFile(files[0]);
+    if (files.length === 1) void onFile(files[0]);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -55,15 +64,13 @@ function FileSlot({
 
   return (
     <div
-      className={`integrated-file-slot ${dragActive ? "is-dragging" : ""} ${file ? "has-file" : ""}`}
+      className={`integrated-file-slot ${dragActive ? "is-dragging" : ""} ${selected ? "has-file" : ""}`}
       onDragEnter={() => setDragActive(true)}
       onDragLeave={() => setDragActive(false)}
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
     >
-      <span className="source-pill">
-        {kind === "icms" ? "Arquivo 1" : "Arquivo 2"}
-      </span>
+      <span className="source-pill">Arquivo {slot}</span>
       <div className="mini-file-symbol" aria-hidden="true">
         TXT
       </div>
@@ -78,13 +85,15 @@ function FileSlot({
         onChange={handleChange}
       />
       <label className="secondary-button" htmlFor={inputId}>
-        {file ? "Trocar arquivo" : "Escolher arquivo"}
+        {selected ? "Trocar arquivo" : "Escolher arquivo"}
       </label>
-      {file ? (
+      {selected ? (
         <p className="selected-file" aria-live="polite">
-          <strong>Selecionado</strong>
-          <span>{file.name}</span>
-          <small>{(file.size / 1024 / 1024).toFixed(2)} MB</small>
+          <strong className="detected-file-type">
+            Reconhecido: {efdKindLabel(selected.kind)}
+          </strong>
+          <span>{selected.file.name}</span>
+          <small>{(selected.file.size / 1024 / 1024).toFixed(2)} MB</small>
         </p>
       ) : (
         <small>TXT de até 8 MB</small>
@@ -93,63 +102,102 @@ function FileSlot({
   );
 }
 
-export function IntegratedUploadPanel({ error, onAnalyze }: Props) {
-  const [icmsFile, setIcmsFile] = useState<File | null>(null);
-  const [contributionsFile, setContributionsFile] = useState<File | null>(null);
+export function IntegratedUploadPanel({
+  error,
+  processing,
+  onAnalyze,
+  onClearError,
+}: Props) {
+  const [firstFile, setFirstFile] = useState<DetectedFile | null>(null);
+  const [secondFile, setSecondFile] = useState<DetectedFile | null>(null);
   const [localError, setLocalError] = useState("");
 
-  function setValidatedFile(kind: "icms" | "contributions", file: File) {
+  async function setValidatedFile(slot: "first" | "second", file: File) {
     setLocalError("");
+    onClearError();
     const result = validateSpedSelection([file]);
     if (!result.ok) {
-      setLocalError(
-        `${kind === "icms" ? "EFD ICMS/IPI" : "EFD-Contribuições"}: ${result.error}`,
-      );
+      setLocalError(result.error);
       return;
     }
-    if (kind === "icms") setIcmsFile(file);
-    else setContributionsFile(file);
+    try {
+      const buffer = await file.arrayBuffer();
+      const [{ detectEfdKind }] = await Promise.all([
+        import("../../lib/integrated/parser"),
+      ]);
+      const detected: DetectedFile = {
+        file,
+        kind: detectEfdKind(decodeSpedBuffer(buffer).text),
+      };
+      const other = slot === "first" ? secondFile : firstFile;
+      if (slot === "first") setFirstFile(detected);
+      else setSecondFile(detected);
+      if (other?.kind === detected.kind) {
+        setLocalError(
+          `Os dois arquivos foram reconhecidos como ${efdKindLabel(detected.kind)}. Troque um deles pela outra escrituração.`,
+        );
+      }
+    } catch (cause) {
+      setLocalError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível identificar o tipo do arquivo.",
+      );
+    }
   }
 
   async function analyze() {
     setLocalError("");
-    if (!icmsFile || !contributionsFile) {
+    onClearError();
+    if (!firstFile || !secondFile) {
       setLocalError("Selecione os dois arquivos antes de iniciar.");
       return;
     }
-    const [icmsBuffer, contributionsBuffer] = await Promise.all([
-      icmsFile.arrayBuffer(),
-      contributionsFile.arrayBuffer(),
+    if (firstFile.kind === secondFile.kind) {
+      setLocalError(
+        `Os dois arquivos foram reconhecidos como ${efdKindLabel(firstFile.kind)}. Troque um deles pela outra escrituração.`,
+      );
+      return;
+    }
+    const [firstBuffer, secondBuffer] = await Promise.all([
+      firstFile.file.arrayBuffer(),
+      secondFile.file.arrayBuffer(),
     ]);
-    await onAnalyze({
-      icms: {
-        text: decodeSpedBuffer(icmsBuffer).text,
-        fileName: icmsFile.name,
+    await onAnalyze([
+      {
+        text: decodeSpedBuffer(firstBuffer).text,
+        fileName: firstFile.file.name,
       },
-      contributions: {
-        text: decodeSpedBuffer(contributionsBuffer).text,
-        fileName: contributionsFile.name,
+      {
+        text: decodeSpedBuffer(secondBuffer).text,
+        fileName: secondFile.file.name,
       },
-    });
+    ]);
   }
 
   async function loadExample() {
     setLocalError("");
+    onClearError();
     const [icmsResponse, contributionsResponse] = await Promise.all([
       fetch("/exemplo-efd.txt"),
       fetch("/exemplo-efd-contribuicoes.txt"),
     ]);
-    await onAnalyze({
-      icms: {
+    await onAnalyze([
+      {
         text: await icmsResponse.text(),
         fileName: "exemplo-efd-icms-ipi.txt",
       },
-      contributions: {
+      {
         text: await contributionsResponse.text(),
         fileName: "exemplo-efd-contribuicoes.txt",
       },
-    });
+    ]);
   }
+
+  const filesReady =
+    firstFile !== null &&
+    secondFile !== null &&
+    firstFile.kind !== secondFile.kind;
 
   return (
     <section className="upload-page integrated-upload" aria-labelledby="integrated-title">
@@ -157,25 +205,26 @@ export function IntegratedUploadPanel({ error, onAnalyze }: Props) {
         <p className="eyebrow">Análise integrada · prova de conceito</p>
         <h1 id="integrated-title">Duas escriturações, uma visão coerente.</h1>
         <p>
-          Selecione a EFD ICMS/IPI e a EFD-Contribuições da mesma competência.
-          Primeiro validamos o estabelecimento; depois conciliamos documentos e itens.
+          Selecione uma EFD ICMS/IPI e uma EFD-Contribuições da mesma
+          competência. A ordem não importa: identificamos cada tipo antes de
+          validar o estabelecimento e conciliar documentos e itens.
         </p>
       </div>
 
       <div className="integrated-file-grid">
         <FileSlot
-          kind="icms"
-          title="EFD ICMS/IPI"
-          description="Fonte operacional de compras, vendas, ICMS, IPI e inventário."
-          file={icmsFile}
-          onFile={(file) => setValidatedFile("icms", file)}
+          slot="A"
+          title="Primeiro arquivo"
+          description="Pode ser a EFD ICMS/IPI ou a EFD-Contribuições. O tipo será reconhecido automaticamente."
+          selected={firstFile}
+          onFile={(file) => setValidatedFile("first", file)}
         />
         <FileSlot
-          kind="contributions"
-          title="EFD-Contribuições"
-          description="Fonte complementar para PIS, Cofins e conciliação documental."
-          file={contributionsFile}
-          onFile={(file) => setValidatedFile("contributions", file)}
+          slot="B"
+          title="Segundo arquivo"
+          description="Selecione a outra escrituração da mesma competência, em qualquer ordem."
+          selected={secondFile}
+          onFile={(file) => setValidatedFile("second", file)}
         />
       </div>
 
@@ -189,15 +238,27 @@ export function IntegratedUploadPanel({ error, onAnalyze }: Props) {
         <button
           className="primary-button"
           type="button"
-          disabled={!icmsFile || !contributionsFile}
+          disabled={!filesReady || processing}
           onClick={() => void analyze()}
         >
-          Validar e cruzar os arquivos
+          {processing ? "Validando no navegador..." : "Validar e cruzar os arquivos"}
         </button>
-        <button className="secondary-button" type="button" onClick={() => void loadExample()}>
+        <button
+          className="secondary-button"
+          type="button"
+          disabled={processing}
+          onClick={() => void loadExample()}
+        >
           Usar demonstração fictícia
         </button>
       </div>
+
+      {processing && (
+        <p className="integrated-processing-note" role="status" aria-live="polite">
+          Lendo e validando os dois arquivos localmente. Nenhuma linha fiscal
+          está sendo enviada ao servidor.
+        </p>
+      )}
 
       <div className="privacy-explainer" aria-label="Como a análise protege os arquivos">
         <div>
@@ -225,4 +286,3 @@ export function IntegratedUploadPanel({ error, onAnalyze }: Props) {
     </section>
   );
 }
-

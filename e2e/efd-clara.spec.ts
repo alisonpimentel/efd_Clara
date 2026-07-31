@@ -179,8 +179,12 @@ test("análise integrada preserva privacidade, fontes e estados verdadeiros", as
 
   const inputs = page.locator(".integrated-file-slot input[type=file]");
   await expect(inputs).toHaveCount(2);
-  await inputs.nth(0).setInputFiles(samplePath);
-  await inputs.nth(1).setInputFiles(contributionsSamplePath);
+  await inputs.nth(0).setInputFiles(contributionsSamplePath);
+  await expect(
+    page.getByText("Reconhecido: EFD-Contribuições"),
+  ).toBeVisible();
+  await inputs.nth(1).setInputFiles(samplePath);
+  await expect(page.getByText("Reconhecido: EFD ICMS/IPI")).toBeVisible();
   await page
     .getByRole("button", { name: "Validar e cruzar os arquivos" })
     .click();

@@ -2,20 +2,19 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { IntegratedTextSource } from "../../lib/integrated/source-pair";
 import type { IntegratedAnalysis } from "../../lib/integrated/types";
 import { IntegratedDashboard } from "./integrated-dashboard";
-import {
-  IntegratedTextPair,
-  IntegratedUploadPanel,
-} from "./integrated-upload-panel";
+import { IntegratedUploadPanel } from "./integrated-upload-panel";
 import { RegistrationGate } from "./registration-gate";
 
-type Screen = "welcome" | "upload" | "processing" | "dashboard";
+type Screen = "welcome" | "upload" | "dashboard";
 
 export function IntegratedEfdApp() {
   const [screen, setScreen] = useState<Screen>("welcome");
   const [analysis, setAnalysis] = useState<IntegratedAnalysis | null>(null);
   const [error, setError] = useState("");
+  const [processing, setProcessing] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
   const mainRef = useRef<HTMLElement>(null);
 
@@ -35,23 +34,28 @@ export function IntegratedEfdApp() {
     setScreen("upload");
   }
 
-  async function analyzePair(pair: IntegratedTextPair) {
+  async function analyzePair(
+    sources: readonly [IntegratedTextSource, IntegratedTextSource],
+  ) {
     setError("");
-    setScreen("processing");
+    setProcessing(true);
     await new Promise((resolve) => window.setTimeout(resolve, 40));
     try {
       const [
         { parseIntegratedEfd },
         { validateEfdPair },
+        { orderIntegratedTextSources },
         matching,
         { buildIntegratedOperational },
       ] =
         await Promise.all([
           import("../../lib/integrated/parser"),
           import("../../lib/integrated/pair-validation"),
+          import("../../lib/integrated/source-pair"),
           import("../../lib/integrated/matching"),
           import("../../lib/integrated/analytics"),
         ]);
+      const pair = orderIntegratedTextSources(sources[0], sources[1]);
       const icms = parseIntegratedEfd(pair.icms.text, "efd-icms-ipi");
       const contributions = parseIntegratedEfd(
         pair.contributions.text,
@@ -91,6 +95,8 @@ export function IntegratedEfdApp() {
           : "Não foi possível integrar as escriturações.",
       );
       setScreen("upload");
+    } finally {
+      setProcessing(false);
     }
   }
 
@@ -98,6 +104,7 @@ export function IntegratedEfdApp() {
     setAnalysis(null);
     setFileNames([]);
     setError("");
+    setProcessing(false);
     setScreen("upload");
   }
 
@@ -132,20 +139,12 @@ export function IntegratedEfdApp() {
           <RegistrationGate variant="integrated" onRegistered={grantAccess} />
         )}
         {screen === "upload" && (
-          <IntegratedUploadPanel error={error} onAnalyze={analyzePair} />
-        )}
-        {screen === "processing" && (
-          <section className="processing-state" aria-live="polite" aria-busy="true">
-            <div className="processing-orbit" aria-hidden="true">
-              <span />
-            </div>
-            <p className="eyebrow">Processamento local</p>
-            <h1>Validando antes de conciliar...</h1>
-            <p>
-              Os dois arquivos estão sendo lidos nesta página. Nenhuma linha fiscal é
-              enviada ao servidor.
-            </p>
-          </section>
+          <IntegratedUploadPanel
+            error={error}
+            processing={processing}
+            onAnalyze={analyzePair}
+            onClearError={() => setError("")}
+          />
         )}
         {screen === "dashboard" && analysis && (
           <IntegratedDashboard

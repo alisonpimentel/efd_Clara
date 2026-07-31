@@ -9,7 +9,7 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 31 de julho de 2026, 39 testes unitários foram executados sem falhas. Eles
+Em 31 de julho de 2026, 41 testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
 validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e separação entre
@@ -23,9 +23,9 @@ inspeção dos corpos de requisição. A execução pública percorreu ainda as 
 concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes unitários: 39
+testes unitários: 41
 fluxos E2E: 4
-aprovados: 43
+aprovados: 45
 falhas: 0
 ```
 
@@ -60,6 +60,15 @@ registros.
 No teste de rede, o cadastro fictício foi a única operação `POST`. A análise integrada
 obteve apenas os exemplos públicos por `GET`; nenhuma linha `0000`, `C100`, CNPJ extraído
 ou valor fiscal foi enviado a uma API.
+
+Um relato de uso revelou que a primeira interface associava rigidamente o campo esquerdo
+à EFD ICMS/IPI e o direito à EFD-Contribuições. Selecionar os arquivos em ordem inversa
+produzia uma mensagem tecnicamente correta, porém atribuía ao usuário uma restrição que
+não era necessária ao domínio. A seleção passou a reconhecer o leiaute de cada TXT,
+mostrar o tipo identificado e ordenar as fontes antes do parser. Em teste isolado com o
+par real autorizado, a EFD-Contribuições foi selecionada primeiro e a EFD ICMS/IPI
+depois; o painel foi gerado e nenhum corpo fiscal foi transmitido. Os arquivos reais não
+foram copiados para o projeto nem incluídos na suíte reproduzível.
 
 Durante a ampliação do teste E2E, dois seletores iniciais foram corrigidos: um procurava
 texto da aba anterior e outro encontrava duas ocorrências legítimas do mesmo valor de

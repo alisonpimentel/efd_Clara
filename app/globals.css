@@ -2662,6 +2662,18 @@ summary:focus-visible,
   text-transform: uppercase;
 }
 
+.detected-file-type {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  width: fit-content;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: var(--teal-dark);
+  background: var(--mint);
+  letter-spacing: 0.02em;
+}
+
 .selected-file small {
   white-space: nowrap;
   color: var(--ink-soft);
@@ -2677,6 +2689,13 @@ summary:focus-visible,
 
 .integrated-upload-actions .primary-button:disabled {
   cursor: not-allowed;
+}
+
+.integrated-processing-note {
+  max-width: 680px;
+  margin: 14px auto 0;
+  color: var(--ink-soft);
+  text-align: center;
 }
 
 .integrated-trust-banner {

@@ -92,6 +92,7 @@ Os cenários unitários são cobertos por 38 testes automatizados.
 | E2E08 | rota `/integrada` | duas entradas, base fictícia combinada e quatro áreas do painel |
 | E2E09 | viewport integrado de 375 px | nenhum transbordamento horizontal e ações empilhadas |
 | E2E10 | rede da demonstração integrada | nenhum `POST` de análise; somente arquivos fictícios públicos obtidos por `GET` |
+| E2E11 | EFD-Contribuições escolhida antes da EFD ICMS/IPI | tipos reconhecidos, fontes reordenadas e painel gerado |
 
 As verificações da versão inicial foram agrupadas em três fluxos automatizados. A rota
 integrada também foi inspecionada em navegador real, no desktop e em viewport de 375 px.
@@ -109,6 +110,14 @@ revelou um terceiro risco: arquivos TXT de módulos diferentes usam posições d
 registro `0000`. Na EFD-Contribuições, `DT_INI` e `DT_FIN` aparecem nos campos 6 e 7;
 interpretá-la como EFD ICMS/IPI deslocava razão social, CNPJ, UF e demais dados. O caso foi
 reproduzido apenas com uma linha sintética e passou a ser recusado antes do parser.
+
+Um teste isolado posterior utilizou, sem copiá-los para o repositório, dois arquivos reais
+da mesma competência e do mesmo estabelecimento. A EFD-Contribuições foi escolhida no
+primeiro campo e a EFD ICMS/IPI no segundo, reproduzindo a ordem que antes gerava erro.
+Após a correção, os tipos foram identificados antes do parser, as fontes foram
+reordenadas internamente e o painel foi gerado. A captura de rede não registrou qualquer
+`POST` durante a análise. O conteúdo e os valores dos arquivos não foram preservados como
+evidência.
 
 ## Valores esperados da demonstração
 

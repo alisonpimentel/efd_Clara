@@ -424,3 +424,29 @@
 - **Validação:** demonstração fictícia em desktop e 375 px, sem transbordamento
   horizontal; quatro documentos exatos, um somente ICMS/IPI e zero chaves inválidas.
 - **Uso no TCC:** evolução incremental do artefato e avaliação por protótipo executável.
+
+## D34 - Identificar as fontes sem exigir ordem de seleção
+
+- **Problema observado:** ao selecionar a EFD-Contribuições no primeiro campo e a EFD
+  ICMS/IPI no segundo, a aplicação informava que o primeiro arquivo não era uma EFD
+  ICMS/IPI. Os arquivos eram válidos; a falha estava na associação rígida entre posição
+  visual e tipo de escrituração.
+- **Evidência:** os registros `0000`, `C010`, `M100`, `M500` e `E110` confirmaram os
+  módulos. Um teste isolado com os dois arquivos reais confirmou mesma competência e
+  estabelecimento exato e reproduziu a falha apenas pela ordem de escolha.
+- **Alternativas consideradas:** manter a ordem obrigatória e ampliar a instrução; trocar
+  os arquivos somente após o erro; identificar cada arquivo na seleção e ordenar as
+  fontes antes do parser.
+- **Escolha:** usar a terceira alternativa. Os campos passaram a ser `Arquivo A` e
+  `Arquivo B`; cada TXT recebe um rótulo de tipo reconhecido e a camada de domínio
+  reordena as fontes independentemente da interface.
+- **Tratamento de erro:** dois arquivos do mesmo módulo bloqueiam a ação e geram mensagem
+  específica. Arquivo sem leiaute reconhecido continua recusado. Em falhas de competência
+  ou estabelecimento, os arquivos permanecem selecionados para facilitar a correção.
+- **Privacidade:** o reconhecimento e a reordenação ocorrem no navegador. O teste real
+  não produziu `POST`, e nenhum conteúdo fiscal foi salvo no repositório ou na
+  documentação.
+- **Validação:** dois testes unitários de ordem invertida e módulo duplicado, fluxo E2E
+  reproduzível com exemplos fictícios em ordem inversa e teste isolado com o par real.
+- **Uso no TCC:** iteração do artefato orientada por evidência de uso, prevenção de erro
+  humano e separação entre semântica do domínio e posição visual dos controles.
