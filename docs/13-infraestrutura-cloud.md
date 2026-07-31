@@ -12,14 +12,24 @@ fiscal fora da infraestrutura de nuvem.
 | código | GitHub | gratuito | fonte oficial e histórico |
 | aplicação | Vercel | Hobby | HTML, JavaScript, funções mínimas e deploy |
 | cadastro | Neon | Free | interessados e solicitações de privacidade |
-| análise fiscal | navegador | local | parser, SQLite temporário e dashboard |
+| análise fiscal inicial | navegador | local | parser e SQLite temporário |
+| análise integrada | navegador | local | dois parsers, inteiros decimais, conciliação e dashboard |
 
 ## Separação dos fluxos
 
 O navegador baixa o código público pela Vercel. O formulário de interesse envia apenas
 nome, e-mail, perfil e consentimentos para a rota de cadastro. O seletor de EFD não usa
 formulário de upload: `File.text()` lê o conteúdo na própria página e o encaminha
-diretamente ao parser local.
+diretamente ao parser local. Na rota integrada, cada seletor aceita um TXT de até 8 MB e
+os dois objetos permanecem no estado da página durante a análise.
+
+## Restrição da Vercel
+
+Vercel Functions aceitam no máximo 4,5 MB no corpo da requisição ou resposta. Por isso,
+nem FastAPI nem uma rota Node.js recebe as EFDs de até 8 MB. A API continua adequada para
+o cadastro pequeno, mas fica fora do caminho fiscal.
+
+Fonte: <https://vercel.com/docs/functions/limitations>, acesso em 31 jul. 2026.
 
 ## Variáveis de ambiente
 
@@ -30,8 +40,8 @@ diretamente ao parser local.
 - `ADMIN_SESSION_SECRET`: assinatura das sessões;
 - `NEXT_PUBLIC_SITE_URL`: URL canônica pública.
 
-Nenhuma variável possui prefixo `NEXT_PUBLIC_`; portanto, não é incorporada ao código
-entregue ao navegador.
+Somente `NEXT_PUBLIC_SITE_URL` possui prefixo público e contém uma URL, não segredo. As
+demais variáveis não são incorporadas ao código entregue ao navegador.
 
 ## Controles de custo
 

@@ -45,6 +45,14 @@ SQLITE. **SQLite3 WebAssembly & JavaScript documentation**. Disponível em:
 SQLITE. **Persistent storage options**. Disponível em:
 <https://sqlite.org/wasm/doc/tip/persistence.md>. Acesso em: 30 jul. 2026.
 
+VERCEL. **Vercel Functions Limits**. Limite máximo de 4,5 MB para o corpo de entrada ou
+saída de uma Function. Disponível em:
+<https://vercel.com/docs/functions/limitations>. Acesso em: 31 jul. 2026.
+
+VERCEL. **FastAPI on Vercel**. Documentação do runtime Python e da execução de FastAPI
+como Vercel Function. Disponível em:
+<https://vercel.com/docs/frameworks/backend/fastapi>. Acesso em: 31 jul. 2026.
+
 ## Referências metodológicas e de BI
 
 FEW, Stephen. **Information Dashboard Design: Displaying Data for At-a-Glance
@@ -93,3 +101,7 @@ gestão.
 O Guia Prático define campos e regras do leiaute. Ele não deve ser usado como fonte para
 afirmar impacto empresarial. As referências de BI sustentam a organização visual; os
 resultados do protótipo devem ser citados como evidência própria do artefato.
+
+A documentação da Vercel sustenta somente a decisão de infraestrutura. O limite de
+requisição não é uma característica do SPED; ele justifica por que os arquivos de até
+8 MB permanecem no navegador na versão integrada.

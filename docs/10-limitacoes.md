@@ -12,7 +12,7 @@
 - cobertura elegível de 100% não significa que 100% das operações possuam itens; a
   disponibilidade total deve ser lida em conjunto;
 - descrições e relacionamentos dependem da qualidade de 0150 e 0200;
-- um único arquivo não permite análise histórica.
+- uma única competência combinada não permite análise histórica.
 
 ## Limitações analíticas
 
@@ -47,22 +47,34 @@
   efetivamente analisados;
 - indicadores parciais não são extrapolados para documentos sem C170, C190 ou participante
   identificado.
+- a conciliação não prova que dois registros representam juridicamente a mesma operação;
+  ela documenta uma correspondência técnica segundo as regras do protótipo;
+- EFD-Contribuições com `IND_ESCRI = 1` pode não possuir C100/C170 individualizados; nesse
+  caso, conciliação documental ou de itens pode ficar indisponível;
+- documentos presentes somente na EFD-Contribuições não são acrescentados aos totais
+  empresariais por padrão, para evitar dupla contagem sem confirmação;
+- PIS e Cofins exibidos vêm dos registros informados e não são recalculados.
 
 ## Limitações técnicas
 
-- máximo de 8 MB;
+- máximo de 8 MB para cada um dos dois arquivos da análise integrada;
 - processamento depende de navegador moderno com WebAssembly;
 - arquivo muito complexo pode consumir memória perceptível;
 - não há validação completa do leiaute;
 - a identificação preventiva diferencia o recorte pelos campos do registro `0000`, mas
   não substitui a validação oficial do PVA;
-- EFD-Contribuições, ECD, ECF e outros módulos são recusados, ainda que também sejam TXT;
+- a rota inicial recusa EFD-Contribuições; a rota integrada a aceita no campo próprio;
+  ECD, ECF e outros módulos continuam fora do escopo;
 - apenas doze registros são interpretados;
 - município é exibido pelo código IBGE informado; o protótipo não consulta serviços
   externos para converter o código em nome;
 - dados cadastrais refletem o conteúdo da EFD e não são validados em cadastros externos;
 - não há histórico nem recuperação da análise;
 - PDF depende do recurso de impressão do navegador.
+- o desempenho de duas entradas próximas de 8 MB foi medido com linhas sintéticas; arquivos
+  densos em C100/C170 podem exigir mais memória e tempo;
+- o processamento ainda ocorre na thread principal; Web Worker é evolução recomendada
+  antes de ampliar o limite ou a densidade suportada.
 
 ## Limitações metodológicas
 
@@ -83,6 +95,8 @@
 | camada gratuita mudar | média | média | arquitetura portável e ausência de arquivos em nuvem |
 | excesso de cadastros automatizados | média | baixa | validação, honeypot e futura proteção adicional |
 | promessa acadêmica superar evidência | média | alta | separar resultado técnico de impacto |
+| conciliação provável interpretada como certeza | média | alta | método, confiança e classe visíveis |
+| matriz centralizada ligar filial errada | baixa/média | alta | exigir CNPJ completo no 0140/C010 |
 
 ## Trabalhos futuros
 
@@ -93,3 +107,6 @@
 5. acrescentar comparação entre períodos somente após validar o MVP;
 6. avaliar autenticação e governança antes de qualquer histórico;
 7. realizar revisão jurídica e de segurança para uso comercial.
+8. mover parser e cálculos para Web Worker e medir pico de memória;
+9. avaliar C180/C190 consolidado sem reconstruir documentos inexistentes;
+10. validar manualmente pares reais autorizados por cenário de escrituração.

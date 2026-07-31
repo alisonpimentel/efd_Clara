@@ -18,13 +18,16 @@ resultados do painel.
 
 ## Controles implementados
 
-- seleção restrita a um arquivo TXT;
-- limite de 8 MB antes da leitura;
+- seleção restrita a um arquivo TXT por campo;
+- limite de 8 MB para cada arquivo antes da leitura;
 - decodificação UTF-8/Windows-1252 executada localmente;
 - módulo SPED validado localmente antes de interpretar os campos;
 - parser executado no componente cliente;
 - SQLite WebAssembly criado em memória e encerrado em `finally`;
 - nenhuma rota de upload fiscal;
+- validação local de competência e estabelecimento completo antes do cruzamento;
+- nenhuma raiz de CNPJ usada como identidade suficiente;
+- cálculo decimal integrado com texto canônico e `BigInt`, sem enviar valores;
 - resultado mantido somente no estado da página;
 - reinício remove o resumo anterior do estado;
 - cadastro validado no servidor e protegido por campo-armadilha;
@@ -40,7 +43,7 @@ resultados do painel.
 No deploy público, o teste deve:
 
 1. limpar a aba Network;
-2. selecionar a EFD fictícia;
+2. selecionar o par fictício de EFDs;
 3. gerar todas as áreas do painel;
 4. exportar CSV e acionar impressão;
 5. confirmar que não existe requisição contendo linhas iniciadas por `|0000|`, `|C100|`

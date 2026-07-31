@@ -371,3 +371,56 @@
   enganosa.
 - **Uso no TCC:** qualidade semântica, transparência das fórmulas, tratamento de dados
   ausentes e validade interna do artefato.
+
+## D30 - Equalizar a arquitetura com a Vercel
+
+- **Problema:** o plano inicial previa FastAPI, DuckDB nativo e dois uploads de até 8 MB.
+- **Evidência:** a documentação oficial da Vercel limita o corpo de uma Function a 4,5
+  MB, inferior ao tamanho de um único arquivo aceito pelo protótipo.
+- **Alternativas:** reduzir o limite; armazenar partes em serviço externo; depender de
+  afinidade entre funções; manter o processamento fiscal no navegador.
+- **Escolha:** preservar Next.js e executar parser, normalização e conciliação localmente.
+  A Vercel entrega os arquivos estáticos e mantém somente o backend mínimo de cadastro.
+- **Impacto:** FastAPI, Docker e disco temporário deixam de fazer parte do caminho
+  produtivo. A privacidade volta a ser verificável pela ausência de upload.
+- **Validação:** compilação Vercel-compatible, inspeção do fluxo local e logs contendo
+  apenas o `POST` do cadastro fictício, sem rota de análise.
+- **Uso no TCC:** decisão arquitetural baseada em restrição real, privacidade desde a
+  concepção e viabilidade no plano gratuito.
+
+## D31 - Integrar as escriturações sem aceitar identidade por raiz
+
+- **Problema:** a EFD-Contribuições pode ser centralizada na matriz, mas compras e vendas
+  pertencem a estabelecimentos específicos.
+- **Alternativas:** exigir CNPJ do 0000 igual; aceitar a raiz; localizar o CNPJ completo
+  em `0140` e exigir contexto `C010`.
+- **Escolha:** usar a terceira alternativa. O CNPJ do 0000 pode ser da matriz, porém o
+  estabelecimento completo da EFD ICMS/IPI precisa existir no `0140` e no `C010`.
+- **Impacto:** evita cruzar filiais diferentes e permite centralização legítima.
+- **Validação:** testes de matriz centralizadora, filial exata, raiz igual e competência
+  divergente.
+- **Uso no TCC:** qualidade da chave de integração e delimitação da unidade analisada.
+
+## D32 - Tratar conciliação como resultado graduado
+
+- **Problema:** a mesma operação pode ter chave válida, campos divergentes, identificação
+  parcial, duplicidade ou existir em apenas uma escrituração.
+- **Escolha:** adotar seis classes documentais, método explícito, confiança e bloqueio de
+  empates. Estabelecimento, direção, modelo e número são mínimos para pontuação.
+- **Prevenção de duplicidade:** cada documento é consumido no máximo uma vez; chaves
+  duplicadas e candidatos múltiplos permanecem ambíguos.
+- **Itens:** número do item, código de produto e conjunto NCM/quantidade/unidade/valor são
+  tentados em ordem; descrição não confirma automaticamente.
+- **Validação:** cenários exato, divergente, provável, somente em uma fonte e ambíguo.
+- **Uso no TCC:** explicabilidade do algoritmo, validade interna e limites do artefato.
+
+## D33 - Publicar a transformação em rota paralela
+
+- **Motivo:** a versão de uma EFD está validada em produção e não deve ser substituída
+  antes da paridade.
+- **Escolha:** criar `/integrada`, mantendo `/` como rollback funcional.
+- **Interface:** duas entradas distintas, quatro perguntas analíticas, fontes visíveis,
+  exportação agregada e linguagem não normativa.
+- **Validação:** demonstração fictícia em desktop e 375 px, sem transbordamento
+  horizontal; quatro documentos exatos, um somente ICMS/IPI e zero chaves inválidas.
+- **Uso no TCC:** evolução incremental do artefato e avaliação por protótipo executável.

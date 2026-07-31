@@ -9,28 +9,57 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os 22 testes unitários foram executados sem falhas. Eles
+Em 31 de julho de 2026, 39 testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
 validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e separação entre
 data de emissão e data de entrada ou saída. Três desses testes verificam a identificação
 do módulo SPED antes do parser.
 
-Três fluxos de ponta a ponta, contendo sete verificações funcionais e visuais, também
+Quatro fluxos de ponta a ponta, contendo verificações funcionais, visuais e de rede, também
 foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
 inspeção dos corpos de requisição. A execução pública percorreu ainda as abas de
 concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes unitários: 21
-fluxos E2E: 3
-aprovados: 24
+testes unitários: 39
+fluxos E2E: 4
+aprovados: 43
 falhas: 0
 ```
 
 O lint e o build de produção também foram concluídos. O build abrange a página principal,
-metodologia, privacidade, área administrativa e três rotas de API.
+análise integrada, metodologia, privacidade, área administrativa e rotas de API.
+
+## Resultado da evolução integrada
+
+A rota `/integrada` passou a reconhecer uma EFD ICMS/IPI e uma EFD-Contribuições,
+validar competência e CNPJ completo do estabelecimento, preservar o contexto `C010` e
+conciliar documentos e itens sem somar as duas fontes. A versão inicial permaneceu
+disponível em `/`, permitindo rollback.
+
+Na base fictícia combinada, o artefato reproduziu:
+
+- quatro documentos conciliados exatamente;
+- um documento presente somente na EFD ICMS/IPI;
+- seis itens conciliados nos quatro documentos comuns;
+- R$ 15.500,00 de compras e R$ 27.000,00 de vendas, obtidos exclusivamente da fonte
+  operacional canônica;
+- R$ 5.100,00 de ICMS nos C190 dos documentos ativos;
+- R$ 255,75 de créditos de PIS e R$ 189,75 a recolher informados;
+- R$ 1.178,00 de créditos de Cofins e R$ 874,00 a recolher informados;
+- zero chave eletrônica inválida na base corrigida;
+- os mesmos rankings, concentração, produtos e inventário da demonstração operacional.
+
+O teste sintético com duas entradas próximas de 8 MB concluiu parser, validação e
+conciliação vazia em aproximadamente 204 ms no ambiente local da execução. Esse tempo é
+evidência do caso sintético, não garantia para qualquer equipamento ou densidade de
+registros.
+
+No teste de rede, o cadastro fictício foi a única operação `POST`. A análise integrada
+obteve apenas os exemplos públicos por `GET`; nenhuma linha `0000`, `C100`, CNPJ extraído
+ou valor fiscal foi enviado a uma API.
 
 Durante a ampliação do teste E2E, dois seletores iniciais foram corrigidos: um procurava
 texto da aba anterior e outro encontrava duas ocorrências legítimas do mesmo valor de
@@ -112,6 +141,14 @@ Na base fictícia, o artefato reproduziu:
 > excluídos das análises. O protótipo também reproduziu a apuração declarada no E110 e o
 > inventário do Bloco H, sem recalcular obrigações. O processamento ocorreu no navegador e
 > o banco fiscal temporário foi encerrado após a geração do resumo.
+
+Na evolução integrada, a afirmação defensável é adicional:
+
+> O protótipo demonstrou que documentos individualizados presentes em duas escriturações
+> podem ser ligados por regras explícitas, enriquecendo a camada empresarial com PIS e
+> Cofins sem duplicar compras e vendas. Casos divergentes, prováveis, exclusivos e
+> ambíguos permanecem identificados, e a ausência de detalhamento não é convertida em
+> zero.
 
 Os indicadores adicionais confirmaram que é tecnicamente possível derivar concentração,
 abrangência por CFOP, valor médio por unidade, distribuição semanal e proporções de ICMS

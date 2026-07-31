@@ -66,9 +66,17 @@
 | CT42 | zero sem denominador | preservar total documental igual a zero, mas não calcular ticket ou taxa sem população | passou |
 | CT43 | registros opcionais ausentes | C190, E110 e C170 ausentes devem gerar `não disponível`, nunca percentuais ou valores zerados inventados | passou |
 | CT44 | participante ausente | documento permanece no total, mas não forma ranking nem concentração fictícia | passou |
+| CT45 | detecção integrada | distinguir EFD ICMS/IPI e EFD-Contribuições pelos campos do 0000 | passou |
+| CT46 | hierarquia da EFD-Contribuições | preservar C010 → C100 → C170 e quatro registros M | passou |
+| CT47 | centralização na matriz | aceitar CNPJ da matriz diferente quando o estabelecimento completo existe no 0140/C010 | passou |
+| CT48 | raiz de CNPJ | recusar filial não declarada mesmo quando a raiz é igual | passou |
+| CT49 | conciliação por chave | ligar documento e item únicos uma única vez | passou |
+| CT50 | divergência financeira | manter a identidade e classificar a diferença de total | passou |
+| CT51 | duplicidade e ambiguidade | não escolher automaticamente chaves ou itens duplicados | passou |
+| CT52 | pontuação provável | exigir estabelecimento, direção, modelo e número e registrar confiança | passou |
+| CT53 | exemplo integrado público | quatro documentos exatos, um somente ICMS/IPI e nenhuma chave inválida | passou |
 
-Os cenários unitários são cobertos por 22 funções de teste automatizado distribuídas em
-sete suítes.
+Os cenários unitários são cobertos por 38 testes automatizados.
 
 ## Testes de ponta a ponta
 
@@ -81,9 +89,13 @@ sete suítes.
 | E2E05 | nomes longos e TXT Windows-1252 em 375 × 812 px | acentos preservados e nenhuma rolagem horizontal nas quatro áreas |
 | E2E06 | EFD-Contribuições selecionada como TXT | mensagem instrutiva e nenhum dashboard incorreto |
 | E2E07 | saída própria sem C170 | disponibilidade total de 0% e cobertura elegível `não aplicável` |
+| E2E08 | rota `/integrada` | duas entradas, base fictícia combinada e quatro áreas do painel |
+| E2E09 | viewport integrado de 375 px | nenhum transbordamento horizontal e ações empilhadas |
+| E2E10 | rede da demonstração integrada | nenhum `POST` de análise; somente arquivos fictícios públicos obtidos por `GET` |
 
-As sete verificações E2E da tabela foram agrupadas em três fluxos automatizados e
-executadas em Chrome real contra a aplicação local conectada ao banco gratuito.
+As verificações da versão inicial foram agrupadas em três fluxos automatizados. A rota
+integrada também foi inspecionada em navegador real, no desktop e em viewport de 375 px.
+O cadastro fictício produziu a única chamada `POST`; a análise não possui rota de upload.
 
 Uma EFD real fornecida pelo autor também foi usada para inspeção exploratória no navegador.
 O arquivo não foi copiado para o repositório, exportado como evidência ou incluído nos
@@ -140,6 +152,8 @@ reproduzido apenas com uma linha sintética e passou a ser recusado antes do par
 | MT06 | impressão | salvar PDF e conferir cortes |
 | MT07 | rede | confirmar ausência de requisição com conteúdo fiscal |
 | MT08 | novo arquivo | gerar painel, iniciar nova análise e verificar limpeza |
+| MT09 | dois arquivos de 8 MB | medir tempo, pico de memória e responsividade em desktop e celular |
+| MT10 | conciliação real autorizada | comparar resultados com conferência manual sem preservar o conteúdo fiscal |
 
 ## Comando reproduzível
 

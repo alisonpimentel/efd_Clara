@@ -1,8 +1,9 @@
 # EFD Clara
 
-Protótipo acadêmico de Business Intelligence que transforma registros selecionados da
-EFD ICMS/IPI em indicadores gerenciais simples para pequenos empresários, contadores
-iniciantes e estudantes.
+Protótipo acadêmico de Business Intelligence para transformar registros fiscais em
+informação empresarial explicável. A versão publicada atual analisa EFD ICMS/IPI. A
+evolução disponível em `/integrada` combina EFD ICMS/IPI e EFD-Contribuições sem enviar
+os arquivos ao servidor.
 
 ## Entrega do MVP
 
@@ -30,6 +31,27 @@ iniciantes e estudantes.
 - login administrativo por CPF e senha, sem guardar o CPF ou a senha em texto;
 - sitemap, robots, metadados sociais e dados estruturados para mecanismos de busca;
 - documentação acadêmica e diário de decisões.
+
+## Evolução integrada
+
+A rota `/integrada` foi acrescentada em paralelo, sem retirar o MVP validado. Ela oferece:
+
+- uma EFD ICMS/IPI e uma EFD-Contribuições por análise, até 8 MB cada;
+- validação de competência e CNPJ completo do estabelecimento por `0140` e `C010`;
+- parser separado para os dois registros `0000`;
+- hierarquia `C010 → C100 → C170`;
+- leitura de `M100`, `M200`, `M500` e `M600`;
+- conciliação documental por chave de NF-e ou chave composta;
+- conciliação de itens com método e confiança;
+- estados explícitos de divergência, ambiguidade, indisponibilidade e não aplicabilidade;
+- fonte canônica para evitar duplicar compras e vendas;
+- quatro áreas: empresarial, tributária, conciliação e qualidade;
+- exemplo integrado totalmente fictício.
+
+A Vercel limita o corpo de uma Function a 4,5 MB. Como cada EFD pode ter 8 MB, FastAPI
+ou uma rota Node.js não recebe o conteúdo fiscal. Next.js entrega a aplicação, enquanto
+o parser e a conciliação executam no navegador. O backend continua restrito ao cadastro
+e à administração.
 
 O arquivo fiscal não é enviado ao servidor e não existe histórico de SPED. O banco
 persistente contém apenas os cadastros de interesse e solicitações de privacidade.
@@ -75,8 +97,9 @@ Consulte `docs/13-infraestrutura-cloud.md`, `docs/14-seguranca-e-privacidade.md`
 Na primeira implantação, acesse `/admin/configurar` usando as credenciais temporárias e
 crie o CPF/senha definitivos. Depois, `/admin/login` abre o relatório de interessados.
 
-O arquivo de demonstração está em `public/exemplo-efd.txt`. Todos os nomes, documentos e
-valores nele contidos são fictícios.
+Os arquivos de demonstração estão em `public/exemplo-efd.txt` e
+`public/exemplo-efd-contribuicoes.txt`. Todos os nomes, documentos e valores neles
+contidos são fictícios.
 
 ## Aviso de uso
 

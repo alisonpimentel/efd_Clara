@@ -22,23 +22,31 @@ normas de citação e às orientações recebidas.
 14. [Segurança e privacidade](14-seguranca-e-privacidade.md)
 15. [Relatório de deploy](15-relatorio-de-deploy.md)
 16. [Referencial de BI e visualização](16-referencial-bi-e-visualizacao.md)
+17. [Evolução para análise integrada](17-evolucao-integrada.md)
+18. [Modelo analítico integrado](18-modelo-analitico-integrado.md)
+19. [Dicionário de dados integrado](19-dicionario-dados-integrado.md)
+20. [Regras de conciliação](20-regras-conciliacao.md)
 
 Materiais complementares preservados:
 
 - [LGPD e ética](13-lgpd-etica.md)
 - [Referências preliminares](14-referencias.md)
 - [Roteiro de escrita do TCC](15-roteiro-tcc.md)
+- [ADR-001 — Migração evolutiva](adrs/ADR-001-migracao-evolutiva.md)
+- [ADR-002 — Processamento fiscal local na Vercel](adrs/ADR-002-processamento-local-vercel.md)
+- [ADR-003 — Fonte canônica e conciliação](adrs/ADR-003-fonte-canonica-e-conciliacao.md)
 
 ## Identidade da pesquisa
 
-- **Título provisório:** Modelagem e prototipação de um painel local de Business
-  Intelligence para análise gerencial da EFD ICMS/IPI.
+- **Título provisório:** Integração entre EFD ICMS/IPI e EFD-Contribuições para
+  inteligência empresarial: desenvolvimento de uma prova de conceito de BI fiscal.
 - **Nome do artefato:** EFD Clara.
 - **Natureza:** pesquisa aplicada, exploratória e descritiva, com desenvolvimento e
   avaliação de artefato tecnológico.
-- **Recorte:** um arquivo EFD ICMS/IPI por vez, até 8 MB, processado no navegador.
+- **Recorte:** uma EFD ICMS/IPI e uma EFD-Contribuições por análise, até 8 MB cada,
+  processadas exclusivamente no navegador.
 - **Tecnologia central:** BI sem inteligência artificial.
-- **Data-base deste dossiê:** 30 de julho de 2026.
+- **Data-base deste dossiê:** 31 de julho de 2026.
 
 ## Regras de evidência
 
