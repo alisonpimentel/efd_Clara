@@ -50,6 +50,26 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
 
   await expect(page.locator("#sped-file")).not.toHaveAttribute("multiple", "");
 
+  const contributionsSample = Buffer.from(
+    [
+      "|0000|006|0|||01042024|30042024|AGROBRASIL FRIGORIFICO LTDA|44865458000189|RS|4312401||02|0|",
+      "|C100|1|0||55|00|1|1||05042024|05042024|100,00|",
+    ].join("\n"),
+    "utf8",
+  );
+  await page.locator("#sped-file").setInputFiles({
+    name: "efd-contribuicoes.txt",
+    mimeType: "text/plain",
+    buffer: contributionsSample,
+  });
+  await expect(
+    page.getByRole("alert").filter({ hasText: "EFD-Contribuições" }),
+  ).toContainText("Selecione o TXT do SPED Fiscal");
+  await page.screenshot({
+    path: testInfo.outputPath("layout-incompativel.png"),
+    fullPage: true,
+  });
+
   await page.locator("#sped-file").setInputFiles(samplePath);
   await expect(page.getByText("R$ 15.500,00", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("R$ 27.000,00", { exact: true }).first()).toBeVisible();

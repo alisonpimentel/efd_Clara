@@ -9,22 +9,23 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os dezoito testes unitários foram executados sem falhas. Eles
+Em 30 de julho de 2026, os 21 testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
 validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e separação entre
-data de emissão e data de entrada ou saída.
+data de emissão e data de entrada ou saída. Três desses testes verificam a identificação
+do módulo SPED antes do parser.
 
-Três fluxos de ponta a ponta, contendo cinco verificações funcionais e visuais, também
+Três fluxos de ponta a ponta, contendo seis verificações funcionais e visuais, também
 foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
 inspeção dos corpos de requisição. A execução pública percorreu ainda as abas de
 concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes unitários: 18
+testes unitários: 21
 fluxos E2E: 3
-aprovados: 21
+aprovados: 24
 falhas: 0
 ```
 
@@ -51,6 +52,15 @@ falha da escrituração. A implementação passou a usar `DT_E_S` quando dispon�
 Notas eletrônicas de emissão própria sem C170 são destacadas como ausência geralmente
 esperada, enquanto outras ausências permanecem como ponto de conferência.
 Nenhum dado identificável dessa EFD foi salvo como evidência.
+
+Em uma segunda inspeção, um TXT da EFD-Contribuições foi selecionado no protótipo e teve
+seus campos iniciais deslocados, pois seu registro `0000` não possui o mesmo leiaute da
+EFD ICMS/IPI. O resultado visual permitiu localizar a causa sem copiar o arquivo real.
+Foi acrescentada uma validação anterior ao parser: datas nos campos 4 e 5 caracterizam o
+recorte esperado; datas nos campos 6 e 7 identificam EFD-Contribuições e geram uma
+orientação específica. Outros leiautes também são interrompidos. Dessa forma, o artefato
+prefere não gerar resultado a apresentar uma razão social ou competência semanticamente
+falsa.
 
 ## Evidência quantitativa
 

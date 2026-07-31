@@ -30,6 +30,8 @@ Navegador verifica tipo e limite de 8 MB
         ↓
 File.text() lê o conteúdo localmente
         ↓
+Validador confirma o leiaute EFD ICMS/IPI pelo registro 0000
+        ↓
 Parser retém apenas os registros do escopo
         ↓
 SQLite em memória recebe os dados normalizados
@@ -48,6 +50,7 @@ servidor recebem os dados do cadastro ou uma solicitação de privacidade.
 
 | Componente | Responsabilidade |
 |---|---|
+| `layout-validation.ts` | Distinguir EFD ICMS/IPI de EFD-Contribuições e outros leiautes antes do parser |
 | `parser.ts` | Ler linhas, normalizar campos e relacionar registros |
 | `sqlite-analytics.ts` | Criar banco temporário, inserir dados e consultar métricas |
 | `export.ts` | Produzir CSV e iniciar o download |
@@ -71,6 +74,7 @@ histórico”.
 ## Controles implementados
 
 - limite de arquivo verificado antes da leitura;
+- leiaute incompatível interrompido antes da interpretação dos campos;
 - nenhuma rota de upload de SPED;
 - descarte de itens e resumos ligados a documentos cancelados;
 - SQLite encerrado em bloco `finally`, inclusive em erro;

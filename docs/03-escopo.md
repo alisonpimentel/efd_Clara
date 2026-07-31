@@ -7,6 +7,7 @@
 - um arquivo TXT por análise;
 - limite máximo de 8 MB;
 - EFD ICMS/IPI;
+- identificação do leiaute pelo registro `0000` antes do processamento;
 - registros `0000`, `0005`, `0100`, `0150`, `0200`, `C100`, `C170`, `C190`,
   `E100`, `E110`, `H005` e `H010`;
 - conferência cadastral da entidade, competência e contabilista responsável;
@@ -45,7 +46,7 @@ do período nele informado. Iniciar nova análise substitui o resumo anterior.
 O MVP é considerado tecnicamente bem-sucedido quando:
 
 1. aceita um arquivo válido dentro do limite;
-2. rejeita formato ou tamanho incompatível;
+2. rejeita formato, tamanho ou módulo SPED incompatível antes de gerar indicadores;
 3. interpreta os registros selecionados;
 4. reproduz os valores esperados na base fictícia;
 5. não envia o conteúdo do arquivo a rotas de servidor;

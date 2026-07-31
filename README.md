@@ -8,6 +8,8 @@ iniciantes e estudantes.
 
 - cadastro de interesse com nome, e-mail, perfil e consentimentos separados;
 - um arquivo TXT por análise, com limite de 8 MB;
+- identificação preventiva do leiaute, recusando EFD-Contribuições, ECD e ECF antes de
+  interpretar campos;
 - leitura e processamento integral no navegador;
 - SQLite WebAssembly temporário em memória;
 - suporte aos registros `0000`, `0005`, `0100`, `0150`, `0200`, `C100`, `C170`,

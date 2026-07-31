@@ -298,3 +298,27 @@
   identificação ou conteúdo da EFD real foi gravado no repositório.
 - **Uso no TCC:** ciclo de avaliação e refinamento do artefato, qualidade semântica dos
   indicadores, transparência metodológica e limitações da fonte de dados.
+
+## D27 - Identificar o módulo SPED antes de interpretar o registro 0000
+
+- **Problema observado:** um TXT nomeado como `con` apresentou `01042024` como razão
+  social, `30042024` como CNPJ, o CNPJ real como UF e `RS` como inscrição estadual.
+- **Diagnóstico:** tratava-se de EFD-Contribuições. Nesse leiaute, `DT_INI`, `DT_FIN`,
+  `NOME`, `CNPJ` e `UF` ocupam os campos 6 a 10 do registro `0000`; na EFD ICMS/IPI, as
+  datas estão nos campos 4 e 5, seguidas pela identificação da entidade.
+- **Alternativas consideradas:** adaptar automaticamente os dois módulos; manter o
+  resultado com aviso; selecionar campos pelo nome do arquivo; exigir escolha manual do
+  tipo; recusar o módulo fora do escopo.
+- **Escolha:** validar o conteúdo do registro `0000`, sem confiar no nome do arquivo.
+  EFD-Contribuições recebe mensagem específica; ECD, ECF e outros leiautes incompatíveis
+  recebem mensagem genérica e nenhum dashboard é construído.
+- **Motivo:** incluir PIS/Cofins exigiria registros, fórmulas e fundamentação próprios,
+  ampliando indevidamente o recorte acadêmico centrado em ICMS.
+- **Impacto:** elimina uma classe de resultados semanticamente falsos e reforça a
+  delimitação do produto antes do processamento analítico.
+- **Validação:** três testes unitários de leiaute e um fluxo real de interface com linha
+  sintética de EFD-Contribuições, seguido por uma EFD ICMS/IPI válida.
+- **Privacidade:** os arquivos reais permaneceram no navegador. A reprodução automatizada
+  contém somente empresa e documentos fictícios.
+- **Uso no TCC:** avaliação do artefato por cenário negativo, gestão de escopo, qualidade
+  semântica e prevenção de erro de entrada.

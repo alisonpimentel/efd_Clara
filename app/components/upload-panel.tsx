@@ -81,7 +81,9 @@ export function UploadPanel({ onAnalyze, error }: UploadPanelProps) {
         <label className="primary-button file-button" htmlFor="sped-file">
           Escolher arquivo
         </label>
-        <small>Somente TXT · máximo de 8 MB · um arquivo por vez</small>
+        <small>
+          Somente EFD ICMS/IPI (SPED Fiscal) · TXT de até 8 MB · um arquivo por vez
+        </small>
       </div>
 
       {(localError || error) && (

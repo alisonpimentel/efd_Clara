@@ -9,6 +9,7 @@ import type {
   SpedParseResult,
   TaxAssessment,
 } from "./types";
+import { validateSpedLayout } from "./layout-validation";
 
 const SUPPORTED_RECORDS = new Set([
   "0000",
@@ -54,6 +55,9 @@ function splitSpedLine(line: string) {
 }
 
 export function parseSped(text: string): SpedParseResult {
+  const layout = validateSpedLayout(text);
+  if (!layout.ok) throw new Error(layout.error);
+
   const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
   const participants = new Map<string, Participant>();
   const products = new Map<string, Product>();

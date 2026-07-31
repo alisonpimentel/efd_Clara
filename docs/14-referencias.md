@@ -28,6 +28,12 @@ RECEITA FEDERAL DO BRASIL. **Guia Prático da EFD ICMS/IPI: versão 3.2.2**. Atu
 <https://sped.rfb.gov.br/estatico/74/D84DAAF7A4229EE5EFB705CCD7E7BA4D323CBE/Guia%20Pr%C3%A1tico%20EFD%20-%20Vers%C3%A3o%203.2.2.pdf>.
 Acesso em: 30 jul. 2026.
 
+RECEITA FEDERAL DO BRASIL. **Guia Prático da EFD-Contribuições: versão 1.35**.
+Atualização: 18 jun. 2021. Registro 0000 — abertura e identificação da pessoa jurídica.
+Disponível em:
+<https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/manuais/sped/manuais-efd-contribuicoes/versao-atual/guia_pratico_efd_contribuicoes_versao_1_35-18_06_2021.pdf>.
+Acesso em: 30 jul. 2026.
+
 RECEITA FEDERAL DO BRASIL. **Perguntas Frequentes - EFD ICMS/IPI: versão 6.2**.
 Seção 10.2: Registro 0100 - Dados do Contabilista. Disponível em:
 <https://sped.rfb.gov.br/estatico/C7/04B16D88C8CDEF005053A70D86AFC42484EC5B/Perguntas%20Frequentes%20-%206.2.pdf>.

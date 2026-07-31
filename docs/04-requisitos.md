@@ -19,6 +19,7 @@
 | RF13 | Registrar direito do titular | Solicitações de acesso, correção, exclusão e revogação são gravadas |
 | RF14 | Consultar interessados | Somente o proprietário autenticado acessa resumo, lista e CSV |
 | RF15 | Conferir identificação | Razão social, competência, endereço e contabilista aparecem antes dos indicadores |
+| RF16 | Validar o módulo SPED | Somente o leiaute da EFD ICMS/IPI segue para o parser; EFD-Contribuições e outros módulos são recusados com orientação |
 
 ## Requisitos não funcionais
 
@@ -53,3 +54,5 @@
 - diferença entre totais `C100` e `C190` é apresentada para conciliação, não como erro
   automático.
 - diferença operacional é `saídas - entradas` e nunca recebe o rótulo de lucro.
+- o registro `0000` é validado antes da interpretação: na EFD ICMS/IPI, `DT_INI` e
+  `DT_FIN` ocupam os campos 4 e 5; leiautes incompatíveis não geram dashboard.

@@ -33,7 +33,7 @@ organizacionais. Não se afirma que todo o ciclo de avaliação com usuários fo
 4. modelagem de requisitos e arquitetura;
 5. criação de base fictícia controlada;
 6. implementação incremental;
-7. testes unitários do parser;
+7. testes unitários de identificação do leiaute e do parser;
 8. testes integrados do SQLite e dos indicadores;
 9. verificação do build para hospedagem;
 10. documentação de resultados, riscos e decisões.
@@ -57,6 +57,7 @@ resultados esperados.
 ## Critérios de avaliação
 
 - correção de leitura e normalização;
+- rejeição de módulos SPED incompatíveis antes da leitura dos campos;
 - correção dos relacionamentos;
 - exclusão de cancelamentos;
 - exatidão das somas e contagens;

@@ -44,6 +44,9 @@
 - processamento depende de navegador moderno com WebAssembly;
 - arquivo muito complexo pode consumir memória perceptível;
 - não há validação completa do leiaute;
+- a identificação preventiva diferencia o recorte pelos campos do registro `0000`, mas
+  não substitui a validação oficial do PVA;
+- EFD-Contribuições, ECD, ECF e outros módulos são recusados, ainda que também sejam TXT;
 - apenas doze registros são interpretados;
 - município é exibido pelo código IBGE informado; o protótipo não consulta serviços
   externos para converter o código em nome;
