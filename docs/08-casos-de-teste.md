@@ -57,9 +57,10 @@
 | CT33 | cancelamentos por direção | 0% nas entradas e 33,3% nas saídas | passou |
 | CT34 | indicadores de ICMS | 100% das entradas C190 com ICMS informado e carga aparente de 4% | passou |
 | CT35 | codificação do TXT | preservar UTF-8 e recuperar acentos de Windows-1252 | passou |
-| CT36 | cobertura e competência | apontar saída sem C170 e um documento fora do período | passou |
+| CT36 | disponibilidade de itens | separar C170 disponível, emissão própria eletrônica sem itens e outras ausências | passou |
+| CT37 | emissão e movimento | preservar `DT_DOC`, usar `DT_E_S` na competência e contar emissão anterior sem tratá-la como movimento externo | passou |
 
-Os cenários unitários são cobertos por dezessete funções de teste automatizado distribuídas
+Os cenários unitários são cobertos por dezoito funções de teste automatizado distribuídas
 em seis suítes.
 
 ## Testes de ponta a ponta
@@ -72,13 +73,15 @@ em seis suítes.
 | E2E04 | abas ABC, produtos e ICMS | gráficos novos renderizados e valores esperados visíveis |
 | E2E05 | nomes longos e TXT Windows-1252 em 375 × 812 px | acentos preservados e nenhuma rolagem horizontal nas quatro áreas |
 
-Os três testes E2E foram executados em Chrome real contra a aplicação local conectada ao
-banco gratuito.
+As cinco verificações E2E da tabela foram agrupadas em três fluxos automatizados e
+executadas em Chrome real contra a aplicação local conectada ao banco gratuito.
 
 Uma EFD real fornecida pelo autor também foi usada para inspeção exploratória no navegador.
 O arquivo não foi copiado para o repositório, exportado como evidência ou incluído nos
 testes. Essa inspeção revelou a necessidade de suportar Windows-1252 e de acomodar nomes
-empresariais e descrições extensas.
+empresariais e descrições extensas. Também revelou que `DT_DOC` e `DT_E_S` precisavam ser
+preservadas separadamente e que o percentual de C170 deveria ser apresentado como
+disponibilidade analítica, e não como nota de qualidade.
 
 ## Valores esperados da demonstração
 

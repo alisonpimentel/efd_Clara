@@ -17,7 +17,7 @@ iniciantes e estudantes.
 - concentração de clientes e fornecedores, curvas ABC e abrangência das saídas por CFOP;
 - valor médio escriturado por unidade, mix de SKUs, produtos e inventário;
 - distribuição das saídas por dia da semana e cancelamentos separados por direção;
-- apuração declarada do ICMS, entradas com ICMS informado, indicador aparente e qualidade
+- apuração declarada do ICMS, entradas com ICMS informado, indicador aparente, limites
   para conciliação;
 - exportação CSV e impressão/salvamento em PDF;
 - arquivo demonstrativo fictício;

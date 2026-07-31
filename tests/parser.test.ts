@@ -29,6 +29,11 @@ describe("parser da EFD ICMS/IPI", () => {
     assert.equal(parsed.products.length, 3);
     assert.equal(parsed.documents.length, 5);
     assert.equal(parsed.documents.filter((document) => document.cancelled).length, 1);
+    assert.equal(parsed.documents[0]?.issuer, "third-party");
+    assert.equal(parsed.documents[0]?.issueDate, "2026-06-05");
+    assert.equal(parsed.documents[0]?.movementDate, "2026-06-05");
+    assert.equal(parsed.documents[0]?.date, "2026-06-05");
+    assert.equal(parsed.documents[2]?.issuer, "own");
     assert.equal(parsed.items.length, 6, "o item do documento cancelado deve ser descartado");
     assert.equal(parsed.items[0]?.unit, "UN");
     assert.equal(parsed.items[0]?.quantity, 600);
@@ -61,5 +66,18 @@ describe("parser da EFD ICMS/IPI", () => {
     assert.ok(parsed.warnings.some((warning) => warning.includes("H005")));
     assert.ok(parsed.warnings.some((warning) => warning.includes("0005")));
     assert.ok(parsed.warnings.some((warning) => warning.includes("0100")));
+  });
+
+  it("usa DT_E_S como data de referência e preserva DT_DOC", () => {
+    const parsed = parseSped(
+      [
+        "|0000|019|0|01062026|30062026|EMPRESA TESTE|12345678000195||SP|123|3550308|||A|1|",
+        "|C100|0|1||55|00|1|1||28052026|03062026|100,00|0|0,00|0,00|100,00|9|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|",
+      ].join("\n"),
+    );
+
+    assert.equal(parsed.documents[0]?.issueDate, "2026-05-28");
+    assert.equal(parsed.documents[0]?.movementDate, "2026-06-03");
+    assert.equal(parsed.documents[0]?.date, "2026-06-03");
   });
 });

@@ -122,6 +122,7 @@ prova que o EFD Clara melhora decisões. Esse efeito exigiria avaliação com us
 **Aplicação no EFD Clara:**
 
 - C100 para documentos;
+- `DT_DOC` do C100 para a data de emissão e `DT_E_S` para a data de entrada ou saída;
 - 0000 e 0005 para entidade, competência e endereço;
 - 0100 para o contabilista responsável;
 - C170 para itens;
@@ -133,6 +134,17 @@ prova que o EFD Clara melhora decisões. Esse efeito exigiria avaliação com us
 - `VL_ITEM` e `QTD` do C170 para valor médio ponderado por item e unidade;
 - `VL_ICMS` do C190 para identificar entradas com crédito informado na escrituração;
 - tratamento explícito da possível diferença entre C100 e C190 em 2026.
+
+O guia informa que, nas entradas de produtos, `DT_E_S` é obrigatório e representa a data
+de entrada; nas saídas, seu preenchimento depende da disponibilidade e das regras
+aplicáveis. Por isso, o protótipo preserva as duas datas, usa `DT_E_S` como referência
+quando existente e recorre a `DT_DOC` somente quando necessário.
+
+O mesmo guia reconhece situações sem C170, incluindo NF-e de emissão própria, e trata a
+NFC-e de emissão própria, em regra, por C100 e C190. Essa semântica fundamenta a decisão
+de chamar a métrica de **disponibilidade para análise por produto**, e não de qualidade
+da escrituração. Exceções determinadas pela legislação ou por registros complementares
+continuam possíveis; o protótipo não emite conclusão de regularidade.
 
 **Cuidado acadêmico:** o Guia Prático sustenta o significado e a posição dos campos. Ele
 não sustenta alegações de ganho gerencial, usabilidade ou impacto econômico.
@@ -150,6 +162,7 @@ não sustenta alegações de ganho gerencial, usabilidade ou impacto econômico.
 | indicador ligado a uma decisão | Sebrae |
 | fórmulas e campos oficiais | Guia Prático da EFD |
 | conferência da entidade e responsável | registros 0000, 0005 e 0100 |
+| referência temporal e disponibilidade de itens | C100, `DT_DOC`, `DT_E_S` e C170 |
 
 ## Limite da revisão
 

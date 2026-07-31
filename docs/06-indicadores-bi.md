@@ -5,7 +5,7 @@
 O painel foi reorganizado por perguntas decisórias, e não pela quantidade de gráficos. A
 visão executiva responde “o que aconteceu no período?”; clientes e fornecedores respondem
 “há concentração?”; produtos e estoque respondem “quais itens concentram valor?”; e a
-visão fiscal responde “o que foi informado sobre ICMS e qualidade dos dados?”.
+visão fiscal responde “o que foi informado sobre ICMS e quais são os limites dos dados?”.
 
 Os códigos do SPED permanecem na camada técnica. A interface usa linguagem de negócio e
 sempre informa fonte, período, unidade e limitação.
@@ -93,15 +93,51 @@ O projeto permanece restrito ao ICMS. PIS e Cofins não são agregados aos indic
 pois uma análise mais adequada desses tributos exigiria outro recorte e, em especial,
 dados da EFD-Contribuições.
 
-## Qualidade e conciliação
+## Disponibilidade, consistência e conciliação
+
+O painel separa três conceitos que não devem ser confundidos:
+
+1. **consistência mínima**, como participante, produto e data identificáveis;
+2. **disponibilidade analítica**, como a presença de C170 para análises por item;
+3. **conciliação**, como a comparação entre totais de C100 e C190.
+
+Para a competência, o protótipo usa `DT_E_S` — data de entrada ou saída — quando esse
+campo está preenchido. `DT_DOC`, a data de emissão, é preservada separadamente e usada
+somente como alternativa quando `DT_E_S` não está disponível. Com isso, uma nota emitida
+antes e recebida dentro da competência não é classificada indevidamente como movimento
+fora do período.
 
 O painel apresenta:
 
 - documentos válidos sem participante identificado;
 - itens sem código de produto;
-- documentos sem data válida;
-- ausência dos registros opcionais C170, C190, E110 ou H005;
+- documentos sem data de referência válida;
+- movimentos cuja data de entrada/saída, ou subsidiariamente a emissão, está fora da
+  competência declarada;
+- documentos emitidos antes da competência e escriturados dentro dela, como informação
+  contextual, sem classificá-los como erro;
+- disponibilidade de C170 separada entre entradas e saídas;
+- ausência dos registros opcionais C190, E110 ou H005;
 - diferença absoluta entre a soma de `VL_DOC` no C100 e `VL_OPR` no C190.
+
+### Como interpretar o C170
+
+O percentual de documentos com C170 não é uma nota de qualidade da EFD. Ele informa
+apenas quanto das operações pode alimentar rankings, curva ABC, quantidade e valor médio
+por produto.
+
+Para NF-e ou NFC-e de emissão própria, modelos 55 e 65, a ausência de C170 pode ser
+esperada conforme as regras de escrituração do C100. O protótipo, por isso, mostra
+separadamente:
+
+- documentos com itens C170 disponíveis;
+- documentos eletrônicos de emissão própria sem C170, cuja ausência é geralmente
+  esperada;
+- outros documentos sem itens, que merecem conferência antes de uma análise por produto.
+
+Mesmo sem C170, permanecem disponíveis as análises documentais e fiscais sustentadas por
+C100, C190 e E110. O sistema não inventa produtos nem tenta reconstruir itens a partir de
+registros agregados.
 
 A diferença entre C100 e C190 não é rotulada automaticamente como erro. A documentação
 oficial alerta que, a partir de 2026, componentes relacionados à CBS, IBS e IS podem fazer

@@ -55,11 +55,14 @@ export type Product = {
 export type FiscalDocument = {
   id: number;
   operation: "entry" | "exit";
+  issuer: "own" | "third-party";
   participantCode: string;
   participantName: string;
   model: string;
   status: string;
   number: string;
+  issueDate: string;
+  movementDate: string;
   date: string;
   total: number;
   merchandiseTotal: number;
@@ -261,16 +264,21 @@ export type DashboardData = {
     documentsWithoutParticipant: number;
     itemsWithoutProduct: number;
     documentsWithoutDate: number;
-    documentsOutsidePeriod: number;
-    entryItemCoverage: {
+    documentsOutsideReferencePeriod: number;
+    priorIssueDocumentsInPeriod: number;
+    entryItemAvailability: {
       documentsWithItems: number;
       totalDocuments: number;
       rate: number;
+      electronicOwnIssueWithoutItems: number;
+      otherWithoutItems: number;
     };
-    exitItemCoverage: {
+    exitItemAvailability: {
       documentsWithItems: number;
       totalDocuments: number;
       rate: number;
+      electronicOwnIssueWithoutItems: number;
+      otherWithoutItems: number;
     };
     c100C190Difference: number;
   };

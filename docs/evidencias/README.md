@@ -58,10 +58,11 @@ fiscal. O arquivo foi fornecido diretamente ao elemento local e processado no na
 - [dashboard móvel](dashboard-mobile-vercel.png)
 - [curva ABC de clientes e abrangência por CFOP — produção](dashboard-clientes-abc-vercel.png)
 - [curva ABC de produtos e valor médio por unidade — produção](dashboard-produtos-abc-vercel.png)
-- [indicadores de ICMS e qualidade — produção](dashboard-icms-vercel.png)
+- [indicadores de ICMS e limites — produção](dashboard-icms-vercel.png)
+- [dashboard móvel com disponibilidade C170 — validação local](dashboard-mobile-local.png)
 - [curva ABC de clientes e abrangência por CFOP — validação local](dashboard-clientes-abc-local.png)
 - [curva ABC de produtos e valor médio por unidade — validação local](dashboard-produtos-abc-local.png)
-- [indicadores de ICMS e qualidade — validação local](dashboard-icms-local.png)
+- [indicadores de ICMS e limites — validação local](dashboard-icms-local.png)
 
 As capturas marcadas como produção foram geradas pelo teste E2E contra
 `https://efd-clara.vercel.app`. As capturas locais registram a etapa anterior e permitem

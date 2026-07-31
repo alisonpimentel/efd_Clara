@@ -9,20 +9,22 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os dezessete testes unitários foram executados sem falhas. Eles
+Em 30 de julho de 2026, os dezoito testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
-validação cadastral, exportação e leitura de TXT em UTF-8 ou Windows-1252.
+validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e separação entre
+data de emissão e data de entrada ou saída.
 
-Três testes de ponta a ponta também foram aprovados. O fluxo real cobriu desktop e
+Três fluxos de ponta a ponta, contendo cinco verificações funcionais e visuais, também
+foram aprovados. O fluxo real cobriu desktop e
 celular, rejeição de arquivo acima de 8 MB, geração do painel, CSV, nova análise e
 inspeção dos corpos de requisição. A execução pública percorreu ainda as abas de
 concentração, produtos/inventário e fiscal/E110. Nenhum registro fiscal foi transmitido.
 
 ```text
-testes unitários: 17
-testes E2E: 3
-aprovados: 20
+testes unitários: 18
+fluxos E2E: 3
+aprovados: 21
 falhas: 0
 ```
 
@@ -40,9 +42,14 @@ substituídos pelo símbolo de erro e expansão horizontal provocada por nomes l
 O carregamento passou a testar UTF-8 estrito e, quando necessário, usar Windows-1252.
 As grades receberam contenção de largura, os painéis de conteúdo variável deixaram de
 ser esticados e a validação móvel passou a percorrer todas as áreas com rótulos extensos.
-Também foram acrescentados a quantidade de documentos fora da competência declarada e
-os percentuais de documentos de entrada e saída que possuem itens C170, porque essas
-condições delimitam a interpretação temporal e os rankings por produto.
+Uma primeira implementação ainda usava `DT_DOC` como referência temporal e mostrava o
+percentual de C170 dentro de uma seção intitulada qualidade. Ao analisar a tela com o
+autor, verificou-se que isso podia produzir duas interpretações incorretas: considerar
+uma emissão anterior como movimento fora da competência e ler a ausência de C170 como
+falha da escrituração. A implementação passou a usar `DT_E_S` quando disponível, preservar
+`DT_DOC` separadamente e apresentar C170 como disponibilidade para análise de produtos.
+Notas eletrônicas de emissão própria sem C170 são destacadas como ausência geralmente
+esperada, enquanto outras ausências permanecem como ponto de conferência.
 Nenhum dado identificável dessa EFD foi salvo como evidência.
 
 ## Evidência quantitativa

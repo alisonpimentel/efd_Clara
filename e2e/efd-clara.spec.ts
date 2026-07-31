@@ -94,7 +94,7 @@ test("fluxo completo, limites, exportação e ausência de upload fiscal", async
     fullPage: true,
   });
 
-  await page.getByRole("button", { name: "ICMS e qualidade" }).click();
+  await page.getByRole("button", { name: "ICMS e limites" }).click();
   await expect(page.getByRole("heading", { name: "Resumo do ICMS do período" })).toBeVisible();
   await expect(page.getByText("R$ 1.080,00", { exact: true })).toBeVisible();
   await expect(page.getByText("100%", { exact: true }).first()).toBeVisible();
@@ -141,12 +141,22 @@ test("interface permanece utilizável em celular", async ({ browser }, testInfo)
   const page = await context.newPage();
 
   await register(page, `mobile-${Date.now()}`);
-  const mobileSample = (await readFile(samplePath, "utf8"))
+  const mobileSource = (await readFile(samplePath, "utf8"))
     .replace(
       "MERCADO NOVO DIA LTDA",
       "CLIENTE COM NOME EMPRESARIAL EXTENSO PARA VALIDAR A ORGANIZAÇÃO RESPONSIVA LTDA",
     )
-    .replace("CAFE TORRADO 500G", "CABEÇOTE E PEÇA INDUSTRIAL DE ALTO VALOR");
+    .replace("CAFE TORRADO 500G", "CABEÇOTE E PEÇA INDUSTRIAL DE ALTO VALOR")
+    .replace("|05062026|05062026|10000,00|", "|28052026|05062026|10000,00|");
+  let currentOperation = "";
+  const mobileSample = mobileSource
+    .split(/\r?\n/)
+    .filter((line) => {
+      const fields = line.split("|");
+      if (fields[1] === "C100") currentOperation = fields[2] ?? "";
+      return !(fields[1] === "C170" && currentOperation === "1");
+    })
+    .join("\n");
   await page.locator("#sped-file").setInputFiles({
     name: "efd-windows-1252.txt",
     mimeType: "text/plain",
@@ -159,12 +169,29 @@ test("interface permanece utilizável em celular", async ({ browser }, testInfo)
   );
   expect(metricColumns).toBe(2);
 
-  for (const tab of ["Clientes e fornecedores", "Produtos e estoque", "ICMS e qualidade"]) {
+  for (const tab of ["Clientes e fornecedores", "Produtos e estoque", "ICMS e limites"]) {
     await page.getByRole("button", { name: tab }).click();
     if (tab === "Produtos e estoque") {
       await expect(
         page.getByText("CABEÇOTE E PEÇA INDUSTRIAL DE ALTO VALOR").first(),
       ).toBeVisible();
+    }
+    if (tab === "ICMS e limites") {
+      await expect(
+        page.getByRole("heading", { name: "Disponibilidade dos dados da análise" }),
+      ).toBeVisible();
+      await expect(
+        page.locator(".quality-panel dl > div").filter({
+          hasText: "Emissões anteriores escrituradas no período",
+        }),
+      ).toContainText("1");
+      await expect(
+        page.locator(".quality-panel dl > div").filter({
+          hasText: "Itens C170 disponíveis nas saídas",
+        }),
+      ).toContainText("0 de 2");
+      await expect(page.getByText(/2 NF-e\/NFC-e de emissão própria/)).toBeVisible();
+      await expect(page.getByText("C170 não é uma nota de qualidade.")).toBeVisible();
     }
     const dimensions = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,

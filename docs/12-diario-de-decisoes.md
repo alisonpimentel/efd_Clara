@@ -269,3 +269,32 @@
 - **Validação:** caso automatizado com cobertura de saída igual a zero e um documento fora
   da competência.
 - **Uso no TCC:** qualidade de dados, transparência metodológica e limitações do artefato.
+
+## D26 - Corrigir a semântica temporal e tratar C170 como disponibilidade
+
+- **Problema observado:** ao carregar uma EFD real, a interface mostrou 21 documentos fora
+  da competência e 0% de C170 nas saídas. A apresentação permitia interpretar os dois
+  números como defeitos do arquivo.
+- **Causa:** a primeira versão usava `DT_DOC` como data única da análise e apresentava a
+  presença de C170 dentro de uma seção intitulada qualidade. Para entradas, a emissão pode
+  anteceder legitimamente a entrada escriturada; para NF-e/NFC-e de emissão própria, a
+  ausência de C170 pode ser esperada.
+- **Alternativas consideradas:** manter uma única data; excluir documentos emitidos antes
+  do período; tratar todo C170 ausente como falha; inferir itens pelo C190; exigir XML ou
+  integração com ERP.
+- **Escolha:** preservar `DT_DOC` e `DT_E_S`; usar `DT_E_S` como data de referência e
+  `DT_DOC` apenas como alternativa; contar emissões anteriores separadamente; renomear a
+  métrica para disponibilidade de itens; separar documentos eletrônicos de emissão
+  própria sem C170 das demais ausências.
+- **Impacto no artefato:** a série temporal, a distribuição semanal e a conferência de
+  competência passam a representar o movimento escriturado. A interface deixa explícito
+  que C170 limita somente as análises por produto e não constitui nota de qualidade.
+- **Limite:** o protótipo não conclui regularidade fiscal, não reconstrói itens ausentes e
+  não substitui conciliação com XML, ERP ou profissional habilitado.
+- **Validação:** testes unitários com emissão anterior e movimento no período; cenário com
+  movimento realmente externo; fluxo móvel sem C170 nas saídas; inspeção do texto e da
+  organização visual.
+- **Evidência preservada:** somente quantidades e comportamento do protótipo. Nenhuma linha,
+  identificação ou conteúdo da EFD real foi gravado no repositório.
+- **Uso no TCC:** ciclo de avaliação e refinamento do artefato, qualidade semântica dos
+  indicadores, transparência metodológica e limitações da fonte de dados.

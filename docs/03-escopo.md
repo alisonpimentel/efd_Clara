@@ -13,10 +13,10 @@
 - documentos de entrada e saída;
 - exclusão de documentos com situação cancelada (`02` e `03`) dos totais;
 - base SQLite temporária em memória;
-- quatro áreas: visão executiva, relações, produtos/inventário e fiscal/qualidade;
+- quatro áreas: visão executiva, relações, produtos/inventário e ICMS/limites;
 - evolução temporal, concentração dos três maiores e leituras gerenciais exploratórias;
 - reprodução da apuração própria do ICMS e do inventário quando presentes;
-- explicações de interpretação e avisos de qualidade;
+- explicações de interpretação, disponibilidade e conciliação;
 - exportação CSV e impressão/salvamento em PDF;
 - nova análise com limpeza do estado anterior;
 - armazenamento persistente apenas de interessados e solicitações de privacidade.

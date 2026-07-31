@@ -41,16 +41,21 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.cancellations.exit.cancelled, 1);
     assert.equal(dashboard.cancellations.exit.total, 3);
     assert.equal(dashboard.cancellations.exit.rate, 1 / 3);
-    assert.equal(dashboard.quality.documentsOutsidePeriod, 0);
-    assert.deepEqual(dashboard.quality.entryItemCoverage, {
+    assert.equal(dashboard.quality.documentsOutsideReferencePeriod, 0);
+    assert.equal(dashboard.quality.priorIssueDocumentsInPeriod, 0);
+    assert.deepEqual(dashboard.quality.entryItemAvailability, {
       documentsWithItems: 2,
       totalDocuments: 2,
       rate: 1,
+      electronicOwnIssueWithoutItems: 0,
+      otherWithoutItems: 0,
     });
-    assert.deepEqual(dashboard.quality.exitItemCoverage, {
+    assert.deepEqual(dashboard.quality.exitItemAvailability, {
       documentsWithItems: 2,
       totalDocuments: 2,
       rate: 1,
+      electronicOwnIssueWithoutItems: 0,
+      otherWithoutItems: 0,
     });
     assert.equal(dashboard.customerAbc[0]?.label, "MERCADO NOVO DIA LTDA");
     assert.equal(dashboard.customerAbc[0]?.abcClass, "A");
@@ -94,8 +99,8 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.match(csv, /Razão social/);
     assert.match(csv, /EFD CLARA MERCADO/);
     assert.match(csv, /MARCIA CONTADORA DEMONSTRACAO/);
-    assert.match(csv, /Cobertura C170 nas entradas/);
-    assert.match(csv, /Documentos fora da competência/);
+    assert.match(csv, /Itens C170 disponíveis nas entradas/);
+    assert.match(csv, /Movimentos fora da competência de referência/);
     assert.doesNotMatch(csv, /00000000191/);
   });
 
@@ -115,23 +120,35 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.averageTicket, 0);
   });
 
-  it("expõe cobertura de itens e documentos fora da competência", async () => {
+  it("separa disponibilidade de itens, emissão anterior e movimento fora da competência", async () => {
     const text = await readFile(new URL("../public/exemplo-efd.txt", import.meta.url), "utf8");
     const parsed = parseSped(text);
+    const activeEntry = parsed.documents.find(
+      (document) => document.operation === "entry" && !document.cancelled,
+    );
     const activeExit = parsed.documents.find(
       (document) => document.operation === "exit" && !document.cancelled,
     );
+    assert.ok(activeEntry);
     assert.ok(activeExit);
+    activeEntry.issueDate = "2026-05-28";
+    activeEntry.movementDate = "2026-06-03";
+    activeEntry.date = "2026-06-03";
+    activeExit.issueDate = "2026-05-31";
+    activeExit.movementDate = "";
     activeExit.date = "2026-05-31";
     parsed.items = parsed.items.filter((item) => item.operation === "entry");
 
     const dashboard = await buildDashboard(parsed);
 
-    assert.equal(dashboard.quality.documentsOutsidePeriod, 1);
-    assert.deepEqual(dashboard.quality.exitItemCoverage, {
+    assert.equal(dashboard.quality.documentsOutsideReferencePeriod, 1);
+    assert.equal(dashboard.quality.priorIssueDocumentsInPeriod, 1);
+    assert.deepEqual(dashboard.quality.exitItemAvailability, {
       documentsWithItems: 0,
       totalDocuments: 2,
       rate: 0,
+      electronicOwnIssueWithoutItems: 2,
+      otherWithoutItems: 0,
     });
   });
 });

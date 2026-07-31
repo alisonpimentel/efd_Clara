@@ -163,6 +163,42 @@ function PanelHeading({
   );
 }
 
+function ItemAvailabilityRow({
+  direction,
+  value,
+}: {
+  direction: "entradas" | "saídas";
+  value: DashboardData["quality"]["entryItemAvailability"];
+}) {
+  return (
+    <div>
+      <dt>Itens C170 disponíveis nas {direction}</dt>
+      <dd>
+        {value.totalDocuments
+          ? `${numberFormatter.format(value.documentsWithItems)} de ${numberFormatter.format(value.totalDocuments)}`
+          : "sem documentos"}
+        <small>
+          {value.totalDocuments
+            ? `${percentFormatter.format(value.rate)} dos documentos permite análise por produto`
+            : "não há base para calcular disponibilidade"}
+        </small>
+        {value.electronicOwnIssueWithoutItems > 0 && (
+          <small>
+            {numberFormatter.format(value.electronicOwnIssueWithoutItems)} NF-e/NFC-e de
+            emissão própria sem C170 — ausência geralmente esperada
+          </small>
+        )}
+        {value.otherWithoutItems > 0 && (
+          <small>
+            {numberFormatter.format(value.otherWithoutItems)} documento(s) sem itens requer(em)
+            conferência do modelo e da situação
+          </small>
+        )}
+      </dd>
+    </div>
+  );
+}
+
 function BarList({
   title,
   question,
@@ -826,7 +862,7 @@ export function Dashboard({
           ["overview", "Visão executiva"],
           ["relationships", "Clientes e fornecedores"],
           ["products", "Produtos e estoque"],
-          ["fiscal", "ICMS e qualidade"],
+          ["fiscal", "ICMS e limites"],
         ].map(([value, label]) => (
           <button
             key={value}
@@ -1090,7 +1126,7 @@ export function Dashboard({
         <div className="dashboard-section">
           <div className="section-intro">
             <p className="eyebrow">Leitura fiscal-contábil</p>
-            <h2>O que o arquivo informa sobre ICMS e qualidade da escrituração?</h2>
+            <h2>O que o arquivo informa sobre ICMS e os limites da análise?</h2>
             <p>
               Esta visão reproduz valores declarados e cria proporções descritivas. Ela não
               determina direito ao crédito nem recalcula a obrigação tributária.
@@ -1224,9 +1260,9 @@ export function Dashboard({
 
           <section className="data-panel quality-panel">
             <PanelHeading
-              kicker="Confiabilidade da leitura"
-              title="Qualidade para esta análise"
-              question="Quais pontos podem limitar ou exigir conciliação?"
+              kicker="Limites e consistência"
+              title="Disponibilidade dos dados da análise"
+              question="O que foi lido integralmente e quais análises dependem de registros opcionais?"
             />
             <dl>
               <div>
@@ -1242,41 +1278,48 @@ export function Dashboard({
                 <dd>{data.quality.documentsWithoutDate}</dd>
               </div>
               <div>
-                <dt>Documentos fora da competência declarada</dt>
-                <dd>{data.quality.documentsOutsidePeriod}</dd>
-              </div>
-              <div>
-                <dt>Cobertura C170 nas entradas</dt>
+                <dt>Movimentos fora da competência de referência</dt>
                 <dd>
-                  {percentFormatter.format(data.quality.entryItemCoverage.rate)}
-                  <small>
-                    {data.quality.entryItemCoverage.documentsWithItems} de{" "}
-                    {data.quality.entryItemCoverage.totalDocuments} documento(s)
-                  </small>
+                  {data.quality.documentsOutsideReferencePeriod}
+                  <small>DT_E_S; quando ausente, utiliza DT_DOC</small>
                 </dd>
               </div>
               <div>
-                <dt>Cobertura C170 nas saídas</dt>
+                <dt>Emissões anteriores escrituradas no período</dt>
                 <dd>
-                  {percentFormatter.format(data.quality.exitItemCoverage.rate)}
-                  <small>
-                    {data.quality.exitItemCoverage.documentsWithItems} de{" "}
-                    {data.quality.exitItemCoverage.totalDocuments} documento(s)
-                  </small>
+                  {data.quality.priorIssueDocumentsInPeriod}
+                  <small>DT_DOC anterior, com entrada/saída registrada na competência</small>
                 </dd>
               </div>
+              <ItemAvailabilityRow
+                direction="entradas"
+                value={data.quality.entryItemAvailability}
+              />
+              <ItemAvailabilityRow
+                direction="saídas"
+                value={data.quality.exitItemAvailability}
+              />
               <div>
                 <dt>Diferença absoluta entre totais C100 e C190</dt>
                 <dd>{money(data.quality.c100C190Difference)}</dd>
               </div>
             </dl>
+            <aside className="availability-explainer" aria-label="Como interpretar o C170">
+              <strong>C170 não é uma nota de qualidade.</strong>
+              <p>
+                O percentual mostra somente quantos documentos possuem itens disponíveis
+                para rankings e valores unitários. Na NF-e de emissão própria, a ausência
+                do C170 pode ser prevista pelo leiaute; C100, C190 e E110 continuam
+                sustentando as análises documental e de ICMS.
+              </p>
+            </aside>
             <p className="quality-context">
               Uma diferença entre C100 e C190 não é classificada automaticamente como erro.
               Desde 2026, componentes ligados à reforma tributária podem afetar a conciliação
               entre os valores dos documentos e das operações registrados na EFD ICMS/IPI.
-              Datas fora da competência podem representar escrituração extemporânea, e uma
-              cobertura C170 baixa limita as análises por produto; ambos exigem contexto
-              contábil antes de qualquer conclusão.
+              Emissões anteriores podem ter entrada ou saída registrada na competência atual;
+              o painel usa DT_E_S quando esse campo existe e não classifica a ocorrência como
+              irregularidade.
             </p>
             {data.warnings.length > 0 && (
               <div className="warning-list">

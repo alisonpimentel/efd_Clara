@@ -249,15 +249,20 @@ export function parseSped(text: string): SpedParseResult {
     if (register === "C100") {
       const participantCode = field(fields, 4);
       const operation = field(fields, 2) === "0" ? "entry" : "exit";
+      const issueDate = normalizeDate(field(fields, 10));
+      const movementDate = normalizeDate(field(fields, 11));
       currentDocument = {
         id: documents.length + 1,
         operation,
+        issuer: field(fields, 3) === "0" ? "own" : "third-party",
         participantCode,
         participantName: participants.get(participantCode)?.name ?? "",
         model: field(fields, 5),
         status: field(fields, 6),
         number: field(fields, 8),
-        date: normalizeDate(field(fields, 10)),
+        issueDate,
+        movementDate,
+        date: movementDate || issueDate,
         total: parseBrazilianNumber(field(fields, 12)),
         merchandiseTotal: parseBrazilianNumber(field(fields, 16)),
         icms: parseBrazilianNumber(field(fields, 22)),

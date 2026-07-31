@@ -496,23 +496,56 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         .filter((document) => document.operation === "exit" && !document.cancelled)
         .map((document) => document.id),
     );
-    const entryDocumentsWithItems = new Set(
+    const entryDocumentIdsWithItems = new Set(
       parsed.items
         .filter((item) => activeEntryIds.has(item.documentId))
         .map((item) => item.documentId),
-    ).size;
-    const exitDocumentsWithItems = new Set(
+    );
+    const exitDocumentIdsWithItems = new Set(
       parsed.items
         .filter((item) => activeExitIds.has(item.documentId))
         .map((item) => item.documentId),
-    ).size;
-    const documentsOutsidePeriod = parsed.documents.filter(
+    );
+    const activeEntryDocuments = parsed.documents.filter(
+      (document) => document.operation === "entry" && !document.cancelled,
+    );
+    const activeExitDocuments = parsed.documents.filter(
+      (document) => document.operation === "exit" && !document.cancelled,
+    );
+    const availability = (
+      documents: typeof activeEntryDocuments,
+      documentIdsWithItems: Set<number>,
+    ) => {
+      const withoutItems = documents.filter(
+        (document) => !documentIdsWithItems.has(document.id),
+      );
+      const electronicOwnIssueWithoutItems = withoutItems.filter(
+        (document) =>
+          document.issuer === "own" && (document.model === "55" || document.model === "65"),
+      ).length;
+      return {
+        documentsWithItems: documentIdsWithItems.size,
+        totalDocuments: documents.length,
+        rate: documents.length > 0 ? documentIdsWithItems.size / documents.length : 0,
+        electronicOwnIssueWithoutItems,
+        otherWithoutItems: withoutItems.length - electronicOwnIssueWithoutItems,
+      };
+    };
+    const documentsOutsideReferencePeriod = parsed.documents.filter(
       (document) =>
         !document.cancelled &&
         document.date &&
         parsed.company.startDate &&
         parsed.company.endDate &&
         (document.date < parsed.company.startDate || document.date > parsed.company.endDate),
+    ).length;
+    const priorIssueDocumentsInPeriod = parsed.documents.filter(
+      (document) =>
+        !document.cancelled &&
+        document.issueDate &&
+        document.issueDate < parsed.company.startDate &&
+        document.date >= parsed.company.startDate &&
+        document.date <= parsed.company.endDate,
     ).length;
     const topSuppliers = withShares(
       runRanking(
@@ -694,17 +727,10 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
           db,
           "SELECT COUNT(*) FROM documents WHERE cancelled = 0 AND TRIM(COALESCE(date, '')) = ''",
         ),
-        documentsOutsidePeriod,
-        entryItemCoverage: {
-          documentsWithItems: entryDocumentsWithItems,
-          totalDocuments: entryDocuments,
-          rate: entryDocuments > 0 ? entryDocumentsWithItems / entryDocuments : 0,
-        },
-        exitItemCoverage: {
-          documentsWithItems: exitDocumentsWithItems,
-          totalDocuments: exitDocuments,
-          rate: exitDocuments > 0 ? exitDocumentsWithItems / exitDocuments : 0,
-        },
+        documentsOutsideReferencePeriod,
+        priorIssueDocumentsInPeriod,
+        entryItemAvailability: availability(activeEntryDocuments, entryDocumentIdsWithItems),
+        exitItemAvailability: availability(activeExitDocuments, exitDocumentIdsWithItems),
         c100C190Difference,
       },
       technical: {

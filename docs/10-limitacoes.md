@@ -5,7 +5,10 @@
 - a EFD não contém todas as receitas e despesas da organização;
 - caixa, folha, empréstimos, despesas bancárias e informações gerenciais podem estar fora
   do arquivo;
-- a presença de C170 varia conforme escrituração e situação;
+- a presença de C170 varia conforme escrituração e situação; em NF-e/NFC-e de emissão
+  própria, modelos 55 e 65, a ausência pode ser esperada;
+- quando o C170 não está disponível, curvas ABC, mix, quantidade e valor médio por produto
+  representam somente a parcela detalhada; uma visão completa pode exigir XML ou ERP;
 - descrições e relacionamentos dependem da qualidade de 0150 e 0200;
 - um único arquivo não permite análise histórica.
 
@@ -23,6 +26,8 @@
   sistema empresarial;
 - classificação interna, interestadual e exterior depende do CFOP informado;
 - distribuição por dia da semana em uma competência não constitui sazonalidade histórica;
+- a análise temporal usa `DT_E_S` quando disponível e `DT_DOC` como alternativa; uma data
+  de emissão anterior com entrada ou saída dentro do período não é, isoladamente, erro;
 - a proporção de entradas com ICMS informado não determina direito jurídico ao crédito;
 - ICMS a recolher dividido pelas saídas é denominado indicador aparente, não alíquota
   efetiva;

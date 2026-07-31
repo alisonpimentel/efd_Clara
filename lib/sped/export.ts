@@ -118,26 +118,34 @@ export function dashboardToCsv(data: DashboardData) {
       .map(escapeCsv)
       .join(";"),
     [
-      "Qualidade",
-      "Documentos fora da competência",
-      data.quality.documentsOutsidePeriod,
-      "não classifica automaticamente erro",
+      "Disponibilidade",
+      "Movimentos fora da competência de referência",
+      data.quality.documentsOutsideReferencePeriod,
+      "DT_E_S; quando ausente, DT_DOC",
     ]
       .map(escapeCsv)
       .join(";"),
     [
-      "Qualidade",
-      "Cobertura C170 nas entradas",
-      data.quality.entryItemCoverage.rate,
-      `${data.quality.entryItemCoverage.documentsWithItems} de ${data.quality.entryItemCoverage.totalDocuments} documentos`,
+      "Disponibilidade",
+      "Emissões anteriores escrituradas no período",
+      data.quality.priorIssueDocumentsInPeriod,
+      "DT_DOC anterior e data de referência dentro da competência",
     ]
       .map(escapeCsv)
       .join(";"),
     [
-      "Qualidade",
-      "Cobertura C170 nas saídas",
-      data.quality.exitItemCoverage.rate,
-      `${data.quality.exitItemCoverage.documentsWithItems} de ${data.quality.exitItemCoverage.totalDocuments} documentos`,
+      "Disponibilidade",
+      "Itens C170 disponíveis nas entradas",
+      data.quality.entryItemAvailability.rate,
+      `${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.totalDocuments} documentos | ${data.quality.entryItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.entryItemAvailability.otherWithoutItems} outro(s) sem itens`,
+    ]
+      .map(escapeCsv)
+      .join(";"),
+    [
+      "Disponibilidade",
+      "Itens C170 disponíveis nas saídas",
+      data.quality.exitItemAvailability.rate,
+      `${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.totalDocuments} documentos | ${data.quality.exitItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.exitItemAvailability.otherWithoutItems} outro(s) sem itens`,
     ]
       .map(escapeCsv)
       .join(";"),
