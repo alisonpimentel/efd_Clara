@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `2e4ddfa`
-- **Deploy Vercel:** `dpl_AxrHyS3y2EY1UKUqkM4EebYH1T4v`
+- **Commit validado:** `24c015f`
+- **Deploy Vercel:** `dpl_EuKCLhn66itVbyhmsAMD2q1pHQ63`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 
@@ -34,6 +34,8 @@
 - mensagem explícita de que C170 não é uma nota de qualidade;
 - recusa preventiva de EFD-Contribuições antes de interpretar razão social, competência
   e documentos;
+- disponibilidade total e cobertura elegível do C170 exibidas separadamente;
+- denominador elegível igual a zero apresentado como `não aplicável`;
 - exportação CSV;
 - botão de nova análise e remoção do painel anterior;
 - viewport desktop;
@@ -76,6 +78,6 @@ As capturas marcadas como produção foram geradas pelo teste E2E contra
 `https://efd-clara.vercel.app`. As capturas locais registram a etapa anterior e permitem
 comparar o mesmo artefato antes e depois da publicação.
 
-Os oito cadastros sintéticos encontrados nas rodadas local e pública desta evolução foram
-excluídos ao final. Nenhum
+Todos os cadastros sintéticos encontrados nas rodadas locais e públicas foram excluídos
+ao final. Nenhum
 dado de usuário real foi removido, e a consulta final retornou zero cadastros de teste.

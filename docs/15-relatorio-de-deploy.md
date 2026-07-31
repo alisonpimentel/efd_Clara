@@ -53,8 +53,8 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_AxrHyS3y2EY1UKUqkM4EebYH1T4v`
-- **Commit:** `2e4ddfa`
+- **Deploy:** `dpl_EuKCLhn66itVbyhmsAMD2q1pHQ63`
+- **Commit:** `24c015f`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
@@ -69,6 +69,8 @@ foi cadastrado por esta execução.
   produto, sem reduzir uma nota de qualidade
 - **Módulo SPED:** EFD-Contribuições recusada antes da leitura dos campos e EFD ICMS/IPI
   válida processada na sequência
+- **C170:** disponibilidade total preservada, cobertura elegível calculada separadamente
+  e denominador zero apresentado como `não aplicável`
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
