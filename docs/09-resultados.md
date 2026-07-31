@@ -9,7 +9,7 @@ cadastro de interesse e mecanismo de solicitação de direitos de privacidade.
 
 ## Resultado da verificação
 
-Em 30 de julho de 2026, os 21 testes unitários foram executados sem falhas. Eles
+Em 30 de julho de 2026, os 22 testes unitários foram executados sem falhas. Eles
 cobrem normalização, relacionamento, cancelamento, ausência de registros opcionais,
 totais, rankings, período sem movimento válido, seleção de arquivo, consentimentos,
 validação cadastral, exportação, leitura de TXT em UTF-8 ou Windows-1252 e separação entre

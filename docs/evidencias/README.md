@@ -4,8 +4,8 @@
 
 - **URL:** https://efd-clara.vercel.app
 - **Data:** 30/07/2026
-- **Commit validado:** `24c015f`
-- **Deploy Vercel:** `dpl_EuKCLhn66itVbyhmsAMD2q1pHQ63`
+- **Commit funcional validado:** `31a74cf`
+- **Deploy Vercel:** `dpl_GYpNgD34qRL1tqNQcmDnMDqkHynx`
 - **Plano da aplicação:** Hobby
 - **Plano do banco:** Neon `free_v3`
 

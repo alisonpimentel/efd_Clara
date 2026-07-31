@@ -17,7 +17,7 @@
 | arquivo demonstrativo | identificado como fictício |
 | `npm install` | concluído |
 | `npm run lint` | aprovado |
-| `npm run test` | 21 testes aprovados, zero falhas |
+| `npm run test` | 22 testes aprovados, zero falhas |
 | `npm run test:e2e` | 3 testes aprovados, zero falhas |
 | `npm run build` | concluído |
 | auditoria de dependências de produção | zero vulnerabilidades |
@@ -42,6 +42,11 @@
 - distinção entre NF-e/NFC-e própria sem C170 e outras ausências de itens.
 - validação do registro `0000` antes do parser, recusando EFD-Contribuições e outros
   módulos SPED incompatíveis.
+- política de verdade analítica: zero observado, `não disponível` sem fonte e `não
+  aplicável` sem denominador;
+- remoção de participantes ausentes dos rankings, sem retirá-los dos totais e dos
+  indicadores de qualidade;
+- participação de produtos calculada somente sobre os itens C170 efetivamente disponíveis.
 
 ## Situação do deploy
 
@@ -53,8 +58,8 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_EuKCLhn66itVbyhmsAMD2q1pHQ63`
-- **Commit:** `24c015f`
+- **Deploy:** `dpl_GYpNgD34qRL1tqNQcmDnMDqkHynx`
+- **Commit funcional:** `31a74cf`
 - **Status:** Ready
 - **Testes públicos:** 3 E2E aprovados
 - **Desktop:** aprovado
@@ -71,6 +76,8 @@ foi cadastrado por esta execução.
   válida processada na sequência
 - **C170:** disponibilidade total preservada, cobertura elegível calculada separadamente
   e denominador zero apresentado como `não aplicável`
+- **Dados ausentes:** tickets, taxas, concentrações, ICMS e conciliação sem fonte ou
+  denominador aparecem como `não disponível`, inclusive no CSV
 - **Inspeção de rede:** nenhum registro fiscal em corpos enviados
 - **Erros de runtime na última hora:** nenhum agrupamento encontrado
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
@@ -89,4 +96,5 @@ protegida pela credencial temporária local. Depois da criação única, o acess
 `/admin/login`.
 
 Na rodada desta evolução, os cadastros sintéticos gerados pelas execuções locais e
-públicas foram removidos; a verificação final indicou zero cadastros de teste restantes.
+públicas foram removidos; quatro registros de teste foram excluídos ao final das duas
+execuções.
