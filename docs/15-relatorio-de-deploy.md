@@ -7,6 +7,7 @@
 - **Hospedagem prevista:** Vercel Hobby
 - **Banco previsto:** Neon Free
 - **Data da preparação:** 30/07/2026
+- **Última validação pública:** 31/07/2026
 
 ## Verificações anteriores ao deploy
 
@@ -17,8 +18,8 @@
 | arquivo demonstrativo | identificado como fictício |
 | `npm install` | concluído |
 | `npm run lint` | aprovado |
-| `npm run test` | 22 testes aprovados, zero falhas |
-| `npm run test:e2e` | 3 testes aprovados, zero falhas |
+| `npm run test` | 39 testes aprovados, zero falhas |
+| `npm run test:e2e` | 4 testes aprovados, zero falhas |
 | `npm run build` | concluído |
 | auditoria de dependências de produção | zero vulnerabilidades |
 
@@ -47,6 +48,20 @@
 - remoção de participantes ausentes dos rankings, sem retirá-los dos totais e dos
   indicadores de qualidade;
 - participação de produtos calculada somente sobre os itens C170 efetivamente disponíveis.
+- criação da rota paralela `/integrada` para EFD ICMS/IPI e EFD-Contribuições;
+- validação exata do CNPJ do estabelecimento e da competência antes da conciliação;
+- processamento dos dois arquivos integralmente no navegador, sem requisição fiscal;
+- uso da EFD ICMS/IPI como fonte canônica de compras e vendas, evitando dupla contagem;
+- classificação explícita de conciliações exatas, divergentes, prováveis, exclusivas e
+  ambíguas;
+- cálculo decimal em escala fixa, sem depender de ponto flutuante binário para valores;
+- limite de 8 MB aplicado separadamente aos dois arquivos.
+
+Uma função da Vercel não pode receber cada EFD de 8 MB porque o limite documentado de
+corpo de requisição e resposta é 4,5 MB. Por esse motivo, a compatibilidade direta foi
+obtida mantendo o parser, a validação e a conciliação no navegador. A Vercel entrega a
+interface e executa somente o backend mínimo do cadastro, sem receber conteúdo fiscal.
+Fonte: [Vercel — Functions limitations](https://vercel.com/docs/functions/limitations).
 
 ## Situação do deploy
 
@@ -58,10 +73,12 @@ foi cadastrado por esta execução.
 ## Publicação validada
 
 - **URL de produção:** https://efd-clara.vercel.app
-- **Deploy:** `dpl_GYpNgD34qRL1tqNQcmDnMDqkHynx`
-- **Commit funcional:** `31a74cf`
+- **Rota integrada:** https://efd-clara.vercel.app/integrada
+- **Deploy validado:** `dpl_Ecn5A7ii8BKxqkN9Gj3nZggw12kc`
+- **Commit funcional:** `ba49dbb`
 - **Status:** Ready
-- **Testes públicos:** 3 E2E aprovados
+- **Testes locais completos:** 39 unitários e 4 E2E aprovados
+- **Teste exploratório público:** cadastro, demonstração integrada e painel aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
 - **Codificação Windows-1252 e nomes extensos:** aprovados
@@ -83,8 +100,17 @@ foi cadastrado por esta execução.
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
 - **Área administrativa:** configuração protegida e relatório redirecionado para login
-- **Build público:** concluído em 16 segundos; aviso não bloqueante sobre atualização
-  futura da versão principal do Node.js
+- **Build público integrado:** concluído em 35 segundos
+- **Fontes integradas:** 5 documentos e 7 itens na EFD ICMS/IPI; 4 documentos e 6 itens
+  na EFD-Contribuições da demonstração fictícia
+- **Conciliação fictícia:** 4 documentos exatos, 1 somente na EFD ICMS/IPI, 6 itens
+  conciliados e nenhuma correspondência provável ou ambígua
+- **Indicadores integrados:** compras de R$ 15.500,00, vendas de R$ 27.000,00, ICMS em
+  C190 de R$ 5.100,00, PIS a recolher de R$ 189,75 e Cofins a recolher de R$ 874,00
+- **Console do navegador no teste público:** nenhum erro
+- **Tráfego fiscal:** os dois TXT foram obtidos como exemplos públicos por `GET` e
+  processados localmente; nenhum conteúdo `0000`, `C100` ou CNPJ extraído foi enviado
+  por `POST`
 
 As capturas e o protocolo estão em [evidências](evidencias/README.md).
 
@@ -96,5 +122,5 @@ protegida pela credencial temporária local. Depois da criação única, o acess
 `/admin/login`.
 
 Na rodada desta evolução, os cadastros sintéticos gerados pelas execuções locais e
-públicas foram removidos; quatro registros de teste foram excluídos ao final das duas
-execuções.
+públicas foram removidos. O registro adicional usado na validação do deploy integrado
+também foi excluído imediatamente após o teste.
