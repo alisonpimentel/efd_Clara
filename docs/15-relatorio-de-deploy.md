@@ -74,10 +74,12 @@ foi cadastrado por esta execução.
 
 - **URL de produção:** https://efd-clara.vercel.app
 - **Rota integrada:** https://efd-clara.vercel.app/integrada
-- **Deploy validado:** `dpl_Ecn5A7ii8BKxqkN9Gj3nZggw12kc`
-- **Commit funcional:** `ba49dbb`
+- **Deploy funcional validado:** `dpl_4pwEEGmPvDX5nyXCwunmKdtJWK7Z`
+- **Commit funcional:** `a84ecaa`
 - **Status:** Ready
-- **Testes locais completos:** 39 unitários e 4 E2E aprovados
+- **Testes locais completos:** 41 unitários e 4 E2E aprovados
+- **Teste público da correção:** EFD-Contribuições selecionada antes da EFD ICMS/IPI,
+  com identificação automática, painel gerado e zero envio fiscal
 - **Teste exploratório público:** cadastro, demonstração integrada e painel aprovados
 - **Desktop:** aprovado
 - **Celular 375 × 812 px:** aprovado
@@ -89,8 +91,8 @@ foi cadastrado por esta execução.
 - **Datas:** emissão anterior preservada e `DT_E_S` usada na competência quando disponível
 - **C170:** ausência nas saídas de emissão própria explicada como limite da análise por
   produto, sem reduzir uma nota de qualidade
-- **Módulo SPED:** EFD-Contribuições recusada antes da leitura dos campos e EFD ICMS/IPI
-  válida processada na sequência
+- **Módulo SPED:** na rota simples, EFD-Contribuições é recusada antes da leitura dos
+  campos; na rota integrada, ambos os módulos são aceitos e identificados
 - **C170:** disponibilidade total preservada, cobertura elegível calculada separadamente
   e denominador zero apresentado como `não aplicável`
 - **Dados ausentes:** tickets, taxas, concentrações, ICMS e conciliação sem fonte ou
@@ -100,7 +102,7 @@ foi cadastrado por esta execução.
 - **Erros ou falhas fatais no novo deploy:** nenhum log encontrado
 - **SEO técnico:** página, robots e sitemap respondendo
 - **Área administrativa:** configuração protegida e relatório redirecionado para login
-- **Build público integrado:** concluído em 35 segundos
+- **Build público integrado:** concluído em 28 segundos
 - **Fontes integradas:** 5 documentos e 7 itens na EFD ICMS/IPI; 4 documentos e 6 itens
   na EFD-Contribuições da demonstração fictícia
 - **Conciliação fictícia:** 4 documentos exatos, 1 somente na EFD ICMS/IPI, 6 itens
@@ -111,6 +113,8 @@ foi cadastrado por esta execução.
 - **Tráfego fiscal:** os dois TXT foram obtidos como exemplos públicos por `GET` e
   processados localmente; nenhum conteúdo `0000`, `C100` ou CNPJ extraído foi enviado
   por `POST`
+- **Arquivos reais autorizados:** ordem invertida reproduzida localmente, tipo e
+  estabelecimento reconhecidos e nenhuma requisição `POST`; nenhum conteúdo preservado
 
 As capturas e o protocolo estão em [evidências](evidencias/README.md).
 
@@ -123,4 +127,5 @@ protegida pela credencial temporária local. Depois da criação única, o acess
 
 Na rodada desta evolução, os cadastros sintéticos gerados pelas execuções locais e
 públicas foram removidos. O registro adicional usado na validação do deploy integrado
-também foi excluído imediatamente após o teste.
+também foi excluído imediatamente após o teste. Os registros sintéticos das verificações
+de ordem automática foram removidos depois das execuções local e pública.
