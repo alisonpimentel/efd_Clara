@@ -188,12 +188,12 @@ export type CancellationSummary = {
   entry: {
     cancelled: number;
     total: number;
-    rate: number;
+    rate: number | null;
   };
   exit: {
     cancelled: number;
     total: number;
-    rate: number;
+    rate: number | null;
   };
 };
 
@@ -220,21 +220,21 @@ export type InventorySummary = {
 export type DashboardData = {
   company: SpedCompany;
   accountant: Accountant | null;
-  totalEntries: number;
-  totalExits: number;
-  operationDifference: number;
+  totalEntries: number | null;
+  totalExits: number | null;
+  operationDifference: number | null;
   activeDocuments: number;
   cancelledDocuments: number;
-  icmsRegistered: number;
-  averageTicket: number;
-  averageEntryTicket: number;
-  averageExitTicket: number;
-  uniqueSuppliers: number;
-  uniqueCustomers: number;
-  supplierConcentration: number;
-  customerConcentration: number;
-  icmsOnEntries: number;
-  icmsOnExits: number;
+  icmsRegistered: number | null;
+  averageTicket: number | null;
+  averageEntryTicket: number | null;
+  averageExitTicket: number | null;
+  uniqueSuppliers: number | null;
+  uniqueCustomers: number | null;
+  supplierConcentration: number | null;
+  customerConcentration: number | null;
+  icmsOnEntries: number | null;
+  icmsOnExits: number | null;
   trend: TrendPoint[];
   topSuppliers: RankingItem[];
   topCustomers: RankingItem[];
@@ -249,14 +249,14 @@ export type DashboardData = {
     moved: number;
     purchased: number;
     sold: number;
-    soldShareOfMoved: number;
+    soldShareOfMoved: number | null;
   };
   cancellations: CancellationSummary;
   cfopRanking: RankingItem[];
   icmsCreditEntryValue: number;
   totalEntryOperationValue: number;
-  icmsCreditEntryShare: number;
-  apparentIcmsBurden: number;
+  icmsCreditEntryShare: number | null;
+  apparentIcmsBurden: number | null;
   assessment: TaxAssessment | null;
   inventory: InventorySummary | null;
   insights: ManagementInsight[];
@@ -264,12 +264,12 @@ export type DashboardData = {
     documentsWithoutParticipant: number;
     itemsWithoutProduct: number;
     documentsWithoutDate: number;
-    documentsOutsideReferencePeriod: number;
-    priorIssueDocumentsInPeriod: number;
+    documentsOutsideReferencePeriod: number | null;
+    priorIssueDocumentsInPeriod: number | null;
     entryItemAvailability: {
       documentsWithItems: number;
       totalDocuments: number;
-      rate: number;
+      rate: number | null;
       electronicOwnIssueWithoutItems: number;
       otherWithoutItems: number;
       eligibleDocuments: number;
@@ -278,13 +278,13 @@ export type DashboardData = {
     exitItemAvailability: {
       documentsWithItems: number;
       totalDocuments: number;
-      rate: number;
+      rate: number | null;
       electronicOwnIssueWithoutItems: number;
       otherWithoutItems: number;
       eligibleDocuments: number;
       eligibleRate: number | null;
     };
-    c100C190Difference: number;
+    c100C190Difference: number | null;
   };
   technical: {
     lineCount: number;

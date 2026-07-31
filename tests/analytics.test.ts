@@ -108,7 +108,7 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.doesNotMatch(csv, /00000000191/);
   });
 
-  it("mantém valores zerados quando o arquivo não possui movimento válido", async () => {
+  it("distingue zero observado de indicador sem denominador", async () => {
     const parsed = parseSped(
       [
         "|0000|019|0|01062026|30062026|EMPRESA TESTE|12345678000195||SP|123|3550308|||A|1|",
@@ -121,7 +121,41 @@ describe("indicadores gerados em SQLite temporário", () => {
     assert.equal(dashboard.totalExits, 0);
     assert.equal(dashboard.activeDocuments, 0);
     assert.equal(dashboard.cancelledDocuments, 1);
-    assert.equal(dashboard.averageTicket, 0);
+    assert.equal(dashboard.averageTicket, null);
+    assert.equal(dashboard.averageEntryTicket, null);
+    assert.equal(dashboard.averageExitTicket, null);
+    assert.equal(dashboard.cancellations.entry.rate, null);
+    assert.equal(dashboard.cancellations.exit.rate, 1);
+  });
+
+  it("não fabrica zeros quando registros opcionais não existem", async () => {
+    const parsed = parseSped(
+      [
+        "|0000|019|0|01062026|30062026|EMPRESA TESTE|12345678000195||SP|123|3550308|||A|1|",
+        "|C100|0|0||55|00|1|1||10062026|10062026|100,00|0|0,00|0,00|100,00|9|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|0,00|",
+      ].join("\n"),
+    );
+    const dashboard = await buildDashboard(parsed);
+
+    assert.equal(dashboard.totalEntries, 100);
+    assert.equal(dashboard.totalExits, 0);
+    assert.equal(dashboard.averageEntryTicket, 100);
+    assert.equal(dashboard.averageExitTicket, null);
+    assert.equal(dashboard.uniqueSuppliers, 0);
+    assert.equal(dashboard.supplierConcentration, null);
+    assert.equal(dashboard.icmsOnEntries, null);
+    assert.equal(dashboard.icmsOnExits, null);
+    assert.equal(dashboard.icmsCreditEntryShare, null);
+    assert.equal(dashboard.apparentIcmsBurden, null);
+    assert.equal(dashboard.skuActivity.soldShareOfMoved, null);
+    assert.equal(dashboard.quality.c100C190Difference, null);
+    assert.equal(dashboard.quality.exitItemAvailability.rate, null);
+    assert.equal(dashboard.weekdayActivity.length, 0);
+
+    const csv = dashboardToCsv(dashboard);
+    assert.match(csv, /Ticket médio de saída";"não disponível"/);
+    assert.match(csv, /ICMS nas entradas";"não disponível"/);
+    assert.doesNotMatch(csv, /ICMS nas entradas";"0\.00"/);
   });
 
   it("separa disponibilidade de itens, emissão anterior e movimento fora da competência", async () => {

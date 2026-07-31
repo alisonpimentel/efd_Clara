@@ -35,6 +35,18 @@ function money(value: number) {
   return moneyFormatter.format(value);
 }
 
+function moneyOrUnavailable(value: number | null) {
+  return value === null ? "Não disponível" : money(value);
+}
+
+function numberOrUnavailable(value: number | null) {
+  return value === null ? "Não disponível" : numberFormatter.format(value);
+}
+
+function percentOrUnavailable(value: number | null) {
+  return value === null ? "Não disponível" : percentFormatter.format(value);
+}
+
 function dateLabel(value: string) {
   if (!value) return "não informado";
   const [year, month, day] = value.split("-");
@@ -179,7 +191,7 @@ function ItemAvailabilityRow({
           : "sem documentos"}
         <small>
           {value.totalDocuments
-            ? `${percentFormatter.format(value.rate)} de disponibilidade total para análise por produto`
+            ? `${percentOrUnavailable(value.rate)} de disponibilidade total para análise por produto`
             : "não há base para calcular disponibilidade"}
         </small>
         <small className="eligibility-result">
@@ -449,21 +461,28 @@ function WeekdayChart({ values }: { values: WeekdayActivity[] }) {
         title="Saídas por dia da semana"
         question="Em quais dias ocorre maior valor médio de emissão?"
       />
-      <div className="weekday-chart">
-        {values.map((item) => (
-          <div key={item.weekday}>
-            <span>{item.label.slice(0, 3)}</span>
-            <div className="weekday-track">
-              <i
-                style={{ height: `${Math.max((item.averageValue / max) * 100, item.averageValue ? 5 : 0)}%` }}
-                title={`${item.label}: ${money(item.averageValue)} por ocorrência do dia na competência`}
-              />
+      {values.length ? (
+        <div className="weekday-chart">
+          {values.map((item) => (
+            <div key={item.weekday}>
+              <span>{item.label.slice(0, 3)}</span>
+              <div className="weekday-track">
+                <i
+                  style={{ height: `${Math.max((item.averageValue / max) * 100, item.averageValue ? 5 : 0)}%` }}
+                  title={`${item.label}: ${money(item.averageValue)} por ocorrência do dia na competência`}
+                />
+              </div>
+              <strong>{compactMoneyFormatter.format(item.averageValue)}</strong>
+              <small>{numberFormatter.format(item.documentCount)} doc.</small>
             </div>
-            <strong>{compactMoneyFormatter.format(item.averageValue)}</strong>
-            <small>{numberFormatter.format(item.documentCount)} doc.</small>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty-chart">
+          <strong>Distribuição não disponível</strong>
+          <p>São necessárias saídas C100 com data válida e uma competência identificada.</p>
+        </div>
+      )}
       <p className="data-source">
         Média por ocorrência de cada dia na competência, incluindo dias sem emissão. É
         distribuição semanal do período, não sazonalidade histórica.
@@ -702,13 +721,16 @@ export function Dashboard({
 }) {
   const [tab, setTab] = useState<Tab>("overview");
   const companyLabel = data.company.name || "Empresa não identificada";
-  const period = `${dateLabel(data.company.startDate)} a ${dateLabel(data.company.endDate)}`;
+  const period =
+    data.company.startDate && data.company.endDate
+      ? `${dateLabel(data.company.startDate)} a ${dateLabel(data.company.endDate)}`
+      : "não informado";
   const companyAddress = addressLabel(data.company.address);
   const accountantAddress = data.accountant ? addressLabel(data.accountant.address) : "";
   const cancellationRate =
     data.activeDocuments + data.cancelledDocuments
       ? data.cancelledDocuments / (data.activeDocuments + data.cancelledDocuments)
-      : 0;
+      : null;
 
   return (
     <article className="dashboard-page">
@@ -717,7 +739,8 @@ export function Dashboard({
           <p className="eyebrow">Análise concluída</p>
           <h1>{companyLabel}</h1>
           <p>
-            Período {period} · arquivo {fileName}
+            {period === "não informado" ? "Período não informado" : `Período ${period}`} ·
+            arquivo {fileName}
           </p>
         </div>
         <div className="toolbar-actions">
@@ -890,35 +913,63 @@ export function Dashboard({
           <div className="metrics-grid">
             <Metric
               label="Entradas escrituradas"
-              value={money(data.totalEntries)}
-              note={`Ticket médio de entrada: ${money(data.averageEntryTicket)}`}
+              value={moneyOrUnavailable(data.totalEntries)}
+              note={
+                data.averageEntryTicket === null
+                  ? "Ticket médio não calculado: não há entrada C100 válida"
+                  : `Ticket médio de entrada: ${money(data.averageEntryTicket)}`
+              }
             />
             <Metric
               label="Saídas escrituradas"
-              value={money(data.totalExits)}
-              note={`Ticket médio de saída: ${money(data.averageExitTicket)}`}
+              value={moneyOrUnavailable(data.totalExits)}
+              note={
+                data.averageExitTicket === null
+                  ? "Ticket médio não calculado: não há saída C100 válida"
+                  : `Ticket médio de saída: ${money(data.averageExitTicket)}`
+              }
               tone="positive"
             />
             <Metric
               label="Diferença operacional"
-              value={money(data.operationDifference)}
-              note="Saídas menos entradas; não equivale a resultado"
-              tone={data.operationDifference < 0 ? "attention" : "default"}
+              value={moneyOrUnavailable(data.operationDifference)}
+              note={
+                data.operationDifference === null
+                  ? "Não calculada: registros C100 não disponíveis"
+                  : "Saídas menos entradas; não equivale a resultado"
+              }
+              tone={
+                data.operationDifference !== null && data.operationDifference < 0
+                  ? "attention"
+                  : "default"
+              }
             />
             <Metric
               label="Documentos válidos"
               value={numberFormatter.format(data.activeDocuments)}
-              note={`${data.cancelledDocuments} cancelado(s), taxa de ${percentFormatter.format(cancellationRate)}`}
+              note={
+                cancellationRate === null
+                  ? "Nenhum documento C100 encontrado"
+                  : `${data.cancelledDocuments} cancelado(s), taxa de ${percentFormatter.format(cancellationRate)}`
+              }
             />
             <Metric
               label="Clientes identificados"
-              value={numberFormatter.format(data.uniqueCustomers)}
-              note={`${percentFormatter.format(data.customerConcentration)} das saídas nos 3 maiores`}
+              value={numberOrUnavailable(data.uniqueCustomers)}
+              note={
+                data.customerConcentration === null
+                  ? "Concentração não calculada: não há base monetária de saídas"
+                  : `${percentFormatter.format(data.customerConcentration)} das saídas nos 3 maiores`
+              }
             />
             <Metric
               label="Fornecedores identificados"
-              value={numberFormatter.format(data.uniqueSuppliers)}
-              note={`${percentFormatter.format(data.supplierConcentration)} das entradas nos 3 maiores`}
+              value={numberOrUnavailable(data.uniqueSuppliers)}
+              note={
+                data.supplierConcentration === null
+                  ? "Concentração não calculada: não há base monetária de entradas"
+                  : `${percentFormatter.format(data.supplierConcentration)} das entradas nos 3 maiores`
+              }
             />
           </div>
 
@@ -937,15 +988,33 @@ export function Dashboard({
               <div className="cancellation-comparison">
                 <Metric
                   label="Entradas canceladas"
-                  value={percentFormatter.format(data.cancellations.entry.rate)}
-                  note={`${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total} documento(s)`}
-                  tone={data.cancellations.entry.rate >= 0.05 ? "attention" : "default"}
+                  value={percentOrUnavailable(data.cancellations.entry.rate)}
+                  note={
+                    data.cancellations.entry.rate === null
+                      ? "Não há documentos C100 de entrada no denominador"
+                      : `${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total} documento(s)`
+                  }
+                  tone={
+                    data.cancellations.entry.rate !== null &&
+                    data.cancellations.entry.rate >= 0.05
+                      ? "attention"
+                      : "default"
+                  }
                 />
                 <Metric
                   label="Saídas canceladas"
-                  value={percentFormatter.format(data.cancellations.exit.rate)}
-                  note={`${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total} documento(s)`}
-                  tone={data.cancellations.exit.rate >= 0.05 ? "attention" : "default"}
+                  value={percentOrUnavailable(data.cancellations.exit.rate)}
+                  note={
+                    data.cancellations.exit.rate === null
+                      ? "Não há documentos C100 de saída no denominador"
+                      : `${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total} documento(s)`
+                  }
+                  tone={
+                    data.cancellations.exit.rate !== null &&
+                    data.cancellations.exit.rate >= 0.05
+                      ? "attention"
+                      : "default"
+                  }
                 />
               </div>
               <p className="fiscal-explainer">
@@ -971,15 +1040,33 @@ export function Dashboard({
           <div className="concentration-grid">
             <Metric
               label="3 maiores fornecedores"
-              value={percentFormatter.format(data.supplierConcentration)}
-              note="Participação nas entradas escrituradas"
-              tone={data.supplierConcentration >= 0.5 ? "attention" : "default"}
+              value={percentOrUnavailable(data.supplierConcentration)}
+              note={
+                data.supplierConcentration === null
+                  ? "Sem base monetária de entradas para calcular"
+                  : "Participação nas entradas escrituradas"
+              }
+              tone={
+                data.supplierConcentration !== null &&
+                data.supplierConcentration >= 0.5
+                  ? "attention"
+                  : "default"
+              }
             />
             <Metric
               label="3 maiores clientes"
-              value={percentFormatter.format(data.customerConcentration)}
-              note="Participação nas saídas escrituradas"
-              tone={data.customerConcentration >= 0.5 ? "attention" : "default"}
+              value={percentOrUnavailable(data.customerConcentration)}
+              note={
+                data.customerConcentration === null
+                  ? "Sem base monetária de saídas para calcular"
+                  : "Participação nas saídas escrituradas"
+              }
+              tone={
+                data.customerConcentration !== null &&
+                data.customerConcentration >= 0.5
+                  ? "attention"
+                  : "default"
+              }
             />
           </div>
           <div className="dashboard-grid">
@@ -1021,19 +1108,43 @@ export function Dashboard({
           <div className="metrics-grid">
             <Metric
               label="SKUs movimentados"
-              value={numberFormatter.format(data.skuActivity.moved)}
-              note="Itens distintos com entrada ou saída no C170"
+              value={
+                data.technical.itemCount > 0
+                  ? numberFormatter.format(data.skuActivity.moved)
+                  : "Não disponível"
+              }
+              note={
+                data.technical.itemCount > 0
+                  ? "Itens distintos com entrada ou saída no C170"
+                  : "O arquivo não possui itens C170 analisáveis"
+              }
             />
             <Metric
               label="SKUs com saída"
-              value={numberFormatter.format(data.skuActivity.sold)}
-              note={`${percentFormatter.format(data.skuActivity.soldShareOfMoved)} dos itens movimentados`}
+              value={
+                data.skuActivity.soldShareOfMoved === null
+                  ? "Não disponível"
+                  : numberFormatter.format(data.skuActivity.sold)
+              }
+              note={
+                data.skuActivity.soldShareOfMoved === null
+                  ? "Não há SKUs movimentados no denominador"
+                  : `${percentFormatter.format(data.skuActivity.soldShareOfMoved)} dos itens movimentados`
+              }
               tone="positive"
             />
             <Metric
               label="SKUs com entrada"
-              value={numberFormatter.format(data.skuActivity.purchased)}
-              note="Não equivale ao catálogo completo do ERP"
+              value={
+                data.technical.itemCount > 0
+                  ? numberFormatter.format(data.skuActivity.purchased)
+                  : "Não disponível"
+              }
+              note={
+                data.technical.itemCount > 0
+                  ? "Não equivale ao catálogo completo do ERP"
+                  : "O arquivo não possui itens C170 analisáveis"
+              }
             />
           </div>
           <div className="dashboard-grid">
@@ -1209,13 +1320,21 @@ export function Dashboard({
               <div className="fiscal-comparison">
                 <Metric
                   label="ICMS nas entradas"
-                  value={money(data.icmsOnEntries)}
-                  note="Soma dos C190 de entrada"
+                  value={moneyOrUnavailable(data.icmsOnEntries)}
+                  note={
+                    data.icmsOnEntries === null
+                      ? "Não há C190 de entrada para somar"
+                      : "Soma dos C190 de entrada"
+                  }
                 />
                 <Metric
                   label="ICMS nas saídas"
-                  value={money(data.icmsOnExits)}
-                  note="Soma dos C190 de saída"
+                  value={moneyOrUnavailable(data.icmsOnExits)}
+                  note={
+                    data.icmsOnExits === null
+                      ? "Não há C190 de saída para somar"
+                      : "Soma dos C190 de saída"
+                  }
                   tone="positive"
                 />
               </div>
@@ -1234,14 +1353,22 @@ export function Dashboard({
               <div className="fiscal-comparison">
                 <Metric
                   label="Entradas com ICMS informado"
-                  value={percentFormatter.format(data.icmsCreditEntryShare)}
-                  note={`${money(data.icmsCreditEntryValue)} de ${money(data.totalEntryOperationValue)} nos C190`}
+                  value={percentOrUnavailable(data.icmsCreditEntryShare)}
+                  note={
+                    data.icmsCreditEntryShare === null
+                      ? "Não há base monetária C190 de entrada no denominador"
+                      : `${money(data.icmsCreditEntryValue)} de ${money(data.totalEntryOperationValue)} nos C190`
+                  }
                   tone="positive"
                 />
                 <Metric
                   label="ICMS a recolher ÷ saídas"
-                  value={percentFormatter.format(data.apparentIcmsBurden)}
-                  note="Indicador aparente; não é alíquota efetiva"
+                  value={percentOrUnavailable(data.apparentIcmsBurden)}
+                  note={
+                    data.apparentIcmsBurden === null
+                      ? "Exige E110 e valor positivo de saídas C100"
+                      : "Indicador aparente; não é alíquota efetiva"
+                  }
                 />
               </div>
               <p className="fiscal-explainer">
@@ -1272,27 +1399,39 @@ export function Dashboard({
             <dl>
               <div>
                 <dt>Documentos sem participante identificado</dt>
-                <dd>{data.quality.documentsWithoutParticipant}</dd>
+                <dd>
+                  {data.technical.documentCount > 0
+                    ? data.quality.documentsWithoutParticipant
+                    : "Não disponível"}
+                </dd>
               </div>
               <div>
                 <dt>Itens sem código de produto</dt>
-                <dd>{data.quality.itemsWithoutProduct}</dd>
+                <dd>
+                  {data.technical.itemCount > 0
+                    ? data.quality.itemsWithoutProduct
+                    : "Não disponível"}
+                </dd>
               </div>
               <div>
                 <dt>Documentos sem data válida</dt>
-                <dd>{data.quality.documentsWithoutDate}</dd>
+                <dd>
+                  {data.technical.documentCount > 0
+                    ? data.quality.documentsWithoutDate
+                    : "Não disponível"}
+                </dd>
               </div>
               <div>
                 <dt>Movimentos fora da competência de referência</dt>
                 <dd>
-                  {data.quality.documentsOutsideReferencePeriod}
+                  {numberOrUnavailable(data.quality.documentsOutsideReferencePeriod)}
                   <small>DT_E_S; quando ausente, utiliza DT_DOC</small>
                 </dd>
               </div>
               <div>
                 <dt>Emissões anteriores escrituradas no período</dt>
                 <dd>
-                  {data.quality.priorIssueDocumentsInPeriod}
+                  {numberOrUnavailable(data.quality.priorIssueDocumentsInPeriod)}
                   <small>DT_DOC anterior, com entrada/saída registrada na competência</small>
                 </dd>
               </div>
@@ -1306,7 +1445,12 @@ export function Dashboard({
               />
               <div>
                 <dt>Diferença absoluta entre totais C100 e C190</dt>
-                <dd>{money(data.quality.c100C190Difference)}</dd>
+                <dd>
+                  {moneyOrUnavailable(data.quality.c100C190Difference)}
+                  {data.quality.c100C190Difference === null && (
+                    <small>Exige a presença simultânea de C100 e C190</small>
+                  )}
+                </dd>
               </div>
             </dl>
             <aside className="availability-explainer" aria-label="Como interpretar o C170">

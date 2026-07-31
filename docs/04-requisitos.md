@@ -21,6 +21,7 @@
 | RF15 | Conferir identificação | Razão social, competência, endereço e contabilista aparecem antes dos indicadores |
 | RF16 | Validar o módulo SPED | Somente o leiaute da EFD ICMS/IPI segue para o parser; EFD-Contribuições e outros módulos são recusados com orientação |
 | RF17 | Explicar disponibilidade do C170 | Mostrar percentual total, cobertura elegível e `não aplicável` quando o denominador elegível for zero |
+| RF18 | Preservar verdade analítica | Ausência de fonte ou denominador nunca é convertida em zero; a interface e o CSV informam `não disponível` ou `não aplicável` |
 
 ## Requisitos não funcionais
 
@@ -54,6 +55,13 @@
   exclui NF-e/NFC-e própria sem C170 e não é calculada com denominador zero;
 - evolução temporal usa datas válidas do `C100`;
 - concentração considera a participação dos três maiores clientes ou fornecedores;
+- documentos sem participante identificado não formam um cliente ou fornecedor fictício
+  nos rankings;
+- participações de produtos usam somente o valor dos itens C170 disponíveis, e não o
+  total documental C100;
+- zero é exibido apenas quando a fonte está presente e o resultado observado é zero;
+- `não disponível` identifica ausência da fonte necessária; `não aplicável` identifica
+  fórmula sem denominador válido;
 - diferença entre totais `C100` e `C190` é apresentada para conciliação, não como erro
   automático.
 - diferença operacional é `saídas - entradas` e nunca recebe o rótulo de lucro.

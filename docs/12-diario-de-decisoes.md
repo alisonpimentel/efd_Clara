@@ -347,3 +347,27 @@
   inspeção visual e fluxo completo.
 - **Uso no TCC:** construção responsável de indicadores, tratamento de denominador nulo e
   prevenção de comunicação enganosa em BI.
+
+## D29 - Distinguir zero, não disponível e não aplicável
+
+- **Problema observado:** alguns indicadores retornavam `0`, `0%` ou `R$ 0,00` quando a
+  fonte opcional não existia ou a fórmula não possuía denominador. O número era válido
+  para o programa, mas não era uma afirmação sustentada pelo arquivo.
+- **Risco:** empresários e contadores poderiam interpretar ausência de C170, C190, E110,
+  documentos ou participantes como ocorrência real de valor zero.
+- **Alternativas consideradas:** manter o zero com nota de rodapé; ocultar toda a seção;
+  estimar valores por outros registros; criar estados analíticos explícitos.
+- **Escolha:** adotar três estados. `Zero observado` exige fonte e população válidas;
+  `não disponível` indica ausência da fonte; `não aplicável` indica denominador inexistente.
+- **Aplicação:** tickets, cancelamentos por direção, concentrações, SKUs, proporções de
+  ICMS, distribuição semanal, disponibilidade C170, conciliação C100/C190, tela e CSV.
+- **Correção adicional:** participante vazio não é transformado em cliente ou fornecedor
+  fictício. A participação dos produtos usa a soma dos C170 disponíveis, deixando claro
+  o recorte parcial.
+- **Validação:** cenários automatizados sem movimento válido, sem C170/C190/E110 e sem
+  participante; verificação de que o CSV contém `não disponível` em vez de zero.
+- **Impacto no projeto:** a habilidade de design de dashboards orientou a separação entre
+  estado vazio, dado parcial e resultado numérico, reduzindo o risco de comunicação
+  enganosa.
+- **Uso no TCC:** qualidade semântica, transparência das fórmulas, tratamento de dados
+  ausentes e validade interna do artefato.

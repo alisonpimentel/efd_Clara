@@ -41,6 +41,12 @@
 - a elegibilidade do C170 é um critério metodológico do artefato, não conclusão sobre
   obrigação ou conformidade fiscal;
 - o protótipo não realiza auditoria de combinações CFOP/CST nem emite diagnóstico fiscal.
+- `não disponível` não significa que a operação não ocorreu; significa apenas que o
+  recorte de registros interpretado não sustenta aquele indicador;
+- valores iguais a zero só são conclusivos dentro da população e dos registros
+  efetivamente analisados;
+- indicadores parciais não são extrapolados para documentos sem C170, C190 ou participante
+  identificado.
 
 ## Limitações técnicas
 

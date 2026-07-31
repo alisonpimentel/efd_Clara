@@ -101,6 +101,25 @@ O painel separa três conceitos que não devem ser confundidos:
 2. **disponibilidade analítica**, como a presença de C170 para análises por item;
 3. **conciliação**, como a comparação entre totais de C100 e C190.
 
+## Política de verdade analítica
+
+O artefato não transforma falta de dados em zero. A apresentação usa três estados:
+
+| Estado | Quando é usado | Exemplo |
+|---|---|---|
+| zero observado | a fonte e o denominador existem e o cálculo resulta em zero | nenhum cancelamento entre documentos de entrada existentes |
+| não disponível | o registro ou a população necessária não existe no arquivo | ICMS nas entradas sem C190 de entrada |
+| não aplicável | a fórmula não possui denominador válido | cobertura elegível sem documentos elegíveis |
+
+Tickets não são calculados sem documentos válidos; concentração não é calculada sem
+base monetária e participantes identificados; proporções fiscais exigem os registros
+explicitados na fórmula. O CSV preserva os mesmos estados da tela.
+
+Registros sem nome de participante permanecem no total documental e no indicador de
+qualidade, mas não são convertidos em um cliente ou fornecedor chamado “não
+identificado”. Nas listas de produtos, a participação é calculada sobre a soma dos
+próprios itens C170 disponíveis na direção analisada.
+
 Para a competência, o protótipo usa `DT_E_S` — data de entrada ou saída — quando esse
 campo está preenchido. `DT_DOC`, a data de emissão, é preservada separadamente e usada
 somente como alternativa quando `DT_E_S` não está disponível. Com isso, uma nota emitida

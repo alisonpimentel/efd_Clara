@@ -71,6 +71,13 @@ passou a ser apresentada como não aplicável, pois o denominador era zero. Some
 contagens foram utilizadas na análise; o arquivo e suas identificações não foram
 preservados.
 
+Uma quarta revisão auditou valores derivados e fontes opcionais. O protótipo deixou de
+apresentar `0%` ou `R$ 0,00` quando não existe denominador, C170, C190, E110 ou população
+documental capaz de sustentar o indicador. Nesses casos, a tela e o CSV registram `não
+disponível` ou `não aplicável`. Documentos sem participante continuam contabilizados nos
+totais e na qualidade, mas não são agrupados como um cliente ou fornecedor artificial.
+Os testes negativos confirmaram que a ausência de fonte não produz um valor numérico.
+
 ## Evidência quantitativa
 
 Na base fictícia, o artefato reproduziu:

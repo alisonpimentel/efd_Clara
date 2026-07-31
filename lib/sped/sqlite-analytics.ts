@@ -62,15 +62,16 @@ function runTrend(db: Database): TrendPoint[] {
 function withShares(values: RankingItem[], total: number) {
   return values.map((item) => ({
     ...item,
-    share: total > 0 ? item.value / total : 0,
+    share: total > 0 ? item.value / total : undefined,
   }));
 }
 
 function withAbc(values: RankingItem[]) {
   const total = values.reduce((sum, item) => sum + item.value, 0);
+  if (total <= 0) return [];
   let cumulative = 0;
   return values.map((item) => {
-    const share = total > 0 ? item.value / total : 0;
+    const share = item.value / total;
     cumulative += share;
     return {
       ...item,
@@ -85,7 +86,7 @@ function withAbc(values: RankingItem[]) {
 }
 
 function concentration(values: RankingItem[], total: number) {
-  if (!total) return 0;
+  if (total <= 0 || values.length === 0) return null;
   return values.slice(0, 3).reduce((sum, item) => sum + item.value, 0) / total;
 }
 
@@ -139,6 +140,7 @@ function runGeographicShares(db: Database): GeographicShare[] {
   `)[0];
   if (!result) return [];
   const total = result.values.reduce((sum, row) => sum + Number(row[1] ?? 0), 0);
+  if (total <= 0) return [];
   return result.values.map((row) => {
     const category = String(row[0]) as GeographicShare["category"];
     const value = Number(row[1] ?? 0);
@@ -146,7 +148,7 @@ function runGeographicShares(db: Database): GeographicShare[] {
       category,
       label: labels[category],
       value,
-      share: total > 0 ? value / total : 0,
+      share: value / total,
     };
   });
 }
@@ -172,14 +174,14 @@ function runWeekdayActivity(parsed: SpedParseResult): WeekdayActivity[] {
   const start = parseUtcDate(parsed.company.startDate);
   const end = parseUtcDate(parsed.company.endDate);
 
-  if (start && end && start <= end) {
-    for (
-      let cursor = new Date(start);
-      cursor <= end;
-      cursor.setUTCDate(cursor.getUTCDate() + 1)
-    ) {
-      daysInPeriod[cursor.getUTCDay()] += 1;
-    }
+  if (!start || !end || start > end) return [];
+
+  for (
+    let cursor = new Date(start);
+    cursor <= end;
+    cursor.setUTCDate(cursor.getUTCDate() + 1)
+  ) {
+    daysInPeriod[cursor.getUTCDay()] += 1;
   }
 
   const buckets = WEEKDAY_LABELS.map((label, weekday) => ({
@@ -200,6 +202,8 @@ function runWeekdayActivity(parsed: SpedParseResult): WeekdayActivity[] {
     bucket.documentCount += 1;
     bucket.totalValue += document.total;
   }
+
+  if (!buckets.some((bucket) => bucket.documentCount > 0)) return [];
 
   for (const bucket of buckets) {
     if (bucket.daysInPeriod > 0) {
@@ -224,7 +228,7 @@ function runCancellations(db: Database): CancellationSummary {
     return {
       cancelled,
       total,
-      rate: total > 0 ? cancelled / total : 0,
+      rate: total > 0 ? cancelled / total : null,
     };
   }
 
@@ -263,7 +267,7 @@ function summarizeInventory(parsed: SpedParseResult): InventorySummary | null {
         label: item.description,
         value: item.totalValue,
         detail: `${item.quantity} ${item.unit}`.trim(),
-        share: inventory.totalValue > 0 ? item.totalValue / inventory.totalValue : 0,
+        share: inventory.totalValue > 0 ? item.totalValue / inventory.totalValue : undefined,
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 5),
@@ -272,11 +276,11 @@ function summarizeInventory(parsed: SpedParseResult): InventorySummary | null {
 }
 
 function buildInsights(input: {
-  supplierConcentration: number;
-  customerConcentration: number;
+  supplierConcentration: number | null;
+  customerConcentration: number | null;
   cancelledDocuments: number;
   activeDocuments: number;
-  c100C190Difference: number;
+  c100C190Difference: number | null;
   assessment: DashboardData["assessment"];
   inventory: InventorySummary | null;
 }): ManagementInsight[] {
@@ -291,13 +295,13 @@ function buildInsights(input: {
     inventory,
   } = input;
 
-  if (customerConcentration >= 0.5) {
+  if (customerConcentration !== null && customerConcentration >= 0.5) {
     insights.push({
       tone: "attention",
       title: "Saídas concentradas em poucos clientes",
       description: `${Math.round(customerConcentration * 100)}% das saídas estão nos três maiores clientes. Vale acompanhar dependência comercial e limites de crédito.`,
     });
-  } else if (customerConcentration > 0) {
+  } else if (customerConcentration !== null && customerConcentration > 0) {
     insights.push({
       tone: "positive",
       title: "Carteira de saídas mais distribuída",
@@ -305,7 +309,7 @@ function buildInsights(input: {
     });
   }
 
-  if (supplierConcentration >= 0.5) {
+  if (supplierConcentration !== null && supplierConcentration >= 0.5) {
     insights.push({
       tone: "attention",
       title: "Compras concentradas em poucos fornecedores",
@@ -344,7 +348,7 @@ function buildInsights(input: {
     });
   }
 
-  if (c100C190Difference > 0.01) {
+  if (c100C190Difference !== null && c100C190Difference > 0.01) {
     insights.push({
       tone: "neutral",
       title: "C100 e C190 possuem bases diferentes",
@@ -457,11 +461,18 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
     createSchema(db);
     loadData(db, parsed);
 
-    const totalEntries = runValue(
+    const hasC100 = (parsed.recordCounts.C100 ?? 0) > 0;
+    const hasC190 = (parsed.recordCounts.C190 ?? 0) > 0;
+    const hasReferencePeriod = Boolean(
+      parsed.company.startDate &&
+        parsed.company.endDate &&
+        parsed.company.startDate <= parsed.company.endDate,
+    );
+    const totalEntriesValue = runValue(
       db,
       "SELECT COALESCE(SUM(total), 0) FROM documents WHERE operation = 'entry' AND cancelled = 0",
     );
-    const totalExits = runValue(
+    const totalExitsValue = runValue(
       db,
       "SELECT COALESCE(SUM(total), 0) FROM documents WHERE operation = 'exit' AND cancelled = 0",
     );
@@ -473,7 +484,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       db,
       "SELECT COUNT(*) FROM documents WHERE cancelled = 1",
     );
-    const icmsRegistered = parsed.summaries.length
+    const icmsRegisteredValue = parsed.summaries.length
       ? runValue(db, "SELECT COALESCE(SUM(icms), 0) FROM summaries")
       : parsed.documents
           .filter((document) => !document.cancelled)
@@ -527,7 +538,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       return {
         documentsWithItems: documentIdsWithItems.size,
         totalDocuments: documents.length,
-        rate: documents.length > 0 ? documentIdsWithItems.size / documents.length : 0,
+        rate: documents.length > 0 ? documentIdsWithItems.size / documents.length : null,
         electronicOwnIssueWithoutItems,
         otherWithoutItems: withoutItems.length - electronicOwnIssueWithoutItems,
         eligibleDocuments,
@@ -535,33 +546,37 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
           eligibleDocuments > 0 ? documentIdsWithItems.size / eligibleDocuments : null,
       };
     };
-    const documentsOutsideReferencePeriod = parsed.documents.filter(
-      (document) =>
-        !document.cancelled &&
-        document.date &&
-        parsed.company.startDate &&
-        parsed.company.endDate &&
-        (document.date < parsed.company.startDate || document.date > parsed.company.endDate),
-    ).length;
-    const priorIssueDocumentsInPeriod = parsed.documents.filter(
-      (document) =>
-        !document.cancelled &&
-        document.issueDate &&
-        document.issueDate < parsed.company.startDate &&
-        document.date >= parsed.company.startDate &&
-        document.date <= parsed.company.endDate,
-    ).length;
+    const documentsOutsideReferencePeriod = hasReferencePeriod
+      ? parsed.documents.filter(
+          (document) =>
+            !document.cancelled &&
+            document.date &&
+            (document.date < parsed.company.startDate ||
+              document.date > parsed.company.endDate),
+        ).length
+      : null;
+    const priorIssueDocumentsInPeriod = hasReferencePeriod
+      ? parsed.documents.filter(
+          (document) =>
+            !document.cancelled &&
+            document.issueDate &&
+            document.issueDate < parsed.company.startDate &&
+            document.date >= parsed.company.startDate &&
+            document.date <= parsed.company.endDate,
+        ).length
+      : null;
     const topSuppliers = withShares(
       runRanking(
         db,
         `SELECT COALESCE(NULLIF(participant_name, ''), 'Não identificado'), SUM(total), COUNT(*)
          FROM documents
          WHERE operation = 'entry' AND cancelled = 0
+           AND TRIM(COALESCE(participant_name, '')) <> ''
          GROUP BY participant_name
          ORDER BY SUM(total) DESC
          LIMIT 5`,
       ),
-      totalEntries,
+      totalEntriesValue,
     );
     const topCustomers = withShares(
       runRanking(
@@ -569,25 +584,37 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         `SELECT COALESCE(NULLIF(participant_name, ''), 'Não identificado'), SUM(total), COUNT(*)
          FROM documents
          WHERE operation = 'exit' AND cancelled = 0
+           AND TRIM(COALESCE(participant_name, '')) <> ''
          GROUP BY participant_name
          ORDER BY SUM(total) DESC
          LIMIT 5`,
       ),
-      totalExits,
+      totalExitsValue,
     );
-    const supplierConcentration = concentration(topSuppliers, totalEntries);
-    const customerConcentration = concentration(topCustomers, totalExits);
-    const icmsOnEntries = parsed.summaries.length
+    const supplierConcentration = concentration(topSuppliers, totalEntriesValue);
+    const customerConcentration = concentration(topCustomers, totalExitsValue);
+    const entrySummaryCount = runValue(
+      db,
+      "SELECT COUNT(*) FROM summaries WHERE operation = 'entry'",
+    );
+    const exitSummaryCount = runValue(
+      db,
+      "SELECT COUNT(*) FROM summaries WHERE operation = 'exit'",
+    );
+    const icmsOnEntries = entrySummaryCount > 0
       ? runValue(db, "SELECT COALESCE(SUM(icms), 0) FROM summaries WHERE operation = 'entry'")
-      : 0;
-    const icmsOnExits = parsed.summaries.length
+      : null;
+    const icmsOnExits = exitSummaryCount > 0
       ? runValue(db, "SELECT COALESCE(SUM(icms), 0) FROM summaries WHERE operation = 'exit'")
-      : 0;
-    const c100C190Difference = Math.abs(
-      totalEntries +
-        totalExits -
-        runValue(db, "SELECT COALESCE(SUM(operation_value), 0) FROM summaries"),
-    );
+      : null;
+    const c100C190Difference =
+      hasC100 && hasC190
+        ? Math.abs(
+            totalEntriesValue +
+              totalExitsValue -
+              runValue(db, "SELECT COALESCE(SUM(operation_value), 0) FROM summaries"),
+          )
+        : null;
     const assessment = parsed.assessments.at(-1) ?? null;
     const inventory = summarizeInventory(parsed);
     const customerAbc = withAbc(
@@ -596,6 +623,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         `SELECT COALESCE(NULLIF(participant_name, ''), 'Não identificado'), SUM(total), COUNT(*)
          FROM documents
          WHERE operation = 'exit' AND cancelled = 0
+           AND TRIM(COALESCE(participant_name, '')) <> ''
          GROUP BY participant_name
          ORDER BY SUM(total) DESC`,
       ),
@@ -606,6 +634,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
          FROM items
          WHERE operation = 'exit'
+           AND TRIM(COALESCE(product_code, '')) <> ''
          GROUP BY product_code, product_description
          ORDER BY SUM(value) DESC`,
       ),
@@ -630,6 +659,14 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       db,
       "SELECT COUNT(DISTINCT product_code) FROM items WHERE operation = 'exit' AND TRIM(COALESCE(product_code, '')) <> ''",
     );
+    const totalPurchasedItemValue = runValue(
+      db,
+      "SELECT COALESCE(SUM(value), 0) FROM items WHERE operation = 'entry' AND TRIM(COALESCE(product_code, '')) <> ''",
+    );
+    const totalSoldItemValue = runValue(
+      db,
+      "SELECT COALESCE(SUM(value), 0) FROM items WHERE operation = 'exit' AND TRIM(COALESCE(product_code, '')) <> ''",
+    );
     const insights = buildInsights({
       supplierConcentration,
       customerConcentration,
@@ -643,27 +680,31 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
     return {
       company: parsed.company,
       accountant: parsed.accountant,
-      totalEntries,
-      totalExits,
-      operationDifference: totalExits - totalEntries,
+      totalEntries: hasC100 ? totalEntriesValue : null,
+      totalExits: hasC100 ? totalExitsValue : null,
+      operationDifference: hasC100 ? totalExitsValue - totalEntriesValue : null,
       activeDocuments,
       cancelledDocuments,
-      icmsRegistered,
-      averageTicket: activeDocuments ? (totalEntries + totalExits) / activeDocuments : 0,
-      averageEntryTicket: entryDocuments ? totalEntries / entryDocuments : 0,
-      averageExitTicket: exitDocuments ? totalExits / exitDocuments : 0,
-      uniqueSuppliers: topSuppliers.length
+      icmsRegistered: hasC100 || hasC190 ? icmsRegisteredValue : null,
+      averageTicket:
+        activeDocuments > 0
+          ? (totalEntriesValue + totalExitsValue) / activeDocuments
+          : null,
+      averageEntryTicket:
+        entryDocuments > 0 ? totalEntriesValue / entryDocuments : null,
+      averageExitTicket: exitDocuments > 0 ? totalExitsValue / exitDocuments : null,
+      uniqueSuppliers: entryDocuments > 0
         ? runValue(
             db,
             "SELECT COUNT(DISTINCT participant_name) FROM documents WHERE operation = 'entry' AND cancelled = 0 AND TRIM(COALESCE(participant_name, '')) <> ''",
           )
-        : 0,
-      uniqueCustomers: topCustomers.length
+        : null,
+      uniqueCustomers: exitDocuments > 0
         ? runValue(
             db,
             "SELECT COUNT(DISTINCT participant_name) FROM documents WHERE operation = 'exit' AND cancelled = 0 AND TRIM(COALESCE(participant_name, '')) <> ''",
           )
-        : 0,
+        : null,
       supplierConcentration,
       customerConcentration,
       icmsOnEntries,
@@ -671,24 +712,32 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       trend: runTrend(db),
       topSuppliers,
       topCustomers,
-      topPurchasedProducts: withShares(runRanking(
-        db,
-        `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
-         FROM items
-         WHERE operation = 'entry'
-         GROUP BY product_code, product_description
-         ORDER BY SUM(value) DESC
-         LIMIT 5`,
-      ), totalEntries),
-      topSoldProducts: withShares(runRanking(
-        db,
-        `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
-         FROM items
-         WHERE operation = 'exit'
-         GROUP BY product_code, product_description
-         ORDER BY SUM(value) DESC
-         LIMIT 5`,
-      ), totalExits),
+      topPurchasedProducts: withShares(
+        runRanking(
+          db,
+          `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
+           FROM items
+           WHERE operation = 'entry'
+             AND TRIM(COALESCE(product_code, '')) <> ''
+           GROUP BY product_code, product_description
+           ORDER BY SUM(value) DESC
+           LIMIT 5`,
+        ),
+        totalPurchasedItemValue,
+      ),
+      topSoldProducts: withShares(
+        runRanking(
+          db,
+          `SELECT COALESCE(NULLIF(product_description, ''), product_code, 'Não identificado'), SUM(value), COUNT(*)
+           FROM items
+           WHERE operation = 'exit'
+             AND TRIM(COALESCE(product_code, '')) <> ''
+           GROUP BY product_code, product_description
+           ORDER BY SUM(value) DESC
+           LIMIT 5`,
+        ),
+        totalSoldItemValue,
+      ),
       customerAbc,
       productAbc,
       averageUnitValues: runAverageUnitValues(db),
@@ -698,7 +747,7 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
         moved: movedSkus,
         purchased: purchasedSkus,
         sold: soldSkus,
-        soldShareOfMoved: movedSkus > 0 ? soldSkus / movedSkus : 0,
+        soldShareOfMoved: movedSkus > 0 ? soldSkus / movedSkus : null,
       },
       cancellations: runCancellations(db),
       cfopRanking: runRanking(
@@ -712,9 +761,13 @@ export async function buildDashboard(parsed: SpedParseResult): Promise<Dashboard
       icmsCreditEntryValue,
       totalEntryOperationValue,
       icmsCreditEntryShare:
-        totalEntryOperationValue > 0 ? icmsCreditEntryValue / totalEntryOperationValue : 0,
+        entrySummaryCount > 0 && totalEntryOperationValue > 0
+          ? icmsCreditEntryValue / totalEntryOperationValue
+          : null,
       apparentIcmsBurden:
-        assessment && totalExits > 0 ? assessment.icmsToCollect / totalExits : 0,
+        assessment && totalExitsValue > 0
+          ? assessment.icmsToCollect / totalExitsValue
+          : null,
       assessment,
       inventory,
       insights,

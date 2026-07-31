@@ -5,6 +5,14 @@ function escapeCsv(value: string | number) {
   return `"${text}"`;
 }
 
+function decimalOrUnavailable(value: number | null) {
+  return value === null ? "não disponível" : value.toFixed(2);
+}
+
+function ratioOrUnavailable(value: number | null) {
+  return value === null ? "não disponível" : value;
+}
+
 function rankingRows(section: string, values: RankingItem[]) {
   return values.map((item) =>
     [
@@ -55,44 +63,44 @@ export function dashboardToCsv(data: DashboardData) {
             .join(";"),
         ]
       : []),
-    ["Resumo", "Total de entradas", data.totalEntries.toFixed(2), ""]
+    ["Resumo", "Total de entradas", decimalOrUnavailable(data.totalEntries), ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Total de saídas", data.totalExits.toFixed(2), ""]
+    ["Resumo", "Total de saídas", decimalOrUnavailable(data.totalExits), ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Diferença operacional", data.operationDifference.toFixed(2), ""]
+    ["Resumo", "Diferença operacional", decimalOrUnavailable(data.operationDifference), ""]
       .map(escapeCsv)
       .join(";"),
     ["Resumo", "Documentos válidos", data.activeDocuments, ""].map(escapeCsv).join(";"),
     ["Resumo", "Documentos cancelados", data.cancelledDocuments, ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "ICMS escriturado", data.icmsRegistered.toFixed(2), ""]
+    ["Resumo", "ICMS escriturado", decimalOrUnavailable(data.icmsRegistered), ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Ticket médio de entrada", data.averageEntryTicket.toFixed(2), ""]
+    ["Resumo", "Ticket médio de entrada", decimalOrUnavailable(data.averageEntryTicket), ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Ticket médio de saída", data.averageExitTicket.toFixed(2), ""]
+    ["Resumo", "Ticket médio de saída", decimalOrUnavailable(data.averageExitTicket), ""]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Concentração nos 3 maiores fornecedores", data.supplierConcentration, "percentual"]
+    ["Resumo", "Concentração nos 3 maiores fornecedores", ratioOrUnavailable(data.supplierConcentration), "percentual"]
       .map(escapeCsv)
       .join(";"),
-    ["Resumo", "Concentração nos 3 maiores clientes", data.customerConcentration, "percentual"]
+    ["Resumo", "Concentração nos 3 maiores clientes", ratioOrUnavailable(data.customerConcentration), "percentual"]
       .map(escapeCsv)
       .join(";"),
-    ["Fiscal", "ICMS nas entradas", data.icmsOnEntries.toFixed(2), "C190"]
+    ["Fiscal", "ICMS nas entradas", decimalOrUnavailable(data.icmsOnEntries), "C190"]
       .map(escapeCsv)
       .join(";"),
-    ["Fiscal", "ICMS nas saídas", data.icmsOnExits.toFixed(2), "C190"]
+    ["Fiscal", "ICMS nas saídas", decimalOrUnavailable(data.icmsOnExits), "C190"]
       .map(escapeCsv)
       .join(";"),
     [
       "Fiscal",
       "Entradas com ICMS informado",
-      data.icmsCreditEntryShare,
+      ratioOrUnavailable(data.icmsCreditEntryShare),
       `${data.icmsCreditEntryValue.toFixed(2)} de ${data.totalEntryOperationValue.toFixed(2)} no C190`,
     ]
       .map(escapeCsv)
@@ -100,15 +108,15 @@ export function dashboardToCsv(data: DashboardData) {
     [
       "Fiscal",
       "ICMS a recolher dividido pelas saídas",
-      data.apparentIcmsBurden,
+      ratioOrUnavailable(data.apparentIcmsBurden),
       "indicador aparente; não é alíquota efetiva",
     ]
       .map(escapeCsv)
       .join(";"),
-    ["Operacional", "Cancelamentos de entrada", data.cancellations.entry.rate, `${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total}`]
+    ["Operacional", "Cancelamentos de entrada", ratioOrUnavailable(data.cancellations.entry.rate), `${data.cancellations.entry.cancelled} de ${data.cancellations.entry.total}`]
       .map(escapeCsv)
       .join(";"),
-    ["Operacional", "Cancelamentos de saída", data.cancellations.exit.rate, `${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total}`]
+    ["Operacional", "Cancelamentos de saída", ratioOrUnavailable(data.cancellations.exit.rate), `${data.cancellations.exit.cancelled} de ${data.cancellations.exit.total}`]
       .map(escapeCsv)
       .join(";"),
     ["Produtos", "SKUs movimentados", data.skuActivity.moved, "C170"]
@@ -120,7 +128,7 @@ export function dashboardToCsv(data: DashboardData) {
     [
       "Disponibilidade",
       "Movimentos fora da competência de referência",
-      data.quality.documentsOutsideReferencePeriod,
+      data.quality.documentsOutsideReferencePeriod ?? "não disponível",
       "DT_E_S; quando ausente, DT_DOC",
     ]
       .map(escapeCsv)
@@ -128,7 +136,7 @@ export function dashboardToCsv(data: DashboardData) {
     [
       "Disponibilidade",
       "Emissões anteriores escrituradas no período",
-      data.quality.priorIssueDocumentsInPeriod,
+      data.quality.priorIssueDocumentsInPeriod ?? "não disponível",
       "DT_DOC anterior e data de referência dentro da competência",
     ]
       .map(escapeCsv)
@@ -136,7 +144,7 @@ export function dashboardToCsv(data: DashboardData) {
     [
       "Disponibilidade",
       "Itens C170 disponíveis nas entradas",
-      data.quality.entryItemAvailability.rate,
+      ratioOrUnavailable(data.quality.entryItemAvailability.rate),
       `${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.totalDocuments} documentos | cobertura elegível: ${data.quality.entryItemAvailability.eligibleRate === null ? "não aplicável" : data.quality.entryItemAvailability.eligibleRate} (${data.quality.entryItemAvailability.documentsWithItems} de ${data.quality.entryItemAvailability.eligibleDocuments}) | ${data.quality.entryItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.entryItemAvailability.otherWithoutItems} outro(s) sem itens`,
     ]
       .map(escapeCsv)
@@ -144,7 +152,7 @@ export function dashboardToCsv(data: DashboardData) {
     [
       "Disponibilidade",
       "Itens C170 disponíveis nas saídas",
-      data.quality.exitItemAvailability.rate,
+      ratioOrUnavailable(data.quality.exitItemAvailability.rate),
       `${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.totalDocuments} documentos | cobertura elegível: ${data.quality.exitItemAvailability.eligibleRate === null ? "não aplicável" : data.quality.exitItemAvailability.eligibleRate} (${data.quality.exitItemAvailability.documentsWithItems} de ${data.quality.exitItemAvailability.eligibleDocuments}) | ${data.quality.exitItemAvailability.electronicOwnIssueWithoutItems} NF-e/NFC-e própria(s) sem C170 | ${data.quality.exitItemAvailability.otherWithoutItems} outro(s) sem itens`,
     ]
       .map(escapeCsv)

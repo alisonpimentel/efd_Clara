@@ -63,8 +63,11 @@
 | CT39 | EFD-Contribuições | reconhecer datas nos campos 6 e 7, recusar o arquivo e orientar sobre o SPED Fiscal | passou |
 | CT40 | outro módulo SPED | recusar leiaute incompatível sem montar o dashboard | passou |
 | CT41 | dois denominadores do C170 | manter disponibilidade total, calcular cobertura elegível e usar `não aplicável` quando o denominador for zero | passou |
+| CT42 | zero sem denominador | preservar total documental igual a zero, mas não calcular ticket ou taxa sem população | passou |
+| CT43 | registros opcionais ausentes | C190, E110 e C170 ausentes devem gerar `não disponível`, nunca percentuais ou valores zerados inventados | passou |
+| CT44 | participante ausente | documento permanece no total, mas não forma ranking nem concentração fictícia | passou |
 
-Os cenários unitários são cobertos por 21 funções de teste automatizado distribuídas em
+Os cenários unitários são cobertos por 22 funções de teste automatizado distribuídas em
 sete suítes.
 
 ## Testes de ponta a ponta
