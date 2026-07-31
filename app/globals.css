@@ -3180,3 +3180,80 @@ summary:focus-visible,
     text-align: left;
   }
 }
+
+/* Qualificação da ausência documental entre as duas escriturações. */
+.absence-panel {
+  margin-top: 14px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-muted);
+}
+
+.absence-heading strong {
+  display: block;
+  font-size: 0.98rem;
+  margin-bottom: 6px;
+}
+
+.absence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.absence-grid article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  border-left-width: 3px;
+}
+
+.absence-grid article[data-absence="AUSENCIA_ESPERADA"] {
+  border-left-color: var(--ok, #1f7a4d);
+}
+
+.absence-grid article[data-absence="AUSENCIA_PROVAVEL"] {
+  border-left-color: var(--warn, #8a6100);
+}
+
+.absence-grid article[data-absence="A_CONFERIR"] {
+  border-left-color: var(--alert, #a32c2c);
+}
+
+.absence-grid span {
+  color: var(--ink-soft);
+  font-size: 0.83rem;
+}
+
+.absence-grid strong {
+  font-size: 1.25rem;
+}
+
+.absence-reasons {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.absence-reasons li {
+  margin-bottom: 6px;
+}
+
+.absence-reasons strong {
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .absence-grid {
+    grid-template-columns: 1fr;
+  }
+}

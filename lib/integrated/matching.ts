@@ -2,6 +2,7 @@ import {
   decimalDifferenceWithin,
   normalizeCode,
 } from "./normalization";
+import { assessDocumentAbsence, detectConsolidatedBookkeeping } from "./absence";
 import type {
   DocumentMatch,
   IntegratedParseResult,
@@ -123,6 +124,10 @@ export function matchDocuments(
   const unmatchedLeft = new Map(left.map((document) => [document.sourceId, document]));
   const unmatchedRight = new Map(right.map((document) => [document.sourceId, document]));
   const matches: DocumentMatch[] = [];
+  const consolidated = detectConsolidatedBookkeeping(
+    contributions,
+    establishmentDocument,
+  ).consolidated;
 
   const keyGroupsLeft = groupBy(
     left.filter((document) => document.documentKeyValid),
@@ -261,6 +266,9 @@ export function matchDocuments(
       contributionsDocumentSourceId: null,
       candidateSourceIds: [],
       divergences: [],
+      absence: assessDocumentAbsence(document, icms.items, {
+        consolidatedBookkeeping: consolidated,
+      }),
     });
   }
   for (const document of unmatchedRight.values()) {

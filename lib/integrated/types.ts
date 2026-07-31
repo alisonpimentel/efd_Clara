@@ -186,6 +186,20 @@ export type DocumentMatchClass =
   | "SOMENTE_CONTRIBUICOES"
   | "AMBIGUO";
 
+export type AbsenceAssessmentCode =
+  | "AUSENCIA_ESPERADA"
+  | "AUSENCIA_PROVAVEL"
+  | "A_CONFERIR"
+  | "INDETERMINADO"
+  | "NAO_APLICAVEL";
+
+export type AbsenceAssessment = {
+  code: AbsenceAssessmentCode;
+  reason: string;
+  itemsExamined: number;
+  evidence: "CFOP_E_CST" | "CFOP" | "CST" | "NENHUMA";
+};
+
 export type DocumentMatch = {
   id: string;
   classification: DocumentMatchClass;
@@ -195,6 +209,12 @@ export type DocumentMatch = {
   contributionsDocumentSourceId: string | null;
   candidateSourceIds: string[];
   divergences: string[];
+  /**
+   * Qualificação da ausência, presente somente na classe SOMENTE_ICMS_IPI.
+   * Distingue a ausência esperada pela regra de escrituração da ausência que
+   * merece conferência. Ver lib/integrated/absence.ts.
+   */
+  absence?: AbsenceAssessment;
 };
 
 export type ItemMatchClass =

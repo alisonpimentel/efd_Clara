@@ -18,6 +18,39 @@ type Props = {
   onReset: () => void;
 };
 
+const ABSENCE_LABELS_UI: Record<string, string> = {
+  AUSENCIA_ESPERADA: "Ausência esperada",
+  AUSENCIA_PROVAVEL: "Ausência provável",
+  A_CONFERIR: "A conferir",
+  INDETERMINADO: "Indeterminado",
+  NAO_APLICAVEL: "Não aplicável",
+};
+
+/**
+ * Explicação da CLASSE, não do documento. A contagem é agregada, então exibir o
+ * motivo de um documento específico ao lado dela induziria a erro.
+ */
+const ABSENCE_CLASS_NOTES: Record<string, string> = {
+  AUSENCIA_ESPERADA:
+    "O CFOP indica operação sem receita e sem crédito, o CST de PIS/Cofins confirma, ou o documento está cancelado. Não é esperado na EFD-Contribuições.",
+  AUSENCIA_PROVAVEL:
+    "O CFOP indica operação sem receita e sem crédito, mas o CST de PIS/Cofins está ausente, genérico ou ambíguo no C170. A conclusão apoia-se apenas no CFOP.",
+  A_CONFERIR:
+    "Há indício de receita ou de direito a crédito, por CST ou por CFOP fora da lista. Merece conferência antes de ser tratado como conformidade.",
+  INDETERMINADO:
+    "Faltam elementos para avaliar: o documento não possui itens C170 ou não teve o indicador de entrada e saída identificado.",
+  NAO_APLICAVEL:
+    "A EFD-Contribuições apresenta escrituração consolidada para este estabelecimento. A conciliação documento a documento não se aplica.",
+};
+
+const ABSENCE_ORDER = [
+  "AUSENCIA_ESPERADA",
+  "AUSENCIA_PROVAVEL",
+  "A_CONFERIR",
+  "INDETERMINADO",
+  "NAO_APLICAVEL",
+] as const;
+
 const MATCH_LABELS: Record<DocumentMatchClass, string> = {
   CONCILIADO_EXATO: "Conciliado exato",
   CONCILIADO_COM_DIVERGENCIA: "Conciliado com divergência",
@@ -188,6 +221,18 @@ export function IntegratedDashboard({ analysis, fileNames, onReset }: Props) {
     matchCounts.CONCILIADO_COM_DIVERGENCIA +
     matchCounts.CONCILIADO_PROVAVEL;
   const reconciliationPopulation = documentMatches.length;
+  const absenceMatches = documentMatches.filter(
+    (match) => match.classification === "SOMENTE_ICMS_IPI" && match.absence,
+  );
+  const absenceCounts = Object.fromEntries(
+    ABSENCE_ORDER.map((code) => [
+      code,
+      absenceMatches.filter((match) => match.absence?.code === code).length,
+    ]),
+  ) as Record<(typeof ABSENCE_ORDER)[number], number>;
+  const absenceReasons = ABSENCE_ORDER.filter(
+    (code) => absenceCounts[code] > 0,
+  ).map((code) => ({ code, reason: ABSENCE_CLASS_NOTES[code] }));
   const reconciliationRate =
     reconciliationPopulation > 0
       ? Math.round((reconciled / reconciliationPopulation) * 1000) / 10
@@ -483,6 +528,41 @@ export function IntegratedDashboard({ analysis, fileNames, onReset }: Props) {
             </article>
           ))}
         </div>
+        {absenceMatches.length > 0 ? (
+          <div className="absence-panel">
+            <div className="absence-heading">
+              <strong>Documentos presentes somente na EFD ICMS/IPI</strong>
+              <p className="data-source">
+                A ausência de um documento na EFD-Contribuições nem sempre é divergência.
+                Conforme as Questões 010 e 011 das Perguntas e Respostas da Receita Federal,
+                só precisam ser escrituradas as saídas representativas de receita e as
+                entradas com direito a crédito. Transferências entre estabelecimentos,
+                remessas, retornos e comodato não precisam constar.
+              </p>
+            </div>
+            <div className="absence-grid">
+              {ABSENCE_ORDER.filter((code) => absenceCounts[code] > 0).map((code) => (
+                <article key={code} data-absence={code}>
+                  <span>{ABSENCE_LABELS_UI[code]}</span>
+                  <strong>{absenceCounts[code]}</strong>
+                </article>
+              ))}
+            </div>
+            <ul className="absence-reasons">
+              {absenceReasons.map((entry) => (
+                <li key={entry.code}>
+                  <strong>{ABSENCE_LABELS_UI[entry.code]}:</strong> {entry.reason}
+                </li>
+              ))}
+            </ul>
+            <p className="data-source">
+              O CFOP, instituído pelo Convênio S/Nº de 15/12/1970 (SINIEF), classifica a
+              circulação da mercadoria e é condição necessária, porém não suficiente, para
+              concluir sobre incidência de PIS e Cofins. Quando o CST das Tabelas 4.3.3 e
+              4.3.4 não está disponível no C170, a análise permanece como ausência provável.
+            </p>
+          </div>
+        ) : null}
         <div className="item-coverage">
           <strong>Itens conciliados</strong>
           <span>
