@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EfdClaraApp } from "./components/efd-clara-app";
+import { IntegratedEfdApp } from "./components/integrated-efd-app";
 
 export const metadata: Metadata = {
   title: "EFD Clara | Seu SPED em linguagem de negócio",
@@ -37,7 +37,7 @@ export default function Home() {
           __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
         }}
       />
-      <EfdClaraApp />
+      <IntegratedEfdApp />
     </>
   );
 }
