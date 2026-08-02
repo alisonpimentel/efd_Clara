@@ -124,9 +124,6 @@ export function IntegratedEfdApp() {
           </span>
         </Link>
         <div className="topbar-links">
-          <Link className="mode-link" href="/">
-            Análise de uma EFD
-          </Link>
           <div className="topbar-note">
             <span className="privacy-dot" aria-hidden="true" />
             Os dois arquivos ficam no navegador
